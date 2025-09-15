@@ -38,3 +38,16 @@ h1, h2, h3, h4 {
 .shadow-glow {
   box-shadow: 0 0 20px rgba(212,175,55,0.6); /* golden glow */
 }
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(30px);
+  visibility: hidden;
+  transition: opacity 0.8s cubic-bezier(0.6, 0.01, 0.05, 0.95), transform 0.8s cubic-bezier(0.6, 0.01, 0.05, 0.95);
+  will-change: opacity, visibility, transform;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+}
