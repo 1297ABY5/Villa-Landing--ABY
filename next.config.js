@@ -2,7 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["localhost"], // later add domains for external images
+    domains: [
+      "images.unsplash.com",
+      "randomuser.me"
+    ],
   },
 };
 
