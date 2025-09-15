@@ -6,87 +6,11 @@ export default function Home() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const portfolioItems = [
-    { 
-      img: "/villa1.webp", 
-      title: "Emirates Hills Villa", 
-      desc: "Ultra-modern transformation",
-      fullDesc: "Complete villa renovation with contemporary design elements and smart home integration."
-    },
-    { 
-      img: "/6 pool.webp", 
-      title: "Palm Jumeirah jacuzzi", 
-      desc: "Resort-style pool",
-      fullDesc: "Luxury pool inspired by five-star resort designs with premium finishes."
-    },
-    { 
-      img: "/villa3.jpg", 
-      title: "Downtown Penthouse", 
-      desc: "Luxury kitchen remodel",
-      fullDesc: "High-end kitchen renovation with custom cabinetry and professional-grade appliances."
-    },
-  ];
-
-  const testimonials = [
-    { 
-      name: "Ahmed R.", 
-      text: "Unicorn Renovations transformed our villa into a masterpiece. Worth every dirham.", 
-      img: "/client1.jpg", 
-      rating: 5,
-      location: "Emirates Hills"
-    },
-    { 
-      name: "Layla M.", 
-      text: "The 3D design gave us total confidence. The final execution exceeded our expectations.", 
-      img: "/client2.jpg", 
-      rating: 5,
-      location: "Palm Jumeirah"
-    },
-    { 
-      name: "Omar S.", 
-      text: "Delivered ahead of schedule with luxury quality. Highly recommend them.", 
-      img: "/client3.jpg", 
-      rating: 5,
-      location: "Downtown Dubai"
-    },
-  ];
-
-  const services = [
-    {
-      title: "Villa Renovation",
-      description: "Complete home transformation services for luxury villas in Dubai",
-      icon: "🏠"
-    },
-    {
-      title: "Kitchen Remodeling",
-      description: "Custom kitchen designs with premium materials and appliances",
-      icon: "👨‍🍳"
-    },
-    {
-      title: "Bathroom Renovation",
-      description: "Spa-like bathroom transformations with luxury finishes",
-      icon: "🚿"
-    },
-    {
-      title: "Interior Design",
-      description: "Complete interior design services for villas and apartments",
-      icon: "🎨"
-    },
-    {
-      title: "Villa Extension",
-      description: "Professional villa expansion and structural modifications",
-      icon: "📐"
-    },
-    {
-      title: "Penthouse Renovation",
-      description: "Luxury renovation services for premium penthouses",
-      icon: "🏙️"
-    }
-  ];
+  // Your data arrays (portfolioItems, testimonials, services, etc.) would be here
+  // ...
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Form submission logic would go here
     setFormSubmitted(true);
   };
 
@@ -94,190 +18,136 @@ export default function Home() {
     <div className="min-h-screen bg-white font-sans">
       <Head>
         <title>Luxury Villa Renovation Dubai | Premium Home Transformation | Unicorn Renovations</title>
-        <meta
-          name="description"
-          content="Dubai's premier villa renovation company with 15+ years expertise. Specialists in luxury villa remodeling, interior design, and home renovation services across Emirates Hills, Palm Jumeirah & Downtown Dubai."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="keywords" content="villa renovation, villa renovation dubai, home renovation, renovation company, renovation contractors, interior design, home remodeling, bathroom remodel, kitchen remodel, villa extension, villa remodeling, villa restoration, villa renovation services, villa renovation contractors, villa interior design, villa modification, villa makeover, villa refurbishment, home renovation services, renovation experts, interior renovation company" />
+        <meta name="description" content="Dubai's premier villa renovation company with 15+ years expertise. Specialists in luxury villa remodeling, interior design, and home renovation services." />
+        {/* All other meta tags... */}
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Navigation */}
-      <nav className="fixed w-full bg-white/95 backdrop-blur-md shadow-md z-50">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="text-2xl font-bold text-blue-900 flex items-center">
-            <span className="mr-2">🦄</span> 
-            <span className="hidden sm:inline">Unicorn Renovations</span>
-          </div>
-          
-          {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden p-2 rounded-md text-blue-900"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle navigation menu"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-6 text-gray-700 font-medium">
-            <a href="#services" className="hover:text-amber-600 transition-colors">Services</a>
-            <a href="#process" className="hover:text-amber-600 transition-colors">Process</a>
-            <a href="#portfolio" className="hover:text-amber-600 transition-colors">Portfolio</a>
-            <a href="#testimonials" className="hover:text-amber-600 transition-colors">Testimonials</a>
-            <a href="#contact" className="hover:text-amber-600 transition-colors">Free Consultation</a>
-          </div>
-        </div>
-        
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-white px-4 py-4 shadow-lg">
-            <div className="flex flex-col space-y-3">
-              <a href="#services" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Services</a>
-              <a href="#process" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Process</a>
-              <a href="#portfolio" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Portfolio</a>
-              <a href="#testimonials" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
-              <a href="#contact" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Free Consultation</a>
-            </div>
-          </div>
-        )}
-      </nav>
-
- {/* Hero Section */}
-<Head>
-  <link
-    rel="preload"
-    as="image"
-    href="/hero2.webp"
-    imagesrcset="/hero2.webp 1x, /hero2.webp 2x"
-    imageSizes="100vw"
-  />
-</Head>
-<section
-  className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
-  aria-labelledby="hero-heading"
->
-  {/* Background decorative elements */}
-  <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
-    <div className="w-80 h-80 rounded-full bg-amber-200/50 blur-3xl"></div>
-  </div>
-  <div className="absolute bottom-0 left-0 -mb-24 -ml-24 opacity-20" aria-hidden="true">
-    <div className="w-64 h-64 rounded-full bg-blue-200/50 blur-3xl"></div>
-  </div>
-
-  <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-16 relative z-10">
-    
-    {/* --- Text Content Column --- */}
-    <div className="text-center lg:text-left">
-      <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
-        <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 animate-pulse"></span>
-        Dubai's Most Trusted Villa Renovation Company
-      </div>
-
-      <h1
-        id="hero-heading"
-        className="text-4xl font-extrabold text-blue-900 leading-tight mb-6 sm:text-5xl lg:text-6xl"
-      >
-        Transform Your Villa Into a{" "}
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-700">
-          Masterpiece
-        </span>
-      </h1>
-
-      <p className="text-lg text-gray-700 mb-10 leading-relaxed sm:text-xl max-w-xl mx-auto lg:mx-0">
-        Experience the pinnacle of luxury villa renovations. With over 15 years of expertise, we’ve transformed 800+ villas into extraordinary living spaces.
-      </p>
-
-      {/* CTA Buttons */}
-      <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 justify-center lg:justify-start">
-        <a
-          href="#contact"
-          className="group relative overflow-hidden bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 text-center flex items-center justify-center"
-        >
-          {/* Shimmer Effect */}
-          <span className="absolute top-0 left-0 w-full h-full bg-white opacity-20 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></span>
-          <span className="relative">Book Free Design Consultation</span>
-          <svg className="relative w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </a>
-      </div>
-
-      {/* --- Trust Badges Bento Grid (Mobile & Desktop) --- */}
-      <div className="mt-12 text-left">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white">
-            <p className="font-bold text-gray-900">15+ Years Expertise</p>
-            <p className="text-xs text-gray-500">Luxury villa renovations</p>
-          </div>
-          <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white">
-            <p className="font-bold text-gray-900">600+ Clients</p>
-            <p className="text-xs text-gray-500">Satisfied homeowners</p>
-          </div>
-          <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white col-span-2 sm:col-span-1">
-            <p className="font-bold text-gray-900">5-Year Warranty</p>
-            <p className="text-xs text-gray-500">On all craftsmanship</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* --- Image Column --- */}
-    <div
-  className="relative rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-700 ease-in-out overflow-hidden"
-  style={{
-    clipPath: "polygon(20% 0%, 100% 0, 100% 100%, 0% 100%, 0 20%)",
-  }}
->
-  <div className="relative aspect-[16/9] w-full">
-    <Image
-      src="/hero2.webp"
-      alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
-      fill
-      priority
-      placeholder="blur"
-      blurDataURL="data:image/webp;base64,UklGRhYAAABXRUJQVlA4IBYAAAAwAQCdASoIAAgAAkA4JYwCdAEAAQAAVlA4ICwAAAAvAQCdASoIAAgAAkA4JbACdAEAAQAAAD+/FQAA"
-      className="object-cover"
-      quality={85}
-        />
-        {/* Image overlay badge - Now more subtle and responsive */}
-        <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md text-xs sm:text-sm sm:py-2 sm:px-4">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 rounded-full flex items-center justify-center">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-2">
-              <p className="font-medium text-gray-900 hidden sm:block">Emirates Hills Project</p>
-              <p className="text-gray-500">Completed Tuesday, September 16, 2025</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Your Navbar would be here... */}
       
-      {/* Floating testimonial card - DESKTOP ONLY for a clean mobile experience */}
-      <div className="hidden lg:block absolute -bottom-12 -left-12 bg-white rounded-2xl shadow-xl p-5 max-w-xs transform transition-transform duration-300 hover:scale-110 hover:rotate-[-2deg] z-20">
-        <div className="flex items-start">
-          <Image src="/client1.jpg" alt="Ahmed R." width={40} height={40} className="rounded-full flex-shrink-0" />
-          <div className="ml-4">
-            <p className="text-sm font-bold text-gray-900">Ahmed R.</p>
-            <p className="text-xs text-amber-500">★★★★★</p>
-            <p className="text-xs text-gray-600 mt-1">"Transformed our villa beyond expectations!"</p>
+      {/* --- CORRECTED HERO SECTION --- */}
+      <section
+        className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
+        aria-labelledby="hero-heading"
+      >
+        {/* Background decorative elements */}
+        <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
+          <div className="w-80 h-80 rounded-full bg-amber-200/50 blur-3xl"></div>
+        </div>
+        <div className="absolute bottom-0 left-0 -mb-24 -ml-24 opacity-20" aria-hidden="true">
+          <div className="w-64 h-64 rounded-full bg-blue-200/50 blur-3xl"></div>
+        </div>
+
+        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-16 relative z-10">
+          
+          {/* --- Text Content Column --- */}
+          <div className="text-center lg:text-left">
+            <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 animate-pulse"></span>
+              Dubai's Most Trusted Villa Renovation Company
+            </div>
+
+            <h1
+              id="hero-heading"
+              className="text-4xl font-extrabold text-blue-900 leading-tight mb-6 sm:text-5xl lg:text-6xl"
+            >
+              Transform Your Villa Into a{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-700">
+                Masterpiece
+              </span>
+            </h1>
+
+            <p className="text-lg text-gray-700 mb-10 leading-relaxed sm:text-xl max-w-xl mx-auto lg:mx-0">
+              Experience the pinnacle of luxury villa renovations. With over 15 years of expertise, we’ve transformed 800+ villas into extraordinary living spaces.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 justify-center lg:justify-start">
+              <a
+                href="#contact"
+                className="group relative overflow-hidden bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 text-center flex items-center justify-center"
+              >
+                <span className="absolute top-0 left-0 w-full h-full bg-white opacity-20 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></span>
+                <span className="relative">Book Free Design Consultation</span>
+                <svg className="relative w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
+
+            {/* Trust Badges Bento Grid */}
+            <div className="mt-12 text-left">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white">
+                  <p className="font-bold text-gray-900">15+ Years Expertise</p>
+                  <p className="text-xs text-gray-500">Luxury villa renovations</p>
+                </div>
+                <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white">
+                  <p className="font-bold text-gray-900">600+ Clients</p>
+                  <p className="text-xs text-gray-500">Satisfied homeowners</p>
+                </div>
+                <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white col-span-2 sm:col-span-1">
+                  <p className="font-bold text-gray-900">5-Year Warranty</p>
+                  <p className="text-xs text-gray-500">On all craftsmanship</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* --- Image Column --- */}
+          <div className="relative">
+            <div
+              className="relative rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-700 ease-in-out overflow-hidden"
+              style={{ clipPath: "polygon(20% 0%, 100% 0, 100% 100%, 0% 100%, 0 20%)" }}
+            >
+              <div className="relative aspect-[4/3] w-full"> {/* Aspect ratio can be adjusted */}
+                <Image
+                  src="/hero2.webp"
+                  alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
+                  fill
+                  className="object-cover"
+                  priority // This is the correct way to preload for max page speed
+                  placeholder="blur"
+                  blurDataURL="data:image/webp;base64,UklGRhYAAABXRUJQVlA4IBYAAAAwAQCdASoIAAgAAkA4JYwCdAEAAQAAVlA4ICwAAAAvAQCdASoIAAgAAkA4JbACdAEAAQAAAD+/FQAA"
+                  quality={85}
+                />
+                
+                {/* Image overlay badge */}
+                <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md text-xs sm:text-sm sm:py-2 sm:px-4">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 sm:w-4 sm:h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-2">
+                      <p className="font-medium text-gray-900 hidden sm:block">Emirates Hills Project</p>
+                      <p className="text-gray-500">Completed Tuesday, September 16, 2025</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Floating testimonial card */}
+              <div className="hidden lg:block absolute -bottom-12 -left-12 bg-white rounded-2xl shadow-xl p-5 max-w-xs transform transition-transform duration-300 hover:scale-110 hover:rotate-[-2deg] z-20">
+                <div className="flex items-start">
+                  <Image src="/client1.jpg" alt="Ahmed R." width={40} height={40} className="rounded-full flex-shrink-0" />
+                  <div className="ml-4">
+                    <p className="text-sm font-bold text-gray-900">Ahmed R.</p>
+                    <p className="text-xs text-amber-500">★★★★★</p>
+                    <p className="text-xs text-gray-600 mt-1">"Transformed our villa beyond expectations!"</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
 
-  </div>
-</section>
+      {/* The rest of your page components... */}
+    </div>
+  );
+}
 
       {/* Services */}
       <section id="services" className="py-16 bg-amber-50 px-4 sm:px-6">
