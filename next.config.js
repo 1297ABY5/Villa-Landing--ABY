@@ -3,9 +3,12 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     domains: [
-      "images.unsplash.com",   // portfolio & hero images
+      "images.unsplash.com",   // correct Unsplash domain for optimized images
+      "unsplash.com",          // fallback in case direct links are used
       "randomuser.me",         // testimonial avatars
-      "localhost"              // keep for local dev
+      "localhost",             // local dev
+      "fonts.gstatic.com",     // Google fonts
+      "fonts.googleapis.com"   // Google fonts
     ],
   },
 };
