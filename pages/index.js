@@ -260,8 +260,8 @@ export default function Home() {
         <Image
   src="/hero2.webp"
   alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
-  width={9000}
-  height={4000}
+  width={1600}
+  height={900}
   className="object-cover w-full h-auto rounded-2xl"
   priority
   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
