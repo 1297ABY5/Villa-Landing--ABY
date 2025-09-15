@@ -158,14 +158,22 @@ export default function Home() {
               Dubai's Premier Villa Renovation Experts
             </h1>
             <p className="text-lg text-gray-700 mb-8 leading-relaxed sm:text-xl">
-              As Dubai's leading villa renovation company, we specialize in luxury home renovation and transformation services. Our expert renovation contractors deliver exceptional interior design and home remodeling solutions for discerning clients across Emirates Hills, Palm Jumeirah, and Downtown Dubai.
+              As Dubai's leading villa renovation company, we specialize in luxury home renovation and transformation services. 
             </p>
             <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 justify-center md:justify-start">
               <a
                 href="#contact"
                 className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 text-center"
               >
-                Book Free Consultation
+                <Image 
+              src="/hero2.webp" 
+              alt="Luxury Villa Renovation Dubai by Unicorn Renovations" 
+              width={650} 
+              height={450} 
+              className="object-cover w-full h-auto" 
+              priority
+            />
+                  Book Free Consultation
               </a>
               <a
                 href="#portfolio"
@@ -190,14 +198,7 @@ export default function Home() {
             </div>
           </div>
           <div className="md:w-1/2 relative rounded-2xl overflow-hidden shadow-xl mt-8 md:mt-0 transform hover:scale-105 transition duration-700">
-            <Image 
-              src="/hero2.webp" 
-              alt="Luxury Villa Renovation Dubai by Unicorn Renovations" 
-              width={650} 
-              height={450} 
-              className="object-cover w-full h-auto" 
-              priority
-            />
+            
           </div>
         </div>
       </section>
@@ -210,7 +211,7 @@ export default function Home() {
             <div className="p-6">
               <div className="text-5xl font-bold text-amber-600 sm:text-6xl">15+</div>
               <div className="text-lg text-gray-700 mt-2">Years of Renovation Excellence</div>
-              <p className="text-gray-500 mt-3 text-sm">Specializing in luxury villa renovation services and home remodeling across Dubai</p>
+              <p className="text-gray-500 mt-3 text-sm">Specializing in luxury villa renovation services and home remodeling across Dubai.Our expert renovation team deliver exceptional interior design and home remodeling solutions for discerning clients across Emirates Hills, Palm Jumeirah, and Downtown Dubai.</p>
             </div>
             <div className="p-6">
               <div className="text-5xl font-bold text-amber-600 sm:text-6xl">800+</div>
