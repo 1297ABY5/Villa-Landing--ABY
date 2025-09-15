@@ -8,7 +8,7 @@ export default function Home() {
 
   const portfolioItems = [
     { 
-      img: "/v2.webp", 
+      img: "/villa1.webp", 
       title: "Emirates Hills Villa", 
       desc: "Ultra-modern transformation",
       fullDesc: "Complete villa renovation with contemporary design elements and smart home integration."
