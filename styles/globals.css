@@ -1,14 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* styles/globals.css */
 
-/* Custom global styles for premium landing */
-html, body {
-  scroll-behavior: smooth;
-  background-color: #F9F6F1; /* luxury ivory background */
-  font-family: 'Inter', sans-serif;
+/* Keep your existing @tailwind base, components, utilities */
+
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  visibility: hidden;
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  will-change: opacity, visibility, transform;
 }
 
-h1, h2, h3, h4 {
-  font-family: 'Playfair Display', serif; /* luxury headings */
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
 }
