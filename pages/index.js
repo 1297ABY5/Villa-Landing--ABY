@@ -258,13 +258,14 @@ export default function Home() {
     <div className="md:w-1/2 relative">
       <div className="relative rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-700">
         <Image
-          src="/hero2.webp"
-          alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
-          width={650}
-          height={450}
-          className="object-cover w-full h-auto"
-          priority
-        />
+  src="/hero2.webp"
+  alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
+  width={1600}
+  height={900}
+  className="object-cover w-full h-auto rounded-2xl"
+  priority
+  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+/>
         {/* CORRECTED: Image overlay badge is now correctly positioned */}
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm py-2 px-4 rounded-full shadow-md">
           <div className="flex items-center">
