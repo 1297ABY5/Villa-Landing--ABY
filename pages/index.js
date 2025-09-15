@@ -27,13 +27,13 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white font-sans">
       <Head>
-        <title>Unicorn Renovations | Dubai's Premier Luxury Villa Transformation Experts</title>
+        <title>Luxury Villa Renovation Dubai | Premium Home Transformation | Unicorn Renovations</title>
         <meta
           name="description"
-          content="Dubai's most trusted luxury villa renovation specialists with 15+ years of excellence. 800+ elite projects completed with precision craftsmanship. Book your complimentary design consultation today."
+          content="Dubai's premier villa renovation company with 15+ years expertise. Specialists in luxury villa remodeling, interior design, and home renovation services across Emirates Hills, Palm Jumeirah & Downtown Dubai."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="keywords" content="luxury villa renovation dubai, emirates hills renovation, palm jumeirah home transformation, premium interior design dubai" />
+        <meta name="keywords" content="villa renovation, villa renovation dubai, home renovation, renovation company, renovation contractors, interior design, home remodeling, bathroom remodel, kitchen remodel, villa extension, villa remodeling, villa restoration, villa renovation services, villa renovation contractors, villa interior design, villa modification, villa makeover, villa refurbishment, home renovation services, renovation experts, interior renovation company" />
       </Head>
 
       {/* NAVBAR */}
@@ -63,7 +63,7 @@ export default function Home() {
             <a href="#process" className="hover:text-amber-600 transition-colors">Our Process</a>
             <a href="#portfolio" className="hover:text-amber-600 transition-colors">Portfolio</a>
             <a href="#testimonials" className="hover:text-amber-600 transition-colors">Testimonials</a>
-            <a href="#contact" className="hover:text-amber-600 transition-colors">Contact</a>
+            <a href="#contact" className="hover:text-amber-600 transition-colors">Free Consultation</a>
           </div>
         </div>
         
@@ -75,7 +75,7 @@ export default function Home() {
               <a href="#process" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Our Process</a>
               <a href="#portfolio" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Portfolio</a>
               <a href="#testimonials" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
-              <a href="#contact" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+              <a href="#contact" className="text-blue-900 hover:text-amber-600 py-2" onClick={() => setMobileMenuOpen(false)}>Free Consultation</a>
             </div>
           </div>
         )}
@@ -86,26 +86,23 @@ export default function Home() {
         <div className="container mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-16">
           <div className="md:w-1/2 text-center md:text-left">
             <h1 className="text-4xl font-extrabold text-blue-900 leading-tight mb-6 sm:text-5xl lg:text-6xl">
-              Where Visionary Design <br />
-              <span className="bg-gradient-to-r from-amber-500 to-yellow-400 bg-clip-text text-transparent">
-                Meets Impeccable Execution
-              </span>
+              Dubai's Premier <span className="text-amber-600">Villa Renovation</span> Experts
             </h1>
             <p className="text-lg text-gray-700 mb-8 leading-relaxed sm:text-xl">
-              Dubai's most discerning homeowners trust us to transform their villas into extraordinary living spaces that embody elegance, sophistication, and uncompromising quality.
+              As Dubai's leading <strong>villa renovation company</strong>, we specialize in luxury <strong>home renovation</strong> and transformation services. Our expert <strong>renovation contractors</strong> deliver exceptional <strong>interior design</strong> and <strong>home remodeling</strong> solutions for discerning clients across Emirates Hills, Palm Jumeirah, and Downtown Dubai.
             </p>
             <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 justify-center md:justify-start">
               <a
                 href="#contact"
                 className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 text-center"
               >
-                Book Complimentary Consultation
+                Book Free Consultation
               </a>
               <a
                 href="#portfolio"
                 className="border-2 border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white font-bold py-4 px-8 rounded-full transition-all duration-300 text-center"
               >
-                Explore Our Masterpieces
+                View Our Villa Portfolio
               </a>
             </div>
             <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-500">
@@ -113,20 +110,20 @@ export default function Home() {
                 <svg className="w-5 h-5 text-amber-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>15+ Years Expertise</span>
+                <span>15+ Years Renovation Expertise</span>
               </div>
               <div className="flex items-center">
                 <svg className="w-5 h-5 text-amber-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>800+ Elite Projects</span>
+                <span>800+ Villa Transformation Projects</span>
               </div>
             </div>
           </div>
           <div className="md:w-1/2 relative rounded-2xl overflow-hidden shadow-xl mt-8 md:mt-0 transform hover:scale-105 transition duration-700">
             <Image 
               src="/hero-villa.jpg" 
-              alt="Luxury Villa Transformation by Unicorn Renovations" 
+              alt="Luxury Villa Renovation Dubai by Unicorn Renovations - Villa Transformation Experts" 
               width={650} 
               height={450} 
               className="object-cover w-full h-auto" 
@@ -138,22 +135,22 @@ export default function Home() {
       {/* TRUST METRICS */}
       <section className="py-16 bg-white px-4 sm:px-6">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold text-blue-900 mb-12 sm:text-4xl">Trusted by Dubai's Most Discerning Homeowners</h2>
+          <h2 className="text-3xl font-bold text-blue-900 mb-12 sm:text-4xl">Dubai's Trusted Villa Renovation Company</h2>
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
             <div className="p-6">
               <div className="text-5xl font-bold text-amber-600 sm:text-6xl">15+</div>
-              <div className="text-lg text-gray-700 mt-2">Years of Uncompromising Excellence</div>
-              <p className="text-gray-500 mt-3 text-sm">Over a decade and a half perfecting the art of luxury villa transformations</p>
+              <div className="text-lg text-gray-700 mt-2">Years of Renovation Excellence</div>
+              <p className="text-gray-500 mt-3 text-sm">Specializing in luxury <strong>villa renovation services</strong> and <strong>home remodeling</strong> across Dubai</p>
             </div>
             <div className="p-6">
               <div className="text-5xl font-bold text-amber-600 sm:text-6xl">800+</div>
-              <div className="text-lg text-gray-700 mt-2">Elite Projects Completed</div>
-              <p className="text-gray-500 mt-3 text-sm">From Palm Jumeirah to Emirates Hills, we've delivered perfection</p>
+              <div className="text-lg text-gray-700 mt-2">Luxury Villa Projects</div>
+              <p className="text-gray-500 mt-3 text-sm">Complete <strong>villa transformation</strong> and <strong>renovation</strong> projects completed</p>
             </div>
             <div className="p-6">
               <div className="text-5xl font-bold text-amber-600 sm:text-6xl">600+</div>
-              <div className="text-lg text-gray-700 mt-2">Exceedingly Satisfied Clients</div>
-              <p className="text-gray-500 mt-3 text-sm">Earning the trust of Dubai's most discerning homeowners</p>
+              <div className="text-lg text-gray-700 mt-2">Satisfied Dubai Clients</div>
+              <p className="text-gray-500 mt-3 text-sm">5-star rated <strong>renovation company</strong> for <strong>villa remodeling</strong> and <strong>interior design</strong></p>
             </div>
           </div>
         </div>
@@ -162,8 +159,8 @@ export default function Home() {
       {/* FEATURES */}
       <section id="features" className="py-16 bg-amber-50 px-4 sm:px-6">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold text-blue-900 mb-4 sm:text-4xl">Why Elite Clients Choose Unicorn Renovations</h2>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Discover the unparalleled advantages that set us apart as Dubai's premier villa renovation specialists</p>
+          <h2 className="text-3xl font-bold text-blue-900 mb-4 sm:text-4xl">Why Choose Our Villa Renovation Services</h2>
+          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Discover why we're Dubai's preferred <strong>renovation contractors</strong> for luxury <strong>villa transformation</strong> and <strong>home renovation</strong> projects</p>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
@@ -171,8 +168,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-blue-900 mb-4">Precision Craftsmanship</h3>
-              <p className="text-gray-600 leading-relaxed">Every millimeter is perfected with artisan-level attention to detail. We exceed expectations with flawless execution.</p>
+              <h3 className="text-xl font-bold text-blue-900 mb-4">Expert Renovation Contractors</h3>
+              <p className="text-gray-600 leading-relaxed">Our team of skilled <strong>renovation experts</strong> delivers precision craftsmanship for your <strong>villa renovation</strong> or <strong>home remodeling</strong> project.</p>
             </div>
             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
@@ -180,8 +177,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-blue-900 mb-4">Timely Perfection</h3>
-              <p className="text-gray-600 leading-relaxed">Our meticulously planned process ensures your project is delivered on schedule without compromising quality.</p>
+              <h3 className="text-xl font-bold text-blue-900 mb-4">Complete Home Renovation Services</h3>
+              <p className="text-gray-600 leading-relaxed">From <strong>villa extension</strong> to <strong>interior renovation</strong>, we provide comprehensive <strong>renovation services</strong> for your entire home.</p>
             </div>
             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
@@ -189,8 +186,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-blue-900 mb-4">Visionary Design</h3>
-              <p className="text-gray-600 leading-relaxed">We create immersive living experiences that resonate with timeless elegance and set trends.</p>
+              <h3 className="text-xl font-bold text-blue-900 mb-4">Luxury Interior Design</h3>
+              <p className="text-gray-600 leading-relaxed">Our <strong>interior design</strong> team creates stunning spaces for your <strong>villa renovation</strong> or <strong>apartment interior design</strong> project.</p>
             </div>
           </div>
         </div>
@@ -199,37 +196,37 @@ export default function Home() {
       {/* PROCESS */}
       <section id="process" className="py-16 bg-white px-4 sm:px-6">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">Our Meticulous Process</h2>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">Experience the seamless journey from vision to reality with our carefully crafted renovation process</p>
+          <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">Our Villa Renovation Process</h2>
+          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">Experience our meticulous approach to <strong>home renovation</strong> and <strong>villa transformation</strong></p>
           
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-6 mx-auto sm:w-20 sm:h-20">
                 <span className="text-xl font-bold text-amber-700 sm:text-2xl">1</span>
               </div>
-              <h3 className="text-lg font-bold text-blue-900 mb-3 sm:text-xl">Discovery & Vision</h3>
-              <p className="text-gray-600 text-sm">We immerse ourselves in your lifestyle to create a design that captures your vision</p>
+              <h3 className="text-lg font-bold text-blue-900 mb-3 sm:text-xl">Consultation & Planning</h3>
+              <p className="text-gray-600 text-sm">We discuss your <strong>villa renovation</strong> vision and create a customized plan for your <strong>home remodeling</strong> project</p>
             </div>
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-6 mx-auto sm:w-20 sm:h-20">
                 <span className="text-xl font-bold text-amber-700 sm:text-2xl">2</span>
               </div>
-              <h3 className="text-lg font-bold text-blue-900 mb-3 sm:text-xl">Detailed Planning</h3>
-              <p className="text-gray-600 text-sm">We develop comprehensive plans and 3D visualizations for flawless execution</p>
+              <h3 className="text-lg font-bold text-blue-900 mb-3 sm:text-xl">Design Development</h3>
+              <p className="text-gray-600 text-sm">Our <strong>interior design</strong> team creates detailed plans for your <strong>villa transformation</strong> or <strong>home renovation</strong></p>
             </div>
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-6 mx-auto sm:w-20 sm:h-20">
                 <span className="text-xl font-bold text-amber-700 sm:text-2xl">3</span>
               </div>
               <h3 className="text-lg font-bold text-blue-900 mb-3 sm:text-xl">Exquisite Execution</h3>
-              <p className="text-gray-600 text-sm">Master craftsmen bring the design to life with precision and finest materials</p>
+              <p className="text-gray-600 text-sm">Our <strong>renovation contractors</strong> bring your <strong>villa renovation</strong> to life with precision craftsmanship</p>
             </div>
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-6 mx-auto sm:w-20 sm:h-20">
                 <span className="text-xl font-bold text-amber-700 sm:text-2xl">4</span>
               </div>
               <h3 className="text-lg font-bold text-blue-900 mb-3 sm:text-xl">Final Reveal</h3>
-              <p className="text-gray-600 text-sm">We present your transformed space ensuring every detail exceeds expectations</p>
+              <p className="text-gray-600 text-sm">We present your transformed <strong>villa renovation</strong> project, ensuring every detail exceeds expectations</p>
             </div>
           </div>
         </div>
@@ -238,17 +235,17 @@ export default function Home() {
       {/* PORTFOLIO */}
       <section id="portfolio" className="py-16 bg-blue-50 px-4 sm:px-6">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">Signature Masterpieces</h2>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">Explore our portfolio of exceptional villa transformations across Dubai's most prestigious communities</p>
+          <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">Our Villa Renovation Portfolio</h2>
+          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">Explore our exceptional <strong>villa transformation</strong> and <strong>home renovation</strong> projects across Dubai's most prestigious communities</p>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {portfolioItems.map((p, i) => (
               <div key={i} className="relative group rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500">
-                <Image src={p.img} alt={p.title} width={450} height={320} className="object-cover w-full h-64 group-hover:scale-110 transition duration-700" />
+                <Image src={p.img} alt={`${p.title} - Villa Renovation Project by Unicorn Renovations`} width={450} height={320} className="object-cover w-full h-64 group-hover:scale-110 transition duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
                   <h3 className="text-xl font-bold text-white">{p.title}</h3>
                   <p className="text-gray-200">{p.desc}</p>
                   <button className="mt-4 text-amber-300 hover:text-amber-100 font-medium self-start flex items-center text-sm">
-                    View Project
+                    View Renovation Project
                     <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
@@ -259,7 +256,7 @@ export default function Home() {
           </div>
           <div className="text-center mt-12">
             <a href="#" className="inline-flex items-center text-blue-900 hover:text-amber-600 font-bold text-sm">
-              Explore Our Complete Portfolio
+              Explore Our Complete Renovation Portfolio
               <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
@@ -268,11 +265,93 @@ export default function Home() {
         </div>
       </section>
 
+      {/* SERVICES */}
+      <section className="py-16 bg-white px-4 sm:px-6">
+        <div className="container mx-auto">
+          <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">Comprehensive Renovation Services</h2>
+          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">From <strong>villa extension</strong> to <strong>interior renovation</strong>, we offer complete <strong>home renovation services</strong></p>
+          
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="bg-amber-50 p-6 rounded-2xl">
+              <h3 className="text-xl font-bold text-blue-900 mb-4">Villa Renovation & Remodeling</h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center">
+                  <svg className="w-4 h-4 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Complete <strong>villa transformation</strong>
+                </li>
+                <li className="flex items-center">
+                  <svg className="w-4 h-4 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <strong>Villa extension</strong> and expansion
+                </li>
+                <li className="flex items-center">
+                  <svg className="w-4 h-4 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <strong>Villa restoration</strong> and refurbishment
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-amber-50 p-6 rounded-2xl">
+              <h3 className="text-xl font-bold text-blue-900 mb-4">Interior Renovation Services</h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center">
+                  <svg className="w-4 h-4 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <strong>Interior design</strong> and decoration
+                </li>
+                <li className="flex items-center">
+                  <svg className="w-4 h-4 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <strong>Kitchen remodel</strong> and renovation
+                </li>
+                <li className="flex items-center">
+                  <svg className="w-4 h-4 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <strong>Bathroom remodel</strong> and transformation
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-amber-50 p-6 rounded-2xl">
+              <h3 className="text-xl font-bold text-blue-900 mb-4">Specialized Renovation Solutions</h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center">
+                  <svg className="w-4 h-4 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <strong>Apartment interior design</strong>
+                </li>
+                <li className="flex items-center">
+                  <svg className="w-4 h-4 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <strong>Penthouse interior renovation</strong>
+                </li>
+                <li className="flex items-center">
+                  <svg className="w-4 h-4 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <strong>Custom home renovation</strong> solutions
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* TESTIMONIALS */}
       <section id="testimonials" className="py-16 bg-amber-50 px-4 sm:px-6">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">Praise From Our Distinguished Clients</h2>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">Hear what Dubai's elite homeowners have to say about their experience with Unicorn Renovations</p>
+          <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">What Our Renovation Clients Say</h2>
+          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">Hear from homeowners who trusted our <strong>renovation company</strong> for their <strong>villa transformation</strong> projects</p>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {testimonials.map((t, i) => (
               <div key={i} className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
@@ -284,7 +363,7 @@ export default function Home() {
                   {[...Array(t.rating)].map((_, j) => <span key={j}>★</span>)}
                 </div>
                 <h4 className="font-bold text-blue-900 text-center">{t.name}</h4>
-                <p className="text-gray-500 text-sm text-center">Emirates Hills Villa Owner</p>
+                <p className="text-gray-500 text-sm text-center">Emirates Hills Villa Renovation Client</p>
               </div>
             ))}
           </div>
@@ -300,15 +379,15 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <h2 className="text-2xl font-bold text-blue-900 mb-4 sm:text-3xl">Thank You!</h2>
-              <p className="text-gray-600 mb-8">We've received your consultation request. Our design specialist will contact you within 24 hours to schedule your complimentary consultation.</p>
+              <p className="text-gray-600 mb-8">We've received your <strong>renovation consultation</strong> request. Our design specialist will contact you within 24 hours to discuss your <strong>villa renovation</strong> project.</p>
               <button onClick={() => setFormSubmitted(false)} className="text-amber-600 hover:text-amber-700 font-medium">
                 Submit Another Request
               </button>
             </div>
           ) : (
             <>
-              <h2 className="text-2xl font-bold text-blue-900 mb-4 text-center sm:text-3xl">Begin Your Transformation Journey</h2>
-              <p className="text-gray-600 mb-8 text-center text-sm">Schedule your complimentary design consultation with our experts</p>
+              <h2 className="text-2xl font-bold text-blue-900 mb-4 text-center sm:text-3xl">Start Your Villa Renovation Journey</h2>
+              <p className="text-gray-600 mb-8 text-center text-sm">Schedule your complimentary <strong>renovation consultation</strong> with our experts</p>
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
@@ -327,19 +406,23 @@ export default function Home() {
                       <option>Villa Renovation</option>
                       <option>Kitchen Remodel</option>
                       <option>Bathroom Renovation</option>
-                      <option>Full Interior Design</option>
+                      <option>Villa Extension</option>
+                      <option>Interior Design</option>
+                      <option>Home Remodeling</option>
+                      <option>Apartment Renovation</option>
+                      <option>Penthouse Renovation</option>
                     </select>
                   </div>
                 </div>
                 <div>
-                  <textarea placeholder="Tell us about your vision and requirements*" rows={4} required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
+                  <textarea placeholder="Tell us about your renovation project*" rows={4} required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
                 </div>
                 <div className="flex items-center">
                   <input type="checkbox" id="consent" required className="w-4 h-4 text-amber-600 focus:ring-amber-500" />
-                  <label htmlFor="consent" className="ml-2 text-sm text-gray-600">I agree to receive communications about my project</label>
+                  <label htmlFor="consent" className="ml-2 text-sm text-gray-600">I agree to receive communications about my renovation project</label>
                 </div>
                 <button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-lg transition-all duration-300 transform hover:scale-105">
-                  Request Complimentary Consultation
+                  Request Free Renovation Consultation
                 </button>
                 <p className="text-center text-xs text-gray-500">Your privacy is important to us. We never share your information with third parties.</p>
               </form>
@@ -351,21 +434,29 @@ export default function Home() {
       {/* FAQ SECTION */}
       <section className="py-16 bg-white px-4 sm:px-6">
         <div className="container mx-auto max-w-4xl">
-          <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">Frequently Asked Questions</h2>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">Get answers to common questions about our luxury renovation process</p>
+          <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">Villa Renovation FAQs</h2>
+          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">Common questions about our <strong>renovation services</strong> and <strong>villa transformation</strong> process</p>
           
           <div className="space-y-6">
             <div className="border-b border-gray-200 pb-6">
-              <h3 className="text-xl font-bold text-blue-900 mb-3">How long does a typical villa renovation take?</h3>
-              <p className="text-gray-600 text-sm">The timeline varies based on project scope, but our average complete villa transformation takes 3-5 months. We provide a detailed timeline during our initial consultation.</p>
+              <h3 className="text-xl font-bold text-blue-900 mb-3">How long does a villa renovation take?</h3>
+              <p className="text-gray-600 text-sm">The timeline for your <strong>villa renovation</strong> depends on the scope of work. Most complete <strong>villa transformations</strong> take 3-5 months. We provide a detailed timeline during our initial <strong>renovation consultation</strong>.</p>
             </div>
             <div className="border-b border-gray-200 pb-6">
-              <h3 className="text-xl font-bold text-blue-900 mb-3">Do you handle permits and approvals?</h3>
-              <p className="text-gray-600 text-sm">Yes, we manage all necessary permits and community approvals as part of our comprehensive service. Our team is experienced with Dubai's regulations.</p>
+              <h3 className="text-xl font-bold text-blue-900 mb-3">Do you handle permits for villa extensions?</h3>
+              <p className="text-gray-600 text-sm">Yes, as experienced <strong>renovation contractors</strong>, we manage all necessary permits and approvals for <strong>villa extensions</strong> and <strong>home renovations</strong> in Dubai. Our team is familiar with local regulations.</p>
             </div>
             <div className="border-b border-gray-200 pb-6">
-              <h3 className="text-xl font-bold text-blue-900 mb-3">What makes Unicorn Renovations different?</h3>
-              <p className="text-gray-600 text-sm">Our exclusive focus on high-end villas, meticulous attention to detail, master craftsmen, premium material partnerships, and personalized service set us apart.</p>
+              <h3 className="text-xl font-bold text-blue-900 mb-3">What makes your renovation company different?</h3>
+              <p className="text-gray-600 text-sm">Our exclusive focus on luxury <strong>villa renovations</strong>, meticulous attention to detail, master craftsmen, premium materials, and personalized service set us apart from other <strong>renovation companies</strong>.</p>
+            </div>
+            <div className="border-b border-gray-200 pb-6">
+              <h3 className="text-xl font-bold text-blue-900 mb-3">Do you offer interior design services?</h3>
+              <p className="text-gray-600 text-sm">Yes, we provide comprehensive <strong>interior design</strong> services as part of our <strong>renovation packages</strong>. Our design team creates cohesive spaces that reflect your style while ensuring functionality.</p>
+            </div>
+            <div className="border-b border-gray-200 pb-6">
+              <h3 className="text-xl font-bold text-blue-900 mb-3">Can you work with my existing furniture?</h3>
+              <p className="text-gray-600 text-sm">Absolutely. Our <strong>interior design</strong> experts can incorporate your existing furniture into the new design or recommend pieces that complement your <strong>villa renovation</strong>.</p>
             </div>
           </div>
         </div>
@@ -378,7 +469,7 @@ export default function Home() {
             <h3 className="font-bold text-xl mb-4 flex items-center justify-center sm:justify-start">
               <span className="mr-2">🦄</span> Unicorn Renovations
             </h3>
-            <p className="text-blue-200 text-sm mb-5">Crafting extraordinary living experiences across Dubai's most prestigious communities since 2008.</p>
+            <p className="text-blue-200 text-sm mb-5">Dubai's premier <strong>renovation company</strong> specializing in luxury <strong>villa transformations</strong>, <strong>home remodeling</strong>, and <strong>interior design</strong> services.</p>
             <div className="flex space-x-4 justify-center sm:justify-start">
               <a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">
                 <span className="sr-only">Facebook</span>
@@ -395,12 +486,14 @@ export default function Home() {
             </div>
           </div>
           <div>
-            <h4 className="font-bold mb-3">Services</h4>
+            <h4 className="font-bold mb-3">Renovation Services</h4>
             <ul className="space-y-2 text-sm">
               <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Villa Renovation</a></li>
               <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Kitchen Remodeling</a></li>
               <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Bathroom Transformation</a></li>
               <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Interior Design</a></li>
+              <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Villa Extension</a></li>
+              <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Home Remodeling</a></li>
             </ul>
           </div>
           <div>
@@ -410,10 +503,12 @@ export default function Home() {
               <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Palm Jumeirah</a></li>
               <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Downtown Dubai</a></li>
               <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Dubai Hills</a></li>
+              <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Jumeirah</a></li>
+              <li><a href="#" className="text-blue-200 hover:text-amber-400 transition-colors">Arabian Ranches</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-bold mb-3">Contact Us</h4>
+            <h4 className="font-bold mb-3">Contact Our Renovation Experts</h4>
             <address className="text-blue-200 not-italic text-sm">
               <p className="mb-2">Design Studio #402</p>
               <p className="mb-2">Al Wasl Road, Jumeirah 1</p>
@@ -424,7 +519,7 @@ export default function Home() {
           </div>
         </div>
         <div className="container mx-auto border-t border-blue-800 mt-8 pt-8 text-center">
-          <p className="text-blue-300 text-xs">© {new Date().getFullYear()} Unicorn Renovations. All rights reserved.</p>
+          <p className="text-blue-300 text-xs">© {new Date().getFullYear()} Unicorn Renovations - Dubai's Premier Villa Renovation Company. All rights reserved.</p>
         </div>
       </footer>
 
@@ -434,7 +529,7 @@ export default function Home() {
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-5 right-5 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-110 sm:bottom-6 sm:right-6 sm:p-4"
-        aria-label="Chat with us on WhatsApp"
+        aria-label="Chat with our renovation experts on WhatsApp"
       >
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 0C5.373 0 0 4.985 0 11.125c0 1.963.545 3.87 1.58 5.54L0 24l7.6-2.39A12.64 12.64 0 0012 22.25c6.627 0 12-4.985 12-11.125S18.627 0 12 0z" />
