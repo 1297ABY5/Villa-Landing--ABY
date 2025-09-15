@@ -270,6 +270,7 @@ export default function Home() {
                (max-width: 1200px) 80vw,
                50vw"
       />
+    </div>
 
         {/* CORRECTED: Image overlay badge is now correctly positioned */}
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm py-2 px-4 rounded-full shadow-md">
