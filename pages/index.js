@@ -191,7 +191,7 @@ export default function Home() {
           </div>
           <div className="md:w-1/2 relative rounded-2xl overflow-hidden shadow-xl mt-8 md:mt-0 transform hover:scale-105 transition duration-700">
             <Image 
-              src="/hero-villa.jpg" 
+              src="/hero1.webp" 
               alt="Luxury Villa Renovation Dubai by Unicorn Renovations" 
               width={650} 
               height={450} 
