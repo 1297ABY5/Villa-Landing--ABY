@@ -150,7 +150,7 @@ export default function Home() {
         )}
       </nav>
 
-      {/* Hero Section */}
+  {/* Hero Section */}
 <section className="relative pt-24 pb-16 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-32 sm:pb-28 sm:px-6 overflow-hidden">
   {/* Background decorative elements */}
   <div className="absolute top-0 right-0 -mt-16 -mr-16 opacity-10">
@@ -246,6 +246,43 @@ export default function Home() {
           className="object-cover w-full h-auto" 
           priority
         />
+        
+        {/* Image overlay badge */}
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm py-2 px-4 rounded-full shadow-md">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                <svg className="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 极客时间 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
+            <div className="ml-2">
+              <p className="text-xs font-medium text-gray-900">Emirates Hills Project</p>
+              <p className="text-xs text-gray-500">Completed 2023</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Floating testimonial card */}
+      <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-xl p-4 max-w-xs">
+        <div className="flex items-start">
+          <div className="flex-shrink-0">
+            <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+              <span className="text-amber-600 font-bold">★</span>
+            </div>
+          </div>
+          <div className="ml-3">
+            <p className="text-sm font-medium text-gray-900">Ahmed R.</p>
+            <p className="text-xs text-amber-500">★★★★★</p>
+            <p className="text-xs text-gray-600 mt-1">"Transformed our villa beyond expectations!"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
         
         {/* Image overlay badge */}
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm py-2 px-4 rounded-full shadow-md">
