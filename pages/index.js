@@ -283,44 +283,59 @@ export default function Home() {
         </div>
       </section>
 
-       {/* Portfolio Section */}
+       {/* Portfolio */}
 <section id="portfolio" className="py-16 bg-blue-50 px-4 sm:px-6">
   <div className="container mx-auto">
     <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">
       Our Villa Renovation Portfolio
     </h2>
     <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">
-      Explore our latest luxury villa transformations, showcased directly from our Instagram feed.
+      Explore our exceptional villa transformation projects and see our latest
+      work directly from Instagram.
     </p>
 
-    {/* Elfsight Instagram Feed */}
-    <div
-      className="elfsight-app-be187cad-c36b-4712-b333-d86a66d2da6d"
-      data-elfsight-app-lazy
-    ></div>
-
-    <div className="text-center mt-12">
-      <a
-        href="https://www.instagram.com/yourhandle"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center text-blue-900 hover:text-amber-600 font-bold text-sm"
-      >
-        Follow us on Instagram
-        <svg
-          className="w-5 h-5 ml-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+    {/* Grid with your own portfolio items */}
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-3 mb-16">
+      {portfolioItems.map((project, index) => (
+        <div
+          key={index}
+          className="relative group rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M14 5l7 7m0 0l-7 7m7-7H3"
+          <Image
+            src={project.img}
+            alt={`${project.title} - ${project.desc}`}
+            width={600}
+            height={400}
+            loading="lazy"
+            className="object-cover w-full h-64 transition-transform duration-700 group-hover:scale-105"
           />
-        </svg>
-      </a>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 opacity-90 group-hover:opacity-100 transition-opacity duration-500">
+            <h3 className="text-xl font-bold text-white">{project.title}</h3>
+            <p className="text-gray-200 text-sm">{project.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Instagram Feed (lazy-loaded) */}
+    <div className="max-w-5xl mx-auto">
+      <h3 className="text-2xl font-bold text-blue-900 text-center mb-6">
+        Follow Our Renovation Journey on Instagram
+      </h3>
+
+      {/* Lazy-load wrapper */}
+      <div
+        className="elfsight-app-be187cad-c36b-4712-b333-d86a66d2da6d"
+        data-elfsight-app-lazy
+        style={{ minHeight: "400px" }}
+      >
+        {/* Script is loaded only when user scrolls here */}
+        <script
+          src="https://static.elfsight.com/platform/platform.js"
+          async
+          defer
+        ></script>
+      </div>
     </div>
   </div>
 </section>
