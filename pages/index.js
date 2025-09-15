@@ -283,63 +283,30 @@ export default function Home() {
         </div>
       </section>
 
-        {/* Portfolio */}
+       {/* Portfolio Section */}
 <section id="portfolio" className="py-16 bg-blue-50 px-4 sm:px-6">
   <div className="container mx-auto">
     <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center sm:text-4xl">
       Our Villa Renovation Portfolio
     </h2>
     <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">
-      Explore our exceptional villa transformation and home renovation projects
-      across Dubai's most prestigious communities
+      Explore our latest luxury villa transformations, showcased directly from our Instagram feed.
     </p>
 
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-      {portfolioItems.map((project, index) => (
-        <div
-          key={index}
-          className="relative group rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500"
-        >
-          <Image
-            src={project.img}
-            alt={`${project.title} - ${project.desc}`}
-            width={600}
-            height={400}
-            className="object-cover w-full h-64"
-          />
+    {/* Elfsight Instagram Feed */}
+    <div
+      className="elfsight-app-be187cad-c36b-4712-b333-d86a66d2da6d"
+      data-elfsight-app-lazy
+    ></div>
 
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 transition-opacity duration-500 group-hover:opacity-100 opacity-90">
-            <h3 className="text-xl font-bold text-white">{project.title}</h3>
-            <p className="text-gray-200">{project.desc}</p>
-            <button className="mt-4 text-amber-300 hover:text-amber-100 font-medium self-start flex items-center text-sm">
-              View Renovation Project
-              <svg
-                className="w-4 h-4 ml-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-
-    {/* View More CTA */}
     <div className="text-center mt-12">
       <a
-        href="#"
+        href="https://www.instagram.com/yourhandle"
+        target="_blank"
+        rel="noopener noreferrer"
         className="inline-flex items-center text-blue-900 hover:text-amber-600 font-bold text-sm"
       >
-        Explore Our Complete Renovation Portfolio
+        Follow us on Instagram
         <svg
           className="w-5 h-5 ml-2"
           fill="none"
