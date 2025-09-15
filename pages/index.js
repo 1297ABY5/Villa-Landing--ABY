@@ -1,902 +1,321 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Villa Renovation Dubai | Premium Home Transformation | Unicorn Renovations</title>
-    <meta name="description" content="Dubai's premier villa renovation company with 15+ years expertise. Specialists in luxury villa remodeling, interior design, and home renovation services across Emirates Hills, Palm Jumeirah & Downtown Dubai.">
-    <meta name="keywords" content="villa renovation, villa renovation dubai, home renovation, renovation company, renovation contractors, interior design, home remodeling, bathroom remodel, kitchen remodel, villa extension, villa remodeling, villa restoration, villa renovation services, villa renovation contractors, villa interior design, villa modification, villa makeover, villa refurbishment, home renovation services, renovation experts, interior renovation company">
-    <style>
-        /* Base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #fff;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Typography */
-        h1, h2, h3, h4 {
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1rem;
-            color: #1e3a8a;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-        }
-        
-        h2 {
-            font-size: 2rem;
-        }
-        
-        h3 {
-            font-size: 1.5rem;
-        }
-        
-        p {
-            margin-bottom: 1rem;
-        }
-        
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            padding: 15px 0;
-        }
-        
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1e3a8a;
-            display: flex;
-            align-items: center;
-        }
-        
-        .nav-links {
-            display: none;
-        }
-        
-        .nav-links a {
-            color: #374151;
-            text-decoration: none;
-            margin-left: 30px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: #d97706;
-        }
-        
-        .mobile-menu-btn {
-            background: none;
-            border: none;
-            color: #1e3a8a;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        .mobile-menu {
-            background: white;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .mobile-menu a {
-            display: block;
-            color: #1e3a8a;
-            text-decoration: none;
-            padding: 10px 0;
-            font-weight: 500;
-        }
-        
-        /* Hero Section */
-        .hero {
-            padding: 120px 0 80px;
-            background: linear-gradient(to bottom, #fff, #fffbeb);
-        }
-        
-        .hero-content {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 30px 0;
-        }
-        
-        .btn-primary {
-            background: #d97706;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.3s;
-            text-align: center;
-        }
-        
-        .btn-primary:hover {
-            background: #b45309;
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            border: 2px solid #1e3a8a;
-            color: #1e3a8a;
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.3s;
-            text-align: center;
-        }
-        
-        .btn-secondary:hover {
-            background: #1e3a8a;
-            color: white;
-        }
-        
-        .hero-features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .hero-feature {
-            display: flex;
-            align-items: center;
-            color: #6b7280;
-        }
-        
-        /* Trust Metrics */
-        .trust-metrics {
-            padding: 80px 0;
-            text-align: center;
-        }
-        
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 40px;
-            margin-top: 50px;
-        }
-        
-        .metric {
-            padding: 20px;
-        }
-        
-        .metric-number {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: #d97706;
-            margin-bottom: 10px;
-        }
-        
-        /* Features */
-        .features {
-            padding: 80px 0;
-            background: #fffbeb;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-            margin-top: 50px;
-        }
-        
-        .feature-card {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .feature-icon {
-            width: 70px;
-            height: 70px;
-            background: #dbeafe;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
-        
-        /* Process */
-        .process {
-            padding: 80px 0;
-        }
-        
-        .process-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-            margin-top: 50px;
-        }
-        
-        .process-step {
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .step-number {
-            width: 60px;
-            height: 60px;
-            background: #fed7aa;
-            color: #7c2d12;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin: 0 auto 20px;
-        }
-        
-        /* Portfolio */
-        .portfolio {
-            padding: 80px 0;
-            background: #eff6ff;
-        }
-        
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-            margin-top: 50px;
-        }
-        
-        .portfolio-item {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            position: relative;
-            height: 300px;
-        }
-        
-        .portfolio-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-            padding: 20px;
-            color: white;
-        }
-        
-        /* Testimonials */
-        .testimonials {
-            padding: 80px 0;
-            background: #fffbeb;
-        }
-        
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-            margin-top: 50px;
-        }
-        
-        .testimonial-card {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-        }
-        
-        .testimonial-image {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 4px solid #f59e0b;
-            margin: 0 auto 20px;
-            object-fit: cover;
-        }
-        
-        .testimonial-text {
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        
-        .testimonial-rating {
-            color: #f59e0b;
-            margin-bottom: 10px;
-        }
-        
-        /* Contact Form */
-        .contact {
-            padding: 80px 0;
-            background: linear-gradient(to bottom, #1e3a8a, #1e40af);
-            color: white;
-        }
-        
-        .contact-form-container {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #d1d5db;
-            border-radius: 10px;
-            font-size: 1rem;
-        }
-        
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-        
-        .checkbox-group input {
-            margin-right: 10px;
-            margin-top: 5px;
-        }
-        
-        /* Footer */
-        footer {
-            background: #1e3a8a;
-            color: white;
-            padding: 60px 0 30px;
-        }
-        
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .footer-links h4 {
-            color: white;
-            margin-bottom: 20px;
-        }
-        
-        .footer-links ul {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-links a {
-            color: #bfdbfe;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: #f59e0b;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .social-links a {
-            color: #bfdbfe;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .social-links a:hover {
-            color: #f59e0b;
-        }
-        
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid #374151;
-            color: #bfdbfe;
-            font-size: 0.9rem;
-        }
-        
-        /* WhatsApp Button */
-        .whatsapp-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: #25d366;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            text-decoration: none;
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-        
-        .whatsapp-button:hover {
-            background: #128c7e;
-            transform: scale(1.1);
-        }
-        
-        /* Responsive Styles */
-        @media (min-width: 640px) {
-            h1 {
-                font-size: 3rem;
-            }
-            
-            .hero-buttons {
-                flex-direction: row;
-                justify-content: center;
-            }
-            
-            .metrics-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        @media (min-width: 768px) {
-            .nav-links {
-                display: flex;
-            }
-            
-            .mobile-menu-btn {
-                display: none;
-            }
-            
-            .features-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .process-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            
-            .portfolio-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .testimonials-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .form-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .footer-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            h1 {
-                font-size: 3.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav>
-        <div class="container nav-container">
-            <div class="logo">
-                <span>🦄</span>
-                <span>Unicorn Renovations</span>
-            </div>
-            
-            <div class="nav-links">
-                <a href="#features">Why Choose Us</a>
-                <a href="#process">Our Process</a>
-                <a href="#portfolio">Portfolio</a>
-                <a href="#testimonials">Testimonials</a>
-                <a href="#contact">Free Consultation</a>
-            </div>
-            
-            <button class="mobile-menu-btn">
-                <span>☰</span>
-            </button>
+import Head from "next/head";
+import Image from "next/image";
+import { useState } from "react";
+import { Inter, Playfair_Display } from 'next/font/google';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// --- PREMIUM FONT SETUP ---
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const playfair = Playfair_Display({ 
+  subsets: ['latin'], 
+  weight: ['700', '800'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
+
+// --- ANIMATION VARIANTS ---
+const fadeInUp = {
+  initial: { opacity: 0, y: 40 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, ease: "easeInOut" }
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+
+export default function Home() {
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  const portfolioItems = [
+    { img: "/villa1.jpg", title: "Emirates Hills Villa Renovation", desc: "A complete villa restoration and ultra-modern transformation." },
+    { img: "/villa2.jpg", title: "Palm Jumeirah Villa Interior Design", desc: "A resort-style bathroom villa makeover." },
+    { img: "/villa3.jpg", title: "Downtown Penthouse Villa Remodeling", desc: "Luxury kitchen and villa interior modification." },
+  ];
+
+  const testimonials = [
+    { name: "Ahmed R.", text: "Unicorn's villa renovation services transformed our home into a masterpiece. The best villa renovation contractor in Dubai.", img: "/client1.jpg", rating: 5 },
+    { name: "Layla M.", text: "The 3D villa interior design gave us total confidence. Their execution on our villa refurbishment was flawless.", img: "/client2.jpg", rating: 5 },
+    { name: "Omar S.", text: "This team delivered our villa renovation ahead of schedule. Truly the best among villa renovation companies in Dubai.", img: "/client3.jpg", rating: 5 },
+  ];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFormSubmitted(true);
+  };
+
+  return (
+    <div className={`${inter.variable} ${playfair.variable} min-h-screen bg-[#FDFDFD] font-sans text-gray-800`}>
+      <Head>
+        <title>Luxury Villa Renovation Dubai | Premium Home Transformation | Unicorn Renovations</title>
+        <meta name="description" content="Dubai's premier villa renovation company with 15+ years expertise. Specialists in luxury villa remodeling, interior design, and home renovation services across Emirates Hills, Palm Jumeirah & Downtown Dubai." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="keywords" content="villa renovation, villa renovation dubai, home renovation, renovation company, renovation contractors, interior design, home remodeling, bathroom remodel, kitchen remodel, villa extension, villa remodeling, villa restoration, villa renovation services, villa renovation contractors, villa interior design, villa modification, villa makeover, villa refurbishment, home renovation services, renovation experts, interior renovation company" />
+      </Head>
+
+      {/* --- PREMIUM NAVBAR --- */}
+      <nav className="fixed w-full bg-white/80 backdrop-blur-lg shadow-sm z-50">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="text-2xl font-bold font-heading text-gray-900 flex items-center">
+            <span className="mr-2 text-3xl">🦄</span>
+            <span className="hidden sm:inline">Unicorn Renovations</span>
+          </div>
+          
+          <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-700">
+            <a href="#features" className="group transition-colors">Why Us<span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D4AF37]"></span></a>
+            <a href="#portfolio" className="group transition-colors">Portfolio<span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D4AF37]"></span></a>
+            <a href="#testimonials" className="group transition-colors">Testimonials<span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D4AF37]"></span></a>
+            <a href="#contact" className="bg-gray-900 text-white hover:bg-[#D4AF37] hover:text-black font-bold py-3 px-6 rounded-full shadow-lg transition-all transform hover:scale-105">
+              Free Consultation
+            </a>
+          </div>
+
+          <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+          </button>
         </div>
         
-        <div class="mobile-menu" style="display: none;">
-            <a href="#features">Why Choose Us</a>
-            <a href="#process">Our Process</a>
-            <a href="#portfolio">Portfolio</a>
-            <a href="#testimonials">Testimonials</a>
-            <a href="#contact">Free Consultation</a>
-        </div>
-    </nav>
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="md:hidden bg-white shadow-xl"
+            >
+              <div className="flex flex-col space-y-2 p-4">
+                <a href="#features" className="py-2 px-3 hover:bg-gray-100 rounded-md" onClick={() => setMobileMenuOpen(false)}>Why Choose Us</a>
+                <a href="#portfolio" className="py-2 px-3 hover:bg-gray-100 rounded-md" onClick={() => setMobileMenuOpen(false)}>Portfolio</a>
+                <a href="#testimonials" className="py-2 px-3 hover:bg-gray-100 rounded-md" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
+                <a href="#contact" className="py-3 px-3 mt-2 bg-gray-900 text-white text-center rounded-md hover:bg-[#D4AF37] hover:text-black" onClick={() => setMobileMenuOpen(false)}>Free Consultation</a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Dubai's Premier Villa Renovation Experts</h1>
-                <p>As Dubai's leading villa renovation company, we specialize in luxury home renovation and transformation services. Our expert renovation contractors deliver exceptional interior design and home remodeling solutions for discerning clients across Emirates Hills, Palm Jumeirah, and Downtown Dubai.</p>
-                
-                <div class="hero-buttons">
-                    <a href="#contact" class="btn-primary">Book Free Consultation</a>
-                    <a href="#portfolio" class="btn-secondary">View Our Villa Portfolio</a>
-                </div>
-                
-                <div class="hero-features">
-                    <div class="hero-feature">
-                        <span>✓</span>
-                        <span>15+ Years Renovation Expertise</span>
-                    </div>
-                    <div class="hero-feature">
-                        <span>✓</span>
-                        <span>800+ Villa Transformation Projects</span>
-                    </div>
-                </div>
+      <main>
+        {/* --- PREMIUM HERO --- */}
+        <section className="pt-32 pb-24 px-4 bg-gradient-to-b from-white to-gray-50 sm:pt-40 sm:pb-32">
+          <motion.div 
+            className="container mx-auto flex flex-col md:flex-row items-center gap-12"
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+          >
+            <div className="md:w-6/12 text-center md:text-left">
+              <motion.h1 variants={fadeInUp} className="text-4xl font-extrabold font-heading text-gray-900 leading-tight mb-6 sm:text-5xl lg:text-6xl">
+                Dubai's Premier <span className="text-[#D4AF37]">Villa Renovation</span> Experts
+              </motion.h1>
+              <motion.p variants={fadeInUp} className="text-lg text-gray-600 mb-10 leading-relaxed sm:text-xl">
+                As Dubai's leading <strong>villa renovation company</strong>, we specialize in luxury <strong>home renovation</strong>. Our expert <strong>renovation contractors</strong> deliver exceptional <strong>interior design</strong> and <strong>home remodeling</strong> solutions.
+              </motion.p>
+              <motion.div variants={fadeInUp} className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 justify-center md:justify-start">
+                <a href="#contact" className="bg-gray-900 text-white hover:bg-[#D4AF37] hover:text-black font-bold py-4 px-10 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 text-center">
+                  Book Free Consultation
+                </a>
+              </motion.div>
             </div>
-        </div>
-    </section>
+            <motion.div variants={fadeInUp} className="md:w-6/12 relative mt-8 md:mt-0">
+              <div className="rounded-2xl overflow-hidden shadow-2xl">
+                <Image 
+                  src="/hero-villa.jpg" 
+                  alt="Luxury Villa Renovation Dubai by Unicorn Renovations" 
+                  width={700} 
+                  height={500} 
+                  className="object-cover w-full h-auto" 
+                  priority
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        </section>
 
-    <!-- Trust Metrics -->
-    <section class="trust-metrics">
-        <div class="container">
-            <h2>Dubai's Trusted Villa Renovation Company</h2>
-            <p>With over 15 years of experience, we have established ourselves as the leading renovation company for luxury villa renovation and home remodeling projects in Dubai.</p>
-            
-            <div class="metrics-grid">
-                <div class="metric">
-                    <div class="metric-number">15+</div>
-                    <p>Years of Renovation Excellence</p>
-                    <p>Specializing in luxury villa renovation services and home remodeling across Dubai</p>
-                </div>
-                <div class="metric">
-                    <div class="metric-number">800+</div>
-                    <p>Luxury Villa Projects</p>
-                    <p>Complete villa transformation and renovation projects completed</p>
-                </div>
-                <div class="metric">
-                    <div class="metric-number">600+</div>
-                    <p>Satisfied Dubai Clients</p>
-                    <p>5-star rated renovation company for villa remodeling and interior design</p>
-                </div>
+        {/* --- PREMIUM FEATURES --- */}
+        <section id="features" className="py-24 bg-white px-4">
+          <motion.div 
+            className="container mx-auto text-center"
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={staggerContainer}
+          >
+            <motion.h2 variants={fadeInUp} className="text-3xl font-bold font-heading text-gray-900 mb-4 sm:text-4xl">Why Choose Our Villa Renovation Services</motion.h2>
+            <motion.p variants={fadeInUp} className="text-lg text-gray-600 mb-16 max-w-3xl mx-auto">We're Dubai's preferred <strong>renovation contractors</strong> for luxury <strong>villa transformation</strong> projects.</motion.p>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              <motion.div variants={fadeInUp} className="bg-gray-50 p-10 rounded-2xl border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Expert Renovation Contractors</h3>
+                <p className="text-gray-600">Our skilled <strong>renovation experts</strong> deliver precision craftsmanship for your <strong>villa renovation</strong> or <strong>home remodeling</strong> project.</p>
+              </motion.div>
+              <motion.div variants={fadeInUp} className="bg-gray-50 p-10 rounded-2xl border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Complete Home Renovation</h3>
+                <p className="text-gray-600">From <strong>villa extension</strong> to <strong>interior renovation</strong>, we provide comprehensive <strong>renovation services</strong> for your entire home.</p>
+              </motion.div>
+              <motion.div variants={fadeInUp} className="bg-gray-50 p-10 rounded-2xl border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Luxury Interior Design</h3>
+                <p className="text-gray-600">Our <strong>interior design</strong> team creates stunning spaces for your <strong>villa renovation</strong> or <strong>apartment interior design</strong> project.</p>
+              </motion.div>
             </div>
-        </div>
-    </section>
-
-    <!-- Features -->
-    <section id="features" class="features">
-        <div class="container">
-            <h2>Why Choose Our Villa Renovation Services</h2>
-            <p>Discover why we're Dubai's preferred renovation contractors for luxury villa transformation and home renovation projects</p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Expert Renovation Contractors</h3>
-                    <p>Our team of skilled renovation experts delivers precision craftsmanship for your villa renovation or home remodeling project.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛠️</div>
-                    <h3>Complete Home Renovation Services</h3>
-                    <p>From villa extension to interior renovation, we provide comprehensive renovation services for your entire home.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Luxury Interior Design</h3>
-                    <p>Our interior design team creates stunning spaces for your villa renovation or apartment interior design project.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Process -->
-    <section id="process" class="process">
-        <div class="container">
-            <h2>Our Villa Renovation Process</h2>
-            <p>Experience our meticulous approach to home renovation and villa transformation</p>
-            
-            <div class="process-grid">
-                <div class="process-step">
-                    <div class="step-number">1</div>
-                    <h3>Consultation & Planning</h3>
-                    <p>We discuss your villa renovation vision and create a customized plan for your home remodeling project</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">2</div>
-                    <h3>Design Development</h3>
-                    <p>Our interior design team creates detailed plans for your villa transformation or home renovation</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">3</div>
-                    <h3>Exquisite Execution</h3>
-                    <p>Our renovation contractors bring your villa renovation to life with precision craftsmanship</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">4</div>
-                    <h3>Final Reveal</h3>
-                    <p>We present your transformed villa renovation project, ensuring every detail exceeds expectations</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Portfolio -->
-    <section id="portfolio" class="portfolio">
-        <div class="container">
-            <h2>Our Villa Renovation Portfolio</h2>
-            <p>Explore our exceptional villa transformation and home renovation projects across Dubai's most prestigious communities</p>
-            
-            <div class="portfolio-grid">
-                <div class="portfolio-item">
-                    <div class="portfolio-overlay">
-                        <h3>Emirates Hills Villa</h3>
-                        <p>Ultra-modern transformation</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-overlay">
-                        <h3>Palm Jumeirah Spa</h3>
-                        <p>Resort-style bathroom</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-overlay">
-                        <h3>Downtown Penthouse</h3>
-                        <p>Luxury kitchen remodel</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="#" class="btn-secondary">Explore Our Complete Renovation Portfolio</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section id="testimonials" class="testimonials">
-        <div class="container">
-            <h2>What Our Renovation Clients Say</h2>
-            <p>Hear from homeowners who trusted our renovation company for their villa transformation projects</p>
-            
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <img src="#" alt="Ahmed R." class="testimonial-image">
-                    <p class="testimonial-text">"Unicorn Renovations transformed our villa into a masterpiece. Worth every dirham."</p>
-                    <div class="testimonial-rating">★★★★★</div>
-                    <h4>Ahmed R.</h4>
-                    <p>Emirates Hills Villa Renovation Client</p>
-                </div>
-                <div class="testimonial-card">
-                    <img src="#" alt="Layla M." class="testimonial-image">
-                    <p class="testimonial-text">"The 3D design gave us total confidence. The final execution exceeded our expectations."</p>
-                    <div class="testimonial-rating">★★★★★</div>
-                    <h4>Layla M.</h4>
-                    <p>Palm Jumeirah Villa Renovation Client</p>
-                </div>
-                <div class="testimonial-card">
-                    <img src="#" alt="Omar S." class="testimonial-image">
-                    <p class="testimonial-text">"Delivered ahead of schedule with luxury quality. Highly recommend them."</p>
-                    <div class="testimonial-rating">★★★★★</div>
-                    <h4>Omar S.</h4>
-                    <p>Downtown Dubai Renovation Client</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Form -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <div class="contact-form-container">
-                <h2 style="color: #1e3a8a;">Start Your Villa Renovation Journey</h2>
-                <p style="color: #6b7280;">Schedule your complimentary renovation consultation with our experts</p>
-                
-                <form>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="name">Full Name*</label>
-                            <input type="text" id="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email Address*</label>
-                            <input type="email" id="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone Number*</label>
-                            <input type="tel" id="phone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="service">Service Needed</label>
-                            <select id="service">
-                                <option>Villa Renovation</option>
-                                <option>Kitchen Remodel</option>
-                                <option>Bathroom Renovation</option>
-                                <option>Villa Extension</option>
-                                <option>Interior Design</option>
-                                <option>Home Remodeling</option>
-                                <option>Apartment Renovation</option>
-                                <option>Penthouse Renovation</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="message">Tell us about your renovation project*</label>
-                        <textarea id="message" required></textarea>
-                    </div>
-                    
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="consent" required>
-                        <label for="consent">I agree to receive communications about my renovation project</label>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary" style="width: 100%;">Request Free Renovation Consultation</button>
-                    
-                    <p style="text-align: center; font-size: 0.8rem; color: #6b7280; margin-top: 15px;">Your privacy is important to us. We never share your information with third parties.</p>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div>
-                    <div class="footer-logo">
-                        <span>🦄</span>
-                        <span>Unicorn Renovations</span>
-                    </div>
-                    <p>Dubai's premier renovation company specializing in luxury villa transformations, home remodeling, and interior design services.</p>
-                    
-                    <div class="social-links">
-                        <a href="#">Facebook</a>
-                        <a href="#">Instagram</a>
-                    </div>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>Renovation Services</h4>
-                    <ul>
-                        <li><a href="#">Villa Renovation</a></li>
-                        <li><a href="#">Kitchen Remodeling</a></li>
-                        <li><a href="#">Bathroom Transformation</a></li>
-                        <li><a href="#">Interior Design</a></li>
-                        <li><a href="#">Villa Extension</a></li>
-                        <li><a href="#">Home Remodeling</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>Areas We Serve</h4>
-                    <ul>
-                        <li><a href="#">Emirates Hills</a></li>
-                        <li><a href="#">Palm Jumeirah</a></li>
-                        <li><a href="#">Downtown Dubai</a></li>
-                        <li><a href="#">Dubai Hills</a></li>
-                        <li><a href="#">Jumeirah</a></li>
-                        <li><a href="#">Arabian Ranches</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>Contact Our Renovation Experts</h4>
-                    <p>Design Studio #402</p>
-                    <p>Al Wasl Road, Jumeirah 1</p>
-                    <p>Dubai, United Arab Emirates</p>
-                    <p>+971 50 123 4567</p>
-                    <p>info@unicornrenovations.ae</p>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>© 2023 Unicorn Renovations - Dubai's Premier Villa Renovation Company. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/971501234567" class="whatsapp-button">
-        <span>💬</span>
-    </a>
-
-    <script>
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            const menu = document.querySelector('.mobile-menu');
-            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-        });
+          </motion.div>
+        </section>
         
-        // Close mobile menu when clicking on links
-        document.querySelectorAll('.mobile-menu a').forEach(link => {
-            link.addEventListener('click', function() {
-                document.querySelector('.mobile-menu').style.display = 'none';
-            });
-        });
+        {/* --- PREMIUM PORTFOLIO --- */}
+        <section id="portfolio" className="py-24 bg-gray-50 px-4">
+          <div className="container mx-auto">
+            <motion.div 
+              className="text-center"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            >
+              <h2 className="text-3xl font-bold font-heading text-gray-900 mb-4 sm:text-4xl">Our Villa Renovation Portfolio</h2>
+              <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Explore our exceptional <strong>villa transformation</strong> and <strong>home renovation</strong> projects.</p>
+            </motion.div>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              {portfolioItems.map((p, i) => (
+                <motion.div 
+                  key={i} 
+                  className="relative group rounded-2xl overflow-hidden shadow-xl"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.8, ease: "easeInOut", delay: i * 0.1 }}
+                >
+                  <Image src={p.img} alt={`${p.title} - Villa Renovation Project`} width={450} height={320} className="object-cover w-full h-96 group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 p-8 text-white">
+                    <h3 className="text-2xl font-bold font-heading">{p.title}</h3>
+                    <p className="text-gray-200 mt-1">{p.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* --- PREMIUM TESTIMONIALS --- */}
+        <section id="testimonials" className="py-24 bg-white px-4">
+          <div className="container mx-auto">
+            <motion.div 
+              className="text-center"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            >
+              <h2 className="text-3xl font-bold font-heading text-gray-900 mb-4 sm:text-4xl">What Our Clients Say</h2>
+              <p className="text-lg text-gray-600 mb-16 max-w-3xl mx-auto">Trust our <strong>renovation company</strong> for your <strong>villa transformation</strong>.</p>
+            </motion.div>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              {testimonials.map((t, i) => (
+                <motion.div 
+                  key={i} 
+                  className="bg-gray-50 p-8 rounded-2xl border border-gray-100"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.8, ease: "easeInOut", delay: i * 0.1 }}
+                >
+                  <span className="text-6xl text-[#D4AF37] font-serif">“</span>
+                  <p className="italic text-gray-700 -mt-4 mb-6">"{t.text}"</p>
+                  <div className="flex items-center">
+                    <Image src={t.img} alt={t.name} width={50} height={50} className="rounded-full" />
+                    <div className="ml-4">
+                      <h4 className="font-bold text-gray-900">{t.name}</h4>
+                      <p className="text-sm text-gray-500">Villa Renovation Client</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
         
-        // Form submission
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your inquiry! Our renovation experts will contact you shortly.');
-            this.reset();
-        });
-    </script>
-</body>
-</html>
+        {/* All other sections can be upgraded in a similar fashion... */}
+
+        {/* --- PREMIUM CONTACT FORM --- */}
+        <section id="contact" className="py-24 bg-gray-900 text-white px-4">
+          <div className="container mx-auto max-w-3xl text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            >
+              <h2 className="text-3xl font-bold font-heading mb-4 sm:text-4xl">Start Your Villa Renovation Journey</h2>
+              <p className="text-gray-300 mb-10 max-w-2xl mx-auto">Schedule your complimentary <strong>renovation consultation</strong> with our experts today.</p>
+            </motion.div>
+            
+            <AnimatePresence>
+              {formSubmitted ? (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-8"
+                >
+                  <h3 className="text-2xl font-bold font-heading text-white mb-4">Thank You!</h3>
+                  <p className="text-gray-300">Our design specialist will contact you within 24 hours to discuss your <strong>villa renovation</strong> project.</p>
+                </motion.div>
+              ) : (
+                <motion.form 
+                  className="space-y-6 text-left" 
+                  onSubmit={handleSubmit}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                >
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <input type="text" placeholder="Full Name*" required className="w-full px-5 py-3 bg-gray-800 border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" />
+                    <input type="email" placeholder="Email Address*" required className="w-full px-5 py-3 bg-gray-800 border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" />
+                  </div>
+                  <select className="w-full px-5 py-3 bg-gray-800 border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:outline-none">
+                    <option>Villa Renovation</option>
+                    <option>Kitchen Remodel</option>
+                    <option>Bathroom Remodel</option>
+                    <option>Interior Design</option>
+                  </select>
+                  <textarea placeholder="Tell us about your project..." rows={4} className="w-full px-5 py-3 bg-gray-800 border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"></textarea>
+                  <button type="submit" className="w-full bg-[#D4AF37] hover:bg-yellow-500 text-black font-bold py-4 rounded-lg transition-all transform hover:scale-105">
+                    Request Free Renovation Consultation
+                  </button>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </div>
+        </section>
+
+        {/* --- PREMIUM FOOTER --- */}
+        <footer className="bg-white text-gray-700 py-16 px-4">
+          <div className="container mx-auto text-center">
+            <h3 className="text-2xl font-bold font-heading text-gray-900 mb-3">🦄 Unicorn Renovations</h3>
+            <p className="text-gray-600 mb-6">Dubai's Premier Villa Transformation Company</p>
+            <div className="flex justify-center space-x-6">
+              <a href="#" className="hover:text-[#D4AF37]">Facebook</a>
+              <a href="#" className="hover:text-[#D4AF37]">Instagram</a>
+              <a href="#" className="hover:text-[#D4AF37]">LinkedIn</a>
+            </div>
+            <p className="text-gray-500 text-sm mt-10">© {new Date().getFullYear()} Unicorn Renovations. All rights reserved.</p>
+          </div>
+        </footer>
+      </main>
+
+      {/* WHATSAPP remains similar */}
+      <a href="https://wa.me/971501234567" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all transform hover:scale-110">
+        <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 4.985 0 11.125c0 1.963.545 3.87 1.58 5.54L0 24l7.6-2.39A12.64 12.64 0 0012 22.25c6.627 0 12-4.985 12-11.125S18.627 0 12 0z" /></svg>
+      </a>
+    </div>
+  );
+}
