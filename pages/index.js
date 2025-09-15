@@ -151,6 +151,15 @@ export default function Home() {
       </nav>
 
  {/* Hero Section */}
+<Head>
+  <link
+    rel="preload"
+    as="image"
+    href="/hero2.webp"
+    imagesrcset="/hero2.webp 1x, /hero2.webp 2x"
+    imageSizes="100vw"
+  />
+</Head>
 <section
   className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
   aria-labelledby="hero-heading"
@@ -221,16 +230,22 @@ export default function Home() {
     </div>
 
     {/* --- Image Column --- */}
-    <div className="relative w-full h-full">
-      {/* Custom Shape using Clip-Path */}
-      <div className="relative rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-700 ease-in-out" style={{ clipPath: 'polygon(20% 0%, 100% 0, 100% 100%, 0% 100%, 0 20%)' }}>
-        <Image
-          src="/hero2.webp"
-          alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
-          width={650}
-          height={700} // Increased height for the custom shape
-          className="object-cover w-full h-auto min-h-[300px] sm:min-h-[500px] lg:min-h-[600px]"
-          priority
+    <div
+  className="relative rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-700 ease-in-out overflow-hidden"
+  style={{
+    clipPath: "polygon(20% 0%, 100% 0, 100% 100%, 0% 100%, 0 20%)",
+  }}
+>
+  <div className="relative aspect-[16/9] w-full">
+    <Image
+      src="/hero2.webp"
+      alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
+      fill
+      priority
+      placeholder="blur"
+      blurDataURL="data:image/webp;base64,UklGRhYAAABXRUJQVlA4IBYAAAAwAQCdASoIAAgAAkA4JYwCdAEAAQAAVlA4ICwAAAAvAQCdASoIAAgAAkA4JbACdAEAAQAAAD+/FQAA"
+      className="object-cover"
+      quality={85}
         />
         {/* Image overlay badge - Now more subtle and responsive */}
         <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md text-xs sm:text-sm sm:py-2 sm:px-4">
