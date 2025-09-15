@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom global styles for premium landing */
+html, body {
+  scroll-behavior: smooth;
+  background-color: #F9F6F1; /* luxury ivory background */
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif; /* luxury headings */
+}
