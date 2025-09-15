@@ -263,8 +263,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
-      
+      </div>      
       {/* Floating testimonial card */}
       <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-xl p-4 max-w-xs">
         <div className="flex items-start">
