@@ -8,16 +8,16 @@ export default function Home() {
 
   const portfolioItems = [
     { 
-      img: "/villa1.jpg", 
+      img: "/v2.webp", 
       title: "Emirates Hills Villa", 
       desc: "Ultra-modern transformation",
       fullDesc: "Complete villa renovation with contemporary design elements and smart home integration."
     },
     { 
-      img: "/villa2.jpg", 
-      title: "Palm Jumeirah Spa", 
-      desc: "Resort-style bathroom",
-      fullDesc: "Luxury bathroom renovation inspired by five-star resort designs with premium finishes."
+      img: "/6 pool.webp", 
+      title: "Palm Jumeirah jacuzzi", 
+      desc: "Resort-style pool",
+      fullDesc: "Luxury pool inspired by five-star resort designs with premium finishes."
     },
     { 
       img: "/villa3.jpg", 
