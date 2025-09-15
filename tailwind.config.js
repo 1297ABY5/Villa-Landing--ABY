@@ -1,23 +1,37 @@
+// tailwind.config.js
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)"],
+        heading: ["var(--font-playfair)"],
+      },
       colors: {
-        brand: {
-          gold: "#D4AF37",
-          dark: "#0A0A0A",
-          stone: "#2C2C2C",
-          ivory: "#F9F6F1",
+        'brand-dark': '#1A202C', // A very dark navy/charcoal
+        'brand-gold': '#D4AF37', // A sophisticated, brushed gold
+        'brand-light': '#F7FAFC', // An off-white/very light grey
+      },
+      keyframes: {
+        'fade-in-up': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(20px)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
         },
       },
-      fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui"],
-        display: ["Playfair Display", "serif"],
+      animation: {
+        'fade-in-up': 'fade-in-up 1s ease-out forwards',
       },
     },
   },
