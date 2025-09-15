@@ -255,21 +255,21 @@ export default function Home() {
 
     {/* --- Image Column --- */}
     {/* CORRECTED: The entire image section, including overlays, is now properly nested */}
-    <div className="md:w-1/2 relative">
-      <div className="relative rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-700">
-       <Image
-  src="/hero2.webp"
-  alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
-  width={2000}
-  height={1200}
-  className="object-cover w-full h-auto rounded-2xl"
-  priority   // 👈 keeps LCP score high
-  placeholder="blur"  // 👈 adds smooth blur-up effect
-  blurDataURL="/hero2-small.webp" // 👈 a tiny 20–30KB blurred version
-  sizes="(max-width: 640px) 100vw,
-         (max-width: 1200px) 80vw,
-         50vw"
-/>
+   <div className="md:w-1/2 relative">
+  <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
+    <div className="aspect-[4/3] sm:aspect-[16/10] w-full"> 
+      <Image
+        src="/hero2.webp"
+        alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
+        fill
+        className="object-cover transition-transform duration-700 group-hover:scale-105"
+        priority
+        placeholder="blur"
+        blurDataURL="/hero2-small.webp"
+        sizes="(max-width: 640px) 100vw,
+               (max-width: 1200px) 80vw,
+               50vw"
+      />
 
         {/* CORRECTED: Image overlay badge is now correctly positioned */}
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm py-2 px-4 rounded-full shadow-md">
