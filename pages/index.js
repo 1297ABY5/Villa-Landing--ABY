@@ -152,22 +152,23 @@ export default function Home() {
 
  {/* Hero Section */}
 <section
-  className="relative pt-24 pb-16 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-32 sm:pb-28 sm:px-6 overflow-hidden"
+  className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
   aria-labelledby="hero-heading"
 >
-  {/* Background decorative elements - Added aria-hidden for accessibility */}
-  <div className="absolute top-0 right-0 -mt-16 -mr-16 opacity-10" aria-hidden="true">
-    <div className="w-64 h-64 rounded-full bg-amber-300"></div>
+  {/* Background decorative elements */}
+  <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
+    <div className="w-80 h-80 rounded-full bg-amber-200/50 blur-3xl"></div>
   </div>
-  <div className="absolute bottom-0 left-0 -mb-20 -ml-20 opacity-10" aria-hidden="true">
-    <div className="w-48 h-48 rounded-full bg-blue-300"></div>
+  <div className="absolute bottom-0 left-0 -mb-24 -ml-24 opacity-20" aria-hidden="true">
+    <div className="w-64 h-64 rounded-full bg-blue-200/50 blur-3xl"></div>
   </div>
 
-  <div className="container mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-16 relative z-10">
+  <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-16 relative z-10">
+    
     {/* --- Text Content Column --- */}
-    <div className="md:w-1/2 text-center md:text-left">
+    <div className="text-center lg:text-left">
       <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
-        <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 animate-pulse"></span>
+        <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 animate-pulse"></span>
         Dubai's Most Trusted Villa Renovation Company
       </div>
 
@@ -181,72 +182,38 @@ export default function Home() {
         </span>
       </h1>
 
-      <p className="text-lg text-gray-700 mb-8 leading-relaxed sm:text-xl max-w-xl mx-auto md:mx-0">
-        Experience the pinnacle of luxury villa renovations in Dubai. With over{" "}
-        <strong>15 years</strong> of expertise, we’ve transformed{" "}
-        <strong>800+ villas</strong> across Emirates Hills, Palm Jumeirah & Downtown Dubai
-        into extraordinary living spaces.
+      <p className="text-lg text-gray-700 mb-10 leading-relaxed sm:text-xl max-w-xl mx-auto lg:mx-0">
+        Experience the pinnacle of luxury villa renovations. With over 15 years of expertise, we’ve transformed 800+ villas into extraordinary living spaces.
       </p>
 
       {/* CTA Buttons */}
-      <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 justify-center md:justify-start">
+      <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 justify-center lg:justify-start">
         <a
           href="#contact"
-          className="group bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 text-center flex items-center justify-center"
+          className="group relative overflow-hidden bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 text-center flex items-center justify-center"
         >
-          <span>Book Free Design Consultation</span>
-          <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Shimmer Effect */}
+          <span className="absolute top-0 left-0 w-full h-full bg-white opacity-20 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></span>
+          <span className="relative">Book Free Design Consultation</span>
+          <svg className="relative w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </a>
-        <a
-          href="#portfolio"
-          className="group border-2 border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white font-bold py-4 px-8 rounded-full transition-all duration-300 text-center flex items-center justify-center"
-        >
-          <span>Explore Our Gallery</span>
-          {/* CORRECTED: Replaced unclear icon with a clearer "eye" icon */}
-          <svg className="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
         </a>
       </div>
 
-      {/* Trust Badges */}
-      <div className="mt-10 flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-6 sm:space-y-0 sm:space-x-8">
-        <div className="flex items-center">
-          <div className="flex-shrink-0 bg-amber-100 p-2 rounded-full">
-            {/* CORRECTED: Replaced simple checkmark with a more relevant "certificate" icon */}
-            <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-900">15+ Years Expertise</p>
+      {/* --- Trust Badges Bento Grid (Mobile & Desktop) --- */}
+      <div className="mt-12 text-left">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white">
+            <p className="font-bold text-gray-900">15+ Years Expertise</p>
             <p className="text-xs text-gray-500">Luxury villa renovations</p>
           </div>
-        </div>
-        <div className="flex items-center">
-          <div className="flex-shrink-0 bg-amber-100 p-2 rounded-full">
-            {/* CORRECTED: Completed the broken SVG path for the "users" icon */}
-            <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm-9 3a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-900">600+ Clients</p>
+          <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white">
+            <p className="font-bold text-gray-900">600+ Clients</p>
             <p className="text-xs text-gray-500">Satisfied homeowners</p>
           </div>
-        </div>
-        <div className="flex items-center">
-          <div className="flex-shrink-0 bg-amber-100 p-2 rounded-full">
-            {/* CORRECTED: Replaced irrelevant icon with a "shield check" for warranty */}
-            <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-900">5-Year Warranty</p>
+          <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white col-span-2 sm:col-span-1">
+            <p className="font-bold text-gray-900">5-Year Warranty</p>
             <p className="text-xs text-gray-500">On all craftsmanship</p>
           </div>
         </div>
@@ -254,50 +221,46 @@ export default function Home() {
     </div>
 
     {/* --- Image Column --- */}
-    {/* CORRECTED: The entire image section, including overlays, is now properly nested */}
-    <div className="md:w-1/2 relative">
-      <div className="relative rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-700">
+    <div className="relative w-full h-full">
+      {/* Custom Shape using Clip-Path */}
+      <div className="relative rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-700 ease-in-out" style={{ clipPath: 'polygon(20% 0%, 100% 0, 100% 100%, 0% 100%, 0 20%)' }}>
         <Image
           src="/hero2.webp"
           alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
           width={650}
-          height={450}
-          className="object-cover w-full h-auto"
+          height={700} // Increased height for the custom shape
+          className="object-cover w-full h-auto min-h-[300px] sm:min-h-[500px] lg:min-h-[600px]"
           priority
         />
-        {/* CORRECTED: Image overlay badge is now correctly positioned */}
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm py-2 px-4 rounded-full shadow-md">
+        {/* Image overlay badge - Now more subtle and responsive */}
+        <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md text-xs sm:text-sm sm:py-2 sm:px-4">
           <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
-                {/* CORRECTED: Fixed broken SVG path with Chinese characters */}
-                <svg className="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              </div>
+            <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 rounded-full flex items-center justify-center">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
             </div>
-            <div className="ml-3">
-              <p className="text-xs font-medium text-gray-900">Emirates Hills Project</p>
-              <p className="text-xs text-gray-500">Completed Tuesday, September 16, 2025</p>
+            <div className="ml-2">
+              <p className="font-medium text-gray-900 hidden sm:block">Emirates Hills Project</p>
+              <p className="text-gray-500">Completed Tuesday, September 16, 2025</p>
             </div>
           </div>
         </div>
       </div>
       
-      {/* CORRECTED: Floating testimonial is properly positioned and hidden on mobile to prevent layout issues */}
-      <div className="hidden md:block absolute -bottom-8 -left-8 bg-white rounded-xl shadow-xl p-4 max-w-[280px] transition-transform duration-300 hover:scale-110">
+      {/* Floating testimonial card - DESKTOP ONLY for a clean mobile experience */}
+      <div className="hidden lg:block absolute -bottom-12 -left-12 bg-white rounded-2xl shadow-xl p-5 max-w-xs transform transition-transform duration-300 hover:scale-110 hover:rotate-[-2deg] z-20">
         <div className="flex items-start">
-          <div className="flex-shrink-0">
-            <Image src="/client1.jpg" alt="Ahmed R." width={40} height={40} className="rounded-full" />
-          </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-900">Ahmed R.</p>
+          <Image src="/client1.jpg" alt="Ahmed R." width={40} height={40} className="rounded-full flex-shrink-0" />
+          <div className="ml-4">
+            <p className="text-sm font-bold text-gray-900">Ahmed R.</p>
             <p className="text-xs text-amber-500">★★★★★</p>
             <p className="text-xs text-gray-600 mt-1">"Transformed our villa beyond expectations!"</p>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </section>
 
