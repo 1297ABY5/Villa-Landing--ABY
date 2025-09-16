@@ -649,7 +649,7 @@ export default function Home() {
                   href="tel:+971585658002"
                   className={`block w-full px-6 py-4 bg-amber-600 text-white text-center text-lg font-semibold rounded-lg ${inter.className}`}
                 >
-                  📞 Call Now: +971 50 123 4567
+                  📞 Call Now: +971 58 565 8002
                 </a>
                 <a
                   href="https://wa.me/971585658002"
@@ -739,7 +739,7 @@ export default function Home() {
                     }
                   }}
                 >
-                  📞 +971 50 123 4567
+                  📞 +971 58 565 8002
                 </a>
               </div>
               
@@ -990,7 +990,7 @@ export default function Home() {
                         </label>
                         <input
                           type="tel"
-                          placeholder="+971 50 123 4567"
+                          placeholder="+971 58 565 8002"
                           required
                           value={formData.phone}
                           onChange={(e) => setFormData({...formData, phone: e.target.value})}
@@ -1176,7 +1176,7 @@ export default function Home() {
                 href="tel:+971585658002"
                 className={`px-8 py-4 bg-transparent border-2 border-white text-white hover:bg-white hover:text-amber-600 text-lg font-bold rounded-lg transition-all ${inter.className}`}
               >
-                📞 +971 50 123 4567
+                📞 +971 58 565 8002
               </a>
             </div>
             <p className={`mt-6 text-sm text-white/80 ${inter.className}`}>
@@ -1236,7 +1236,7 @@ export default function Home() {
                       <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
-                      +971 50 123 4567
+                      +971 58 565 8002
                     </a>
                   </li>
                   <li>
