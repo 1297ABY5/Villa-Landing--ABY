@@ -44,15 +44,20 @@ export default function Home() {
       {/* --- HEADER / NAVBAR --- */}
       <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+          {/* Logo */}
           <a href="/" className="text-xl font-heading font-bold text-amber-600">
             Unicorn Renovations
           </a>
+
+          {/* Desktop Nav */}
           <nav className="hidden md:flex space-x-8 text-gray-700 font-medium">
             <a href="#services" className="hover:text-amber-600 transition">Services</a>
             <a href="#portfolio" className="hover:text-amber-600 transition">Portfolio</a>
             <a href="#testimonials" className="hover:text-amber-600 transition">Testimonials</a>
             <a href="#contact" className="hover:text-amber-600 transition">Contact</a>
           </nav>
+
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden text-gray-700 focus:outline-none"
@@ -60,6 +65,8 @@ export default function Home() {
             {mobileMenuOpen ? "✕" : "☰"}
           </button>
         </div>
+
+        {/* Mobile Nav */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200 px-4 py-3 space-y-2">
             <a href="#services" className="block hover:text-amber-600">Services</a>
@@ -75,7 +82,7 @@ export default function Home() {
         className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
         aria-labelledby="hero-heading"
       >
-        {/* Background accents */}
+        {/* Decorative Background */}
         <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
           <div className="w-80 h-80 rounded-full bg-amber-200/50 blur-3xl"></div>
         </div>
@@ -142,37 +149,6 @@ export default function Home() {
                   blurDataURL="data:image/webp;base64,UklGRhYAAABXRUJQVlA4IBYAAAAwAQCdASoIAAgAAkA4JYwCdAEAAQAAVlA4ICwAAAAvAQCdASoIAAgAAkA4JbACdAEAAQAAAD+/FQAA"
                   quality={85}
                 />
-
-                {/* Overlay Badge */}
-                <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md text-xs sm:text-sm sm:py-2 sm:px-4">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 sm:w-4 sm:h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                    <div className="ml-2">
-                      <p className="font-medium text-gray-900 hidden sm:block">Emirates Hills Project</p>
-                      <p className="text-gray-500">Completed Tuesday, September 16, 2025</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Testimonial Card */}
-              <div className="hidden lg:block absolute -bottom-12 -left-12 bg-white rounded-2xl shadow-xl p-5 max-w-xs transform transition-transform duration-300 hover:scale-110 hover:rotate-[-2deg] z-20">
-                <div className="flex items-start">
-                  <Image src="/client1.jpg" alt="Ahmed R." width={40} height={40} className="rounded-full flex-shrink-0" />
-                  <div className="ml-4">
-                    <p className="text-sm font-bold text-gray-900">Ahmed R.</p>
-                    <p className="text-xs text-amber-500">★★★★★</p>
-                    <p className="text-xs text-gray-600 mt-1">"Transformed our villa beyond expectations!"</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
