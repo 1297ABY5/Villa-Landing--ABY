@@ -6,9 +6,6 @@ export default function Home() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Your data arrays (portfolioItems, testimonials, services, etc.) would be here
-  // ...
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormSubmitted(true);
@@ -18,19 +15,18 @@ export default function Home() {
     <div className="min-h-screen bg-white font-sans">
       <Head>
         <title>Luxury Villa Renovation Dubai | Premium Home Transformation | Unicorn Renovations</title>
-        <meta name="description" content="Dubai's premier villa renovation company with 15+ years expertise. Specialists in luxury villa remodeling, interior design, and home renovation services." />
-        {/* All other meta tags... */}
+        <meta
+          name="description"
+          content="Dubai's premier villa renovation company with 15+ years expertise. Specialists in luxury villa remodeling, interior design, and home renovation services."
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Your Navbar would be here... */}
-      
-      {/* --- CORRECTED HERO SECTION --- */}
+      {/* --- HERO SECTION --- */}
       <section
         className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
         aria-labelledby="hero-heading"
       >
-        {/* Background decorative elements */}
         <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
           <div className="w-80 h-80 rounded-full bg-amber-200/50 blur-3xl"></div>
         </div>
@@ -39,7 +35,6 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-16 relative z-10">
-          
           {/* --- Text Content Column --- */}
           <div className="text-center lg:text-left">
             <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
@@ -58,10 +53,10 @@ export default function Home() {
             </h1>
 
             <p className="text-lg text-gray-700 mb-10 leading-relaxed sm:text-xl max-w-xl mx-auto lg:mx-0">
-              Experience the pinnacle of luxury villa renovations. With over 15 years of expertise, we’ve transformed 800+ villas into extraordinary living spaces.
+              Experience the pinnacle of luxury villa renovations. With over 15 years of expertise, we’ve transformed
+              800+ villas into extraordinary living spaces.
             </p>
 
-            {/* CTA Buttons */}
             <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 justify-center lg:justify-start">
               <a
                 href="#contact"
@@ -69,13 +64,17 @@ export default function Home() {
               >
                 <span className="absolute top-0 left-0 w-full h-full bg-white opacity-20 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></span>
                 <span className="relative">Book Free Design Consultation</span>
-                <svg className="relative w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="relative w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </a>
             </div>
 
-            {/* Trust Badges Bento Grid */}
             <div className="mt-12 text-left">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white">
@@ -100,24 +99,27 @@ export default function Home() {
               className="relative rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-700 ease-in-out overflow-hidden"
               style={{ clipPath: "polygon(20% 0%, 100% 0, 100% 100%, 0% 100%, 0 20%)" }}
             >
-              <div className="relative aspect-[4/3] w-full"> {/* Aspect ratio can be adjusted */}
+              <div className="relative aspect-[4/3] w-full">
                 <Image
                   src="/hero2.webp"
                   alt="Luxury Villa Renovation Dubai by Unicorn Renovations"
                   fill
                   className="object-cover"
-                  priority // This is the correct way to preload for max page speed
+                  priority
                   placeholder="blur"
                   blurDataURL="data:image/webp;base64,UklGRhYAAABXRUJQVlA4IBYAAAAwAQCdASoIAAgAAkA4JYwCdAEAAQAAVlA4ICwAAAAvAQCdASoIAAgAAkA4JbACdAEAAQAAAD+/FQAA"
                   quality={85}
                 />
-                
-                {/* Image overlay badge */}
+
                 <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md text-xs sm:text-sm sm:py-2 sm:px-4">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 rounded-full flex items-center justify-center">
                       <svg className="w-3 h-3 sm:w-4 sm:h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        <path
+                          fillRule="evenodd"
+                          d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                     <div className="ml-2">
@@ -127,8 +129,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              
-              {/* Floating testimonial card */}
+
               <div className="hidden lg:block absolute -bottom-12 -left-12 bg-white rounded-2xl shadow-xl p-5 max-w-xs transform transition-transform duration-300 hover:scale-110 hover:rotate-[-2deg] z-20">
                 <div className="flex items-start">
                   <Image src="/client1.jpg" alt="Ahmed R." width={40} height={40} className="rounded-full flex-shrink-0" />
@@ -143,11 +144,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* The rest of your page components... */}
-    </div>
-  );
-}
 
       {/* Services */}
       <section id="services" className="py-16 bg-amber-50 px-4 sm:px-6">
@@ -433,7 +429,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* WhatsApp Button */}
+     {/* WhatsApp Button FIXED */}
       <a
         href="https://wa.me/971501234567"
         target="_blank"
@@ -441,10 +437,11 @@ export default function Home() {
         className="fixed bottom-5 right-5 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-110 sm:bottom-6 sm:right-6 sm:p-4"
         aria-label="Chat with our renovation experts on WhatsApp"
       >
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 0C5.373 0 0 4.985 0 11.125c0 1.963.545 3.87 1.58 5.54L0 24l7.6-2.39A12.64 12.64 0 0012 22.25c6.627 0 12-4.985 12-11.125S18.627 0 12 0z" />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" className="w-6 h-6">
+          <path d="M16 .396c-8.817 0-15.96 7.143-15.96 15.96 0 2.818.739 5.566 2.144 7.975L0 32l8.003-2.105c2.331 1.274 4.956 1.946 7.681 1.946h.007c8.817 0 15.96-7.143 15.96-15.96C31.651 7.539 24.817.396 16 .396zm0 29.034h-.006c-2.433 0-4.819-.652-6.89-1.885l-.494-.292-4.747 1.248 1.268-4.626-.321-.475c-1.348-1.99-2.06-4.31-2.06-6.707 0-6.698 5.449-12.147 12.147-12.147 3.246 0 6.295 1.265 8.588 3.559 2.293 2.293 3.559 5.342 3.559 8.588-.001 6.698-5.45 12.147-12.154 12.147zm6.627-9.104c-.362-.181-2.145-1.058-2.476-1.178-.331-.121-.572-.181-.813.181-.241.362-.934 1.178-1.145 1.419-.211.241-.421.271-.783.09-.362-.181-1.528-.562-2.911-1.79-1.076-.96-1.801-2.146-2.012-2.508-.211-.362-.022-.558.159-.739.163-.163.362-.421.543-.632.181-.211.241-.362.362-.603.121-.241.06-.452-.03-.632-.09-.181-.813-1.963-1.114-2.681-.292-.7-.591-.604-.813-.615l-.694-.012c-.241 0-.632.09-.963.452-.331.362-1.267 1.24-1.267 3.017 0 1.777 1.297 3.495 1.479 3.736.181.241 2.556 3.902 6.188 5.471.865.373 1.54.596 2.066.763.867.276 1.656.237 2.281.144.696-.104 2.145-.875 2.447-1.719.302-.844.302-1.566.211-1.719-.091-.151-.331-.241-.693-.422z" />
         </svg>
       </a>
     </div>
   );
 }
+
