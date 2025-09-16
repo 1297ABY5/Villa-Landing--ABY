@@ -791,7 +791,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {[
                 {
-                  name: "Ahmed Al Maktoum",
+                  name: "Ahmed Al Balooshi",
                   location: "Palm Jumeirah",
                   text: "Exceptional service! Unicorn transformed our villa beyond expectations. The team was professional and delivered on time.",
                   rating: 5,
@@ -805,7 +805,7 @@ export default function Home() {
                   date: "1 month ago"
                 },
                 {
-                  name: "Khalid Al Rashid",
+                  name: "Aman Atwal",
                   location: "Dubai Hills",
                   text: "Best renovation company in Dubai. Quality work, transparent pricing, and excellent communication throughout the project.",
                   rating: 5,
