@@ -216,51 +216,42 @@ export default function Home() {
 
   // Enhanced form submission with conversion tracking
   const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    setFormState({ submitted: false, loading: true });
-    
-    // Track form submission
-    if (window.gtag) {
-      window.gtag('event', 'generate_lead', {
-        currency: 'AED',
-        value: 5000, // Estimated lead value
-        form_type: 'consultation',
-        service: formData.service || dynamicContent.service,
-        location: dynamicContent.location
-      });
-      
-      // Enhanced conversion tracking with user data
-      window.gtag('event', 'conversion', {
-        send_to: 'AW-XXXXXXXXX/XXXXXXXXX', // Replace with your conversion ID
-        value: 5000,
-        currency: 'AED',
-        enhanced_conversions: {
-          email: formData.email,
-          phone: formData.phone,
-          first_name: formData.name.split(' ')[0],
-          last_name: formData.name.split(' ')[1] || '',
-          address: {
-            city: 'Dubai',
-            country: 'AE'
-          }
-        }
-      });
-    }
-    
-    // Simulate API call
-    setTimeout(() => {
-      setFormState({ submitted: true, loading: false });
-      
-      // Track successful conversion
-      if (window.fbq) {
-        window.fbq('track', 'Lead', {
-          value: 5000,
-          currency: 'AED',
-          content_name: dynamicContent.service
-        });
-      }
-    }, 1500);
-  }, [formData, dynamicContent]);
+  e.preventDefault();
+  setFormState({ submitted: false, loading: true });
+  
+  // Create WhatsApp message with form data
+  const message = `
+*New Lead from Website*
+------------------------
+*Name:* ${formData.name}
+*Phone:* ${formData.phone}
+*Email:* ${formData.email || 'Not provided'}
+*Service:* ${formData.service}
+*Message:* ${formData.message || 'No message'}
+*Time:* ${new Date().toLocaleString()}
+  `.trim();
+  
+  // Send to your WhatsApp
+  const whatsappUrl = `https://wa.me/971585658002?text=${encodeURIComponent(message)}`;
+  
+  // Open WhatsApp in new window
+  window.open(whatsappUrl, '_blank');
+  
+  // Track the submission
+  if (window.gtag) {
+    window.gtag('event', 'generate_lead', {
+      currency: 'AED',
+      value: 5000,
+      form_type: 'consultation',
+      service: formData.service || dynamicContent.service,
+      location: dynamicContent.location
+    });
+  }
+  
+  setTimeout(() => {
+    setFormState({ submitted: true, loading: false });
+  }, 1500);
+}, [formData, dynamicContent]);
 
   // Track form field interactions
   const handleFormFieldFocus = (fieldName) => {
