@@ -53,7 +53,7 @@ const testimonials = [
 
       {/* --- HERO SECTION --- */}
       <section
-  className="relative pt-16 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6 bg-gradient-to-br from-white via-amber-50 to-blue-50 overflow-hidden"
+  className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
   aria-labelledby="hero-heading"
 >
         <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
@@ -72,14 +72,14 @@ const testimonials = [
             </div>
 
             <h1
-              id="hero-heading"
-              className="text-4xl font-extrabold text-blue-900 leading-tight mb-6 sm:text-5xl lg:text-6xl"
-            >
-              Transform Your Villa Into a{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-700">
-                Masterpiece
-              </span>
-            </h1>
+  id="hero-heading"
+  className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-blue-900 leading-tight mb-6"
+>
+  Transform Your Villa Into a{" "}
+  <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-700">
+    Masterpiece
+  </span>
+</h1>
 
             <p className="text-lg text-gray-700 mb-10 leading-relaxed sm:text-xl max-w-xl mx-auto lg:mx-0">
               Experience the pinnacle of luxury villa renovations. With over 15 years of expertise, we’ve transformed
