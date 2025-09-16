@@ -40,31 +40,7 @@ const TestimonialsSection = dynamic(
   }
 );
 
-// Service Card Component
-const ServiceCard = memo(({ icon, title, description, index, link }) => (
-  <a 
-    href={link}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="group relative bg-white rounded-none shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden block"
-    style={{ animationDelay: `${index * 100}ms` }}
-  >
-    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-600 to-amber-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-    <div className="p-8">
-      <div className="text-5xl mb-6 text-amber-600 group-hover:scale-110 transition-transform duration-300">
-        {icon}
-      </div>
-      <h3 className={`text-xl font-bold text-gray-900 mb-3 ${playfair.className}`}>
-        {title}
-      </h3>
-      <p className={`text-gray-600 leading-relaxed ${inter.className}`}>
-        {description}
-      </p>
-    </div>
-  </a>
-));
-
-ServiceCard.displayName = 'ServiceCard';
+// Service Card Component - REMOVED (no longer needed)
 
 export default function Home() {
   const router = useRouter();
@@ -263,40 +239,46 @@ export default function Home() {
     }
   };
 
-  // Your brand's actual services with tracking links
+  // Your brand's actual services with tracking links - UPDATED WITH ICONS
   const services = [
     { 
-      image: "/villa-renovation.webp", 
+      image: "/villa-renovation.webp",
+      icon: "🏡",
       title: "Villa Renovation", 
       description: "Breathe new life into your villa with our expert renovation services. Full makeovers or selective upgrades.",
       link: "https://www.unicornrenovations.com/services/villa-renovations"
     },
     { 
-      image: "/villa-extension.webp", 
+      image: "/villa-extension.webp",
+      icon: "🏗️",
       title: "Villa Extensions", 
       description: "Expand your living space seamlessly. Premium craftsmanship with compliance to local regulations.",
       link: "https://www.unicornrenovations.com/services/villa-renovations"
     },
     { 
-      image: "/Interior-Design.webp", 
+      image: "/Interior-Design.webp",
+      icon: "🎨",
       title: "Interior Design", 
       description: "Bespoke designs that enhance aesthetics, comfort, and reflect your unique vision.",
       link: "https://www.unicornrenovations.com/services/services-light"
     },
     { 
-      image: "/swimming-pool.webp", 
+      image: "/swimming-pool.webp",
+      icon: "🏊",
       title: "Swimming Pools", 
       description: "Custom pool design and construction. Create your private oasis with stunning water features.",
       link: "https://www.unicornrenovations.com/services/swimming-pool-installation"
     },
     { 
-      image: "/office-fitout.webp", 
+      image: "/office-fitout.webp",
+      icon: "🏢",
       title: "Office Fit-Out", 
       description: "Create functional, high-performance workspaces that enhance productivity.",
       link: "https://www.unicornrenovations.com/services/office-commercial-fit-outs"
     },
     { 
-      image: "/smart-home.webp", 
+      image: "/smart-home.webp",
+      icon: "📱",
       title: "Smart Home", 
       description: "Control lighting, AC, security, and entertainment from your smartphone.",
       link: "https://www.unicornrenovations.com/services/home-automations"
@@ -853,7 +835,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Services Section - Mobile Optimized */}
+        {/* Services Section - Mobile Optimized WITH IMAGES FIXED */}
         <section id="services" className="py-12 md:py-20 px-4 md:px-6 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 md:mb-16">
@@ -876,7 +858,7 @@ export default function Home() {
                   href={service.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group bg-white p-6 md:p-8 rounded-xl border-2 border-gray-200 hover:border-amber-600 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  className="group bg-white rounded-xl border-2 border-gray-200 hover:border-amber-600 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
                   onClick={() => {
                     if (window.gtag) {
                       window.gtag('event', 'service_click', {
@@ -886,20 +868,38 @@ export default function Home() {
                     }
                   }}
                 >
-                  <div className="text-4xl md:text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                    {service.icon}
+                  {/* Image Section */}
+                  <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+                    {service.image ? (
+                      <Image
+                        src={service.image}
+                        alt={service.title}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    ) : (
+                      // Fallback to icon if image doesn't load
+                      <div className="h-full flex items-center justify-center bg-gradient-to-br from-amber-50 to-amber-100">
+                        <span className="text-6xl">{service.icon}</span>
+                      </div>
+                    )}
                   </div>
-                  <h3 className={`text-lg md:text-xl font-bold text-gray-900 mb-3 ${playfair.className}`}>
-                    {service.title}
-                  </h3>
-                  <p className={`text-sm md:text-base text-gray-600 leading-relaxed ${inter.className}`}>
-                    {service.description}
-                  </p>
-                  <div className={`mt-4 text-amber-600 font-semibold text-sm inline-flex items-center ${inter.className}`}>
-                    Learn More 
-                    <svg className="w-4 h-4 ml-1 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                  
+                  {/* Content Section */}
+                  <div className="p-6 md:p-8">
+                    <h3 className={`text-lg md:text-xl font-bold text-gray-900 mb-3 ${playfair.className}`}>
+                      {service.title}
+                    </h3>
+                    <p className={`text-sm md:text-base text-gray-600 leading-relaxed mb-4 ${inter.className}`}>
+                      {service.description}
+                    </p>
+                    <div className={`text-amber-600 font-semibold text-sm inline-flex items-center ${inter.className}`}>
+                      Learn More 
+                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
                   </div>
                 </a>
               ))}
