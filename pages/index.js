@@ -4,37 +4,20 @@ import Image from 'next/image';
 import { useState, useEffect, useCallback, memo } from 'react';
 import dynamic from 'next/dynamic';
 
-// CRITICAL PERFORMANCE FIX: Next.js Font Optimization
-// This is THE KEY to 98+ PageSpeed scores
+// FIXED: Using next/font properly without local font files
 import { Roboto } from 'next/font/google';
-import localFont from 'next/font/local';
 
 // Self-hosted Roboto with only 400 & 700 weights for maximum performance
 const roboto = Roboto({
   weight: ['400', '700'],
   subsets: ['latin'],
-  display: 'swap', // Prevents FOIT (Flash of Invisible Text)
-  variable: '--font-roboto',
-  preload: true, // Preloads font files
-  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-});
-
-// Use system font for headings (Segoe UI) - zero download time
-const segoeUI = localFont({
-  src: [
-    {
-      path: '../public/fonts/segoe-ui.woff2',
-      weight: '600',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-segoe',
   display: 'swap',
+  variable: '--font-roboto',
+  preload: true,
   fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
 });
 
-// Note: If you don't have Segoe UI locally, use this instead:
-// Just use system fonts for headings - even faster!
+// FIXED: Just use system fonts for headings - no file needed!
 const systemHeading = {
   className: '',
   style: {
@@ -73,7 +56,7 @@ const FAQSection = dynamic(
 const ServiceCard = memo(({ icon, title, description }) => (
   <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1 will-change-transform">
     <div className="text-4xl mb-4 select-none">{icon}</div>
-    <h3 className={`text-xl font-bold text-blue-900 mb-4 ${systemHeading.style.fontFamily}`}>
+    <h3 className="text-xl font-bold text-blue-900 mb-4" style={systemHeading.style}>
       {title}
     </h3>
     <p className={`text-gray-600 ${roboto.className}`}>
@@ -104,7 +87,7 @@ const PortfolioCard = memo(({ img, title, desc, budget, duration }) => (
     </div>
     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
       <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-        <h3 className={`text-2xl font-bold mb-2 ${systemHeading.style.fontFamily}`}>{title}</h3>
+        <h3 className="text-2xl font-bold mb-2" style={systemHeading.style}>{title}</h3>
         <p className={`text-gray-200 mb-3 ${roboto.className}`}>{desc}</p>
         <div className={`flex gap-4 text-sm ${roboto.className}`}>
           <span className="flex items-center gap-1">💰 {budget}</span>
@@ -715,194 +698,3 @@ export default function Home() {
     </>
   );
 }
-
-// ---------- COMPONENT FILES TO CREATE ----------
-
-// components/TestimonialsSection.js
-/*
-import { memo } from 'react';
-
-const TestimonialCard = memo(({ text, rating, name, location, robotoFont }) => (
-  <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-    <div className="flex justify-center mb-6">
-      <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-lg">
-        <span className={`text-white font-bold text-xl ${robotoFont}`}>{name[0]}</span>
-      </div>
-    </div>
-    <p className={`italic text-gray-700 mb-6 leading-relaxed ${robotoFont}`}>"{text}"</p>
-    <div className="flex justify-center text-amber-500 mb-4">
-      {[...Array(rating)].map((_, i) => (
-        <svg key={i} className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
-    </div>
-    <h4 className={`font-bold text-blue-900 text-center ${robotoFont}`} style={{fontWeight: 700}}>{name}</h4>
-    <p className={`text-gray-500 text-sm text-center ${robotoFont}`}>{location} Client</p>
-  </div>
-));
-
-TestimonialCard.displayName = 'TestimonialCard';
-
-export default function TestimonialsSection({ robotoFont, headingStyle }) {
-  const testimonials = [
-    { 
-      text: "Unicorn Renovations transformed our villa beyond our wildest dreams. Exceptional quality!",
-      rating: 5,
-      name: "Fatima Al-Rashid",
-      location: "Dubai Hills"
-    },
-    { 
-      text: "Professional team, transparent pricing, and stunning results. Highly recommended!",
-      rating: 5,
-      name: "Omar Khalil",
-      location: "Palm Jumeirah"
-    },
-    { 
-      text: "The best renovation decision we made. Our villa feels like a luxury resort now!",
-      rating: 5,
-      name: "Sarah Laurent",
-      location: "Emirates Hills"
-    }
-  ];
-
-  return (
-    <section id="testimonials" className="py-20 bg-gradient-to-b from-amber-50 to-white px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl sm:text-5xl font-bold text-blue-900 mb-4" style={headingStyle}>
-            What Our Clients Say
-          </h2>
-          <p className={`text-lg text-gray-600 max-w-3xl mx-auto ${robotoFont}`}>
-            Join 800+ satisfied homeowners who trusted us with their villa renovation dreams
-          </p>
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <div className="flex text-amber-500">
-              {[...Array(5)].map((_, i) => (
-                <svg key={i} className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <span className={`font-bold text-gray-700 ${robotoFont}`}>4.9/5 (287 Reviews)</span>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <TestimonialCard key={index} {...testimonial} robotoFont={robotoFont} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-*/
-
-// components/FAQSection.js
-/*
-import { useState } from 'react';
-
-export default function FAQSection({ robotoFont, headingStyle }) {
-  const [openIndex, setOpenIndex] = useState(null);
-  
-  const faqs = [
-    {
-      q: "How long does a typical villa renovation take?",
-      a: "Complete villa renovations typically take 3-6 months. Kitchen renovations: 6-8 weeks, bathrooms: 3-4 weeks, extensions: 4-6 months including permits."
-    },
-    {
-      q: "Do you handle all permits and approvals?",
-      a: "Yes, we manage all Dubai Municipality permits, DEWA connections, and community approvals across all major Dubai communities."
-    },
-    {
-      q: "What warranty do you provide?",
-      a: "5-year warranty on structural work, 2 years on finishes, manufacturer warranties on appliances, plus lifetime support."
-    },
-    {
-      q: "Can we live in the villa during renovation?",
-      a: "For partial renovations, yes. For complete renovations, we recommend temporary relocation for comfort and faster completion."
-    },
-    {
-      q: "How do you ensure projects stay on budget?",
-      a: "Detailed transparent quotes, no hidden costs, real-time expense tracking, and approval before any changes."
-    }
-  ];
-
-  return (
-    <section className="py-20 bg-white px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-blue-900 mb-4" style={headingStyle}>
-            Frequently Asked Questions
-          </h2>
-          <p className={`text-lg text-gray-600 ${robotoFont}`}>
-            Everything you need to know about villa renovation in Dubai
-          </p>
-        </div>
-        
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <div 
-              key={index} 
-              className="bg-gray-50 rounded-2xl overflow-hidden transition-all duration-300 hover:bg-amber-50"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className={`w-full text-left p-6 flex justify-between items-center ${robotoFont}`}
-              >
-                <h3 className="text-lg font-bold text-blue-900" style={{fontWeight: 700}}>
-                  {faq.q}
-                </h3>
-                <svg 
-                  className={`w-5 h-5 text-amber-600 transition-transform ${openIndex === index ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {openIndex === index && (
-                <div className={`px-6 pb-6 text-gray-600 ${robotoFont}`}>
-                  {faq.a}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-*/
-
-// components/InstagramFeed.js
-/*
-import { useEffect } from 'react';
-
-export default function InstagramFeed() {
-  useEffect(() => {
-    // Only load script when component mounts
-    const script = document.createElement('script');
-    script.src = 'https://static.elfsight.com/platform/platform.js';
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
-    
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
-
-  return (
-    <div 
-      className="elfsight-app-be187cad-c36b-4712-b333-d86a66d2da6d rounded-xl overflow-hidden"
-      data-elfsight-app-lazy
-      style={{ minHeight: '400px' }}
-    />
-  );
-}
-*/
