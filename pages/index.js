@@ -366,12 +366,12 @@ export default function Home() {
             "name": "Unicorn Renovations",
             "description": "${dynamicContent.keyword} services in ${dynamicContent.location}",
             "url": "https://unicornrenovations.com",
-            "telephone": "+971501234567",
+            "telephone": "+971585658002",
             "priceRange": "$$$$",
             "image": "https://unicornrenovations.com/logo.png",
             "address": {
               "@type": "PostalAddress",
-              "streetAddress": "The Curve Building, Sheikh Zayed Road",
+              "streetAddress": "Regus, The Bridge Building, Sports City , Near Motor City, Dubai , UAE",
               "addressLocality": "Dubai",
               "addressCountry": "AE"
             },
@@ -568,7 +568,7 @@ export default function Home() {
                     </a>
                   ))}
                   <a
-                    href="tel:+971501234567"
+                    href="tel:+971585658002"
                     className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-all ${inter.className}`}
                     onClick={() => {
                       if (window.gtag) {
@@ -646,13 +646,13 @@ export default function Home() {
               ))}
               <div className="pt-6 space-y-3 border-t mt-6">
                 <a
-                  href="tel:+971501234567"
+                  href="tel:+971585658002"
                   className={`block w-full px-6 py-4 bg-amber-600 text-white text-center text-lg font-semibold rounded-lg ${inter.className}`}
                 >
                   📞 Call Now: +971 50 123 4567
                 </a>
                 <a
-                  href="https://wa.me/971501234567"
+                  href="https://wa.me/971585658002"
                   className={`block w-full px-6 py-4 bg-green-500 text-white text-center text-lg font-semibold rounded-lg ${inter.className}`}
                 >
                   💬 WhatsApp Chat
@@ -728,7 +728,7 @@ export default function Home() {
                   Get Free Quote →
                 </a>
                 <a
-                  href="tel:+971501234567"
+                  href="tel:+971585658002"
                   className={`px-8 py-4 md:px-10 md:py-5 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-lg md:text-xl font-bold rounded-lg transition-all ${inter.className}`}
                   onClick={() => {
                     if (window.gtag) {
@@ -1173,7 +1173,7 @@ export default function Home() {
                 Get Free Quote Now
               </a>
               <a
-                href="tel:+971501234567"
+                href="tel:+971585658002"
                 className={`px-8 py-4 bg-transparent border-2 border-white text-white hover:bg-white hover:text-amber-600 text-lg font-bold rounded-lg transition-all ${inter.className}`}
               >
                 📞 +971 50 123 4567
@@ -1229,10 +1229,10 @@ export default function Home() {
                     <svg className="w-4 h-4 mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                     </svg>
-                    The Curve Building, Sheikh Zayed Road, Dubai
+                    Regus, The Bridge Building, Sports City , Near Motor City, Dubai , UAE, Dubai
                   </li>
                   <li>
-                    <a href="tel:+971501234567" className="hover:text-amber-400 flex items-center">
+                    <a href="tel:+971585658002" className="hover:text-amber-400 flex items-center">
                       <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
@@ -1317,7 +1317,7 @@ export default function Home() {
 
         {/* WhatsApp Button - Better Mobile Position */}
         <a
-          href="https://wa.me/971501234567"
+          href="https://wa.me/971585658002"
           target="_blank"
           rel="noopener noreferrer"
           className="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-14 h-14 md:w-16 md:h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-2xl hover:shadow-xl transition-all transform hover:scale-110 z-40"
@@ -1340,7 +1340,7 @@ export default function Home() {
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 z-40 shadow-2xl">
           <div className="grid grid-cols-2 h-16">
             <a
-              href="tel:+971501234567"
+              href="tel:+971585658002"
               className="flex flex-col items-center justify-center bg-white hover:bg-gray-50 transition-colors border-r border-gray-200"
               onClick={() => {
                 if (window.gtag) {
