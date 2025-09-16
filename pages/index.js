@@ -917,7 +917,7 @@ export default function Home() {
             {/* CTA Button */}
             <div className="text-center mt-10 md:mt-12">
               <a
-                href="https://www.unicornrenovations.com/services"
+                href="https://www.unicornrenovations.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`inline-flex items-center px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-lg font-bold rounded-lg shadow-lg transition-all transform hover:scale-105 ${inter.className}`}
