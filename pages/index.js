@@ -44,20 +44,15 @@ export default function Home() {
       {/* --- HEADER / NAVBAR --- */}
       <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-          {/* Logo */}
           <a href="/" className="text-xl font-heading font-bold text-amber-600">
             Unicorn Renovations
           </a>
-
-          {/* Desktop Nav */}
           <nav className="hidden md:flex space-x-8 text-gray-700 font-medium">
             <a href="#services" className="hover:text-amber-600 transition">Services</a>
             <a href="#portfolio" className="hover:text-amber-600 transition">Portfolio</a>
             <a href="#testimonials" className="hover:text-amber-600 transition">Testimonials</a>
             <a href="#contact" className="hover:text-amber-600 transition">Contact</a>
           </nav>
-
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden text-gray-700 focus:outline-none"
@@ -65,8 +60,6 @@ export default function Home() {
             {mobileMenuOpen ? "✕" : "☰"}
           </button>
         </div>
-
-        {/* Mobile Nav */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200 px-4 py-3 space-y-2">
             <a href="#services" className="block hover:text-amber-600">Services</a>
@@ -82,7 +75,7 @@ export default function Home() {
         className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
         aria-labelledby="hero-heading"
       >
-        {/* Decorative Background */}
+        {/* Background accents */}
         <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
           <div className="w-80 h-80 rounded-full bg-amber-200/50 blur-3xl"></div>
         </div>
@@ -149,15 +142,8 @@ export default function Home() {
                   blurDataURL="data:image/webp;base64,UklGRhYAAABXRUJQVlA4IBYAAAAwAQCdASoIAAgAAkA4JYwCdAEAAQAAVlA4ICwAAAAvAQCdASoIAAgAAkA4JbACdAEAAQAAAD+/FQAA"
                   quality={85}
                 />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
 
+                {/* Overlay Badge */}
                 <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md text-xs sm:text-sm sm:py-2 sm:px-4">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 rounded-full flex items-center justify-center">
@@ -177,6 +163,7 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Floating Testimonial Card */}
               <div className="hidden lg:block absolute -bottom-12 -left-12 bg-white rounded-2xl shadow-xl p-5 max-w-xs transform transition-transform duration-300 hover:scale-110 hover:rotate-[-2deg] z-20">
                 <div className="flex items-start">
                   <Image src="/client1.jpg" alt="Ahmed R." width={40} height={40} className="rounded-full flex-shrink-0" />
@@ -191,6 +178,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
 
       {/* Services */}
       <section id="services" className="py-16 bg-amber-50 px-4 sm:px-6">
