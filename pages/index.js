@@ -53,7 +53,7 @@ const testimonials = [
 
       {/* --- HERO SECTION --- */}
       <section
-  className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
+  className="relative pt-16 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6 bg-gradient-to-br from-white via-amber-50 to-blue-50 overflow-hidden"
   aria-labelledby="hero-heading"
 >
         <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
