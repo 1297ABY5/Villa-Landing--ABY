@@ -5,36 +5,26 @@ import { useState } from 'react';
 export default function Home() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-// Dummy data arrays so build doesn’t fail
-const services = [
-  {
-    icon: "🛠️",
-    title: "Villa Renovation",
-    description: "Complete luxury villa remodeling and upgrades."
-  },
-  {
-    icon: "🍴",
-    title: "Kitchen Remodeling",
-    description: "Modern kitchens with high-end finishes and functionality."
-  },
-  {
-    icon: "🛁",
-    title: "Bathroom Renovation",
-    description: "Luxurious bathrooms with spa-like features."
-  }
-];
 
-const portfolioItems = [
-  { img: "/portfolio1.jpg", title: "Palm Jumeirah Villa", desc: "Full renovation with luxury interiors." },
-  { img: "/portfolio2.jpg", title: "Emirates Hills Mansion", desc: "Modern extension and remodeling." },
-  { img: "/portfolio3.jpg", title: "Downtown Penthouse", desc: "High-end interior design transformation." }
-];
+  // Dummy data arrays so build doesn’t fail
+  const services = [
+    { icon: "🛠️", title: "Villa Renovation", description: "Complete luxury villa remodeling and upgrades." },
+    { icon: "🍴", title: "Kitchen Remodeling", description: "Modern kitchens with high-end finishes and functionality." },
+    { icon: "🛁", title: "Bathroom Renovation", description: "Luxurious bathrooms with spa-like features." }
+  ];
 
-const testimonials = [
-  { text: "Unicorn Renovations made our dream villa a reality!", rating: 5, name: "Fatima A.", location: "Dubai Hills" },
-  { text: "Professional, detailed, and luxury results.", rating: 5, name: "Omar K.", location: "Palm Jumeirah" },
-  { text: "The best renovation company in Dubai!", rating: 5, name: "Sarah L.", location: "Emirates Hills" }
-];
+  const portfolioItems = [
+    { img: "/portfolio1.jpg", title: "Palm Jumeirah Villa", desc: "Full renovation with luxury interiors." },
+    { img: "/portfolio2.jpg", title: "Emirates Hills Mansion", desc: "Modern extension and remodeling." },
+    { img: "/portfolio3.jpg", title: "Downtown Penthouse", desc: "High-end interior design transformation." }
+  ];
+
+  const testimonials = [
+    { text: "Unicorn Renovations made our dream villa a reality!", rating: 5, name: "Fatima A.", location: "Dubai Hills" },
+    { text: "Professional, detailed, and luxury results.", rating: 5, name: "Omar K.", location: "Palm Jumeirah" },
+    { text: "The best renovation company in Dubai!", rating: 5, name: "Sarah L.", location: "Emirates Hills" }
+  ];
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormSubmitted(true);
@@ -51,11 +41,48 @@ const testimonials = [
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      {/* --- HEADER / NAVBAR --- */}
+      <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+          {/* Logo */}
+          <a href="/" className="text-xl font-heading font-bold text-amber-600">
+            Unicorn Renovations
+          </a>
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex space-x-8 text-gray-700 font-medium">
+            <a href="#services" className="hover:text-amber-600 transition">Services</a>
+            <a href="#portfolio" className="hover:text-amber-600 transition">Portfolio</a>
+            <a href="#testimonials" className="hover:text-amber-600 transition">Testimonials</a>
+            <a href="#contact" className="hover:text-amber-600 transition">Contact</a>
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-gray-700 focus:outline-none"
+          >
+            {mobileMenuOpen ? "✕" : "☰"}
+          </button>
+        </div>
+
+        {/* Mobile Nav */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-gray-200 px-4 py-3 space-y-2">
+            <a href="#services" className="block hover:text-amber-600">Services</a>
+            <a href="#portfolio" className="block hover:text-amber-600">Portfolio</a>
+            <a href="#testimonials" className="block hover:text-amber-600">Testimonials</a>
+            <a href="#contact" className="block hover:text-amber-600">Contact</a>
+          </div>
+        )}
+      </header>
+
       {/* --- HERO SECTION --- */}
       <section
-  className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
-  aria-labelledby="hero-heading"
->
+        className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
+        aria-labelledby="hero-heading"
+      >
+        {/* Decorative Background */}
         <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
           <div className="w-80 h-80 rounded-full bg-amber-200/50 blur-3xl"></div>
         </div>
@@ -64,7 +91,7 @@ const testimonials = [
         </div>
 
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-16 relative z-10">
-          {/* --- Text Content Column --- */}
+          {/* Text Column */}
           <div className="text-center lg:text-left">
             <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 animate-pulse"></span>
@@ -72,14 +99,14 @@ const testimonials = [
             </div>
 
             <h1
-  id="hero-heading"
-  className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-blue-900 leading-tight mb-6"
->
-  Transform Your Villa Into a{" "}
-  <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-700">
-    Masterpiece
-  </span>
-</h1>
+              id="hero-heading"
+              className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-blue-900 leading-tight mb-6"
+            >
+              Transform Your Villa Into a{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-700">
+                Masterpiece
+              </span>
+            </h1>
 
             <p className="text-lg text-gray-700 mb-10 leading-relaxed sm:text-xl max-w-xl mx-auto lg:mx-0">
               Experience the pinnacle of luxury villa renovations. With over 15 years of expertise, we’ve transformed
@@ -103,26 +130,9 @@ const testimonials = [
                 </svg>
               </a>
             </div>
-
-            <div className="mt-12 text-left">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white">
-                  <p className="font-bold text-gray-900">15+ Years Expertise</p>
-                  <p className="text-xs text-gray-500">Luxury villa renovations</p>
-                </div>
-                <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white">
-                  <p className="font-bold text-gray-900">600+ Clients</p>
-                  <p className="text-xs text-gray-500">Satisfied homeowners</p>
-                </div>
-                <div className="bg-white/60 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-white col-span-2 sm:col-span-1">
-                  <p className="font-bold text-gray-900">5-Year Warranty</p>
-                  <p className="text-xs text-gray-500">On all craftsmanship</p>
-                </div>
-              </div>
-            </div>
           </div>
 
-          {/* --- Image Column --- */}
+          {/* Hero Image */}
           <div className="relative">
             <div
               className="relative rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-700 ease-in-out overflow-hidden"
@@ -139,6 +149,14 @@ const testimonials = [
                   blurDataURL="data:image/webp;base64,UklGRhYAAABXRUJQVlA4IBYAAAAwAQCdASoIAAgAAkA4JYwCdAEAAQAAVlA4ICwAAAAvAQCdASoIAAgAAkA4JbACdAEAAQAAAD+/FQAA"
                   quality={85}
                 />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
 
                 <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md text-xs sm:text-sm sm:py-2 sm:px-4">
                   <div className="flex items-center">
