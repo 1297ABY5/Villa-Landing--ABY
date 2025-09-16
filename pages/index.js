@@ -221,7 +221,7 @@ export default function Home() {
   
   // Create WhatsApp message with form data
   const message = `
-*New Lead from Website*
+*New Client Requirements*
 ------------------------
 *Name:* ${formData.name}
 *Phone:* ${formData.phone}
