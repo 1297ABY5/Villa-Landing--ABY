@@ -5,7 +5,36 @@ import { useState } from 'react';
 export default function Home() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+// Dummy data arrays so build doesn’t fail
+const services = [
+  {
+    icon: "🛠️",
+    title: "Villa Renovation",
+    description: "Complete luxury villa remodeling and upgrades."
+  },
+  {
+    icon: "🍴",
+    title: "Kitchen Remodeling",
+    description: "Modern kitchens with high-end finishes and functionality."
+  },
+  {
+    icon: "🛁",
+    title: "Bathroom Renovation",
+    description: "Luxurious bathrooms with spa-like features."
+  }
+];
 
+const portfolioItems = [
+  { img: "/portfolio1.jpg", title: "Palm Jumeirah Villa", desc: "Full renovation with luxury interiors." },
+  { img: "/portfolio2.jpg", title: "Emirates Hills Mansion", desc: "Modern extension and remodeling." },
+  { img: "/portfolio3.jpg", title: "Downtown Penthouse", desc: "High-end interior design transformation." }
+];
+
+const testimonials = [
+  { text: "Unicorn Renovations made our dream villa a reality!", rating: 5, name: "Fatima A.", location: "Dubai Hills" },
+  { text: "Professional, detailed, and luxury results.", rating: 5, name: "Omar K.", location: "Palm Jumeirah" },
+  { text: "The best renovation company in Dubai!", rating: 5, name: "Sarah L.", location: "Emirates Hills" }
+];
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormSubmitted(true);
