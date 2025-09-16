@@ -266,37 +266,37 @@ export default function Home() {
   // Your brand's actual services with tracking links
   const services = [
     { 
-      icon: "🏛️", 
+      image: "/villa-renovation.webp", 
       title: "Villa Renovation", 
       description: "Breathe new life into your villa with our expert renovation services. Full makeovers or selective upgrades.",
       link: "https://www.unicornrenovations.com/services/villa-renovations"
     },
     { 
-      icon: "🏗️", 
+      image: "/villa-extension.webp", 
       title: "Villa Extensions", 
       description: "Expand your living space seamlessly. Premium craftsmanship with compliance to local regulations.",
       link: "https://www.unicornrenovations.com/services/villa-renovations"
     },
     { 
-      icon: "✨", 
+      image: "/Interior-Design.webp", 
       title: "Interior Design", 
       description: "Bespoke designs that enhance aesthetics, comfort, and reflect your unique vision.",
       link: "https://www.unicornrenovations.com/services/services-light"
     },
     { 
-      icon: "🏊", 
+      image: "/swimming-pool.webp", 
       title: "Swimming Pools", 
       description: "Custom pool design and construction. Create your private oasis with stunning water features.",
       link: "https://www.unicornrenovations.com/services/swimming-pool-installation"
     },
     { 
-      icon: "🏢", 
+      image: "/office-fitout.webp", 
       title: "Office Fit-Out", 
       description: "Create functional, high-performance workspaces that enhance productivity.",
       link: "https://www.unicornrenovations.com/services/office-commercial-fit-outs"
     },
     { 
-      icon: "🤖", 
+      image: "/smart-home.webp", 
       title: "Smart Home", 
       description: "Control lighting, AC, security, and entertainment from your smartphone.",
       link: "https://www.unicornrenovations.com/services/home-automations"
