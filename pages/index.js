@@ -6,7 +6,7 @@ export default function Home() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Dummy data arrays so build doesn’t fail
+  // Dummy data arrays
   const services = [
     { icon: "🛠️", title: "Villa Renovation", description: "Complete luxury villa remodeling and upgrades." },
     { icon: "🍴", title: "Kitchen Remodeling", description: "Modern kitchens with high-end finishes and functionality." },
@@ -44,20 +44,15 @@ export default function Home() {
       {/* --- HEADER / NAVBAR --- */}
       <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-          {/* Logo */}
           <a href="/" className="text-xl font-heading font-bold text-amber-600">
             Unicorn Renovations
           </a>
-
-          {/* Desktop Nav */}
           <nav className="hidden md:flex space-x-8 text-gray-700 font-medium">
             <a href="#services" className="hover:text-amber-600 transition">Services</a>
             <a href="#portfolio" className="hover:text-amber-600 transition">Portfolio</a>
             <a href="#testimonials" className="hover:text-amber-600 transition">Testimonials</a>
             <a href="#contact" className="hover:text-amber-600 transition">Contact</a>
           </nav>
-
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden text-gray-700 focus:outline-none"
@@ -65,8 +60,6 @@ export default function Home() {
             {mobileMenuOpen ? "✕" : "☰"}
           </button>
         </div>
-
-        {/* Mobile Nav */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200 px-4 py-3 space-y-2">
             <a href="#services" className="block hover:text-amber-600">Services</a>
@@ -82,7 +75,6 @@ export default function Home() {
         className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-white via-amber-50 to-blue-50 sm:pt-40 sm:pb-32 sm:px-6 overflow-hidden"
         aria-labelledby="hero-heading"
       >
-        {/* Decorative Background */}
         <div className="absolute top-0 right-0 -mt-24 -mr-24 opacity-20" aria-hidden="true">
           <div className="w-80 h-80 rounded-full bg-amber-200/50 blur-3xl"></div>
         </div>
@@ -91,13 +83,11 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-16 relative z-10">
-          {/* Text Column */}
           <div className="text-center lg:text-left">
             <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 animate-pulse"></span>
               Dubai's Most Trusted Villa Renovation Company
             </div>
-
             <h1
               id="hero-heading"
               className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-blue-900 leading-tight mb-6"
@@ -107,12 +97,10 @@ export default function Home() {
                 Masterpiece
               </span>
             </h1>
-
             <p className="text-lg text-gray-700 mb-10 leading-relaxed sm:text-xl max-w-xl mx-auto lg:mx-0">
               Experience the pinnacle of luxury villa renovations. With over 15 years of expertise, we’ve transformed
               800+ villas into extraordinary living spaces.
             </p>
-
             <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 justify-center lg:justify-start">
               <a
                 href="#contact"
@@ -131,8 +119,6 @@ export default function Home() {
               </a>
             </div>
           </div>
-
-          {/* Hero Image */}
           <div className="relative">
             <div
               className="relative rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-700 ease-in-out overflow-hidden"
@@ -154,10 +140,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
-  );
-}
-
 
       {/* Services */}
       <section id="services" className="py-16 bg-amber-50 px-4 sm:px-6">
@@ -443,7 +425,7 @@ export default function Home() {
         </div>
       </footer>
 
-     {/* WhatsApp Button FIXED */}
+     {/* WhatsApp Button */}
       <a
         href="https://wa.me/971501234567"
         target="_blank"
@@ -452,12 +434,9 @@ export default function Home() {
         aria-label="Chat with our renovation experts on WhatsApp"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" className="w-6 h-6">
-          <path
-  d="M16 .396c-8.817 0-15.96 7.143-15.96 15.96 0 2.818.739 5.566 2.144 7.975L0 32l8.003-2.105c2.331 1.274 4.956 1.946 7.681 1.946h.007c8.817 0 15.96-7.143 15.96-15.96C31.651 7.539 24.817.396 16 .396zm0 29.034h-.006c-2.433 0-4.819-.652-6.89-1.885l-.494-.292-4.747 1.248 1.268-4.626-.321-.475c-1.348-1.99-2.06-4.31-2.06-6.707 0-6.698 5.449-12.147 12.147-12.147 3.246 0 6.295 1.265 8.588 3.559 2.293 2.293 3.559 5.342 3.559 8.588-.001 6.698-5.45 12.147-12.154 12.147zm6.627-9.104c-.362-.181-2.145-1.058-2.476-1.178-.331-.121-.572-.181-.813.181-.241.362-.934 1.178-1.145 1.419-.211.241-.421.271-.783.09-.362-.181-1.528-.562-2.911-1.79-1.076-.96-1.801-2.146-2.012-2.508-.211-.362-.022-.558.159-.739.163-.163.362-.421.543-.632.181-.211.241-.362.362-.603.121-.241.06-.452-.03-.632-.09-.181-.813-1.963-1.114-2.681-.292-.7-.591-.604-.813-.615l-.694-.012c-.241 0-.632.09-.963.452-.331.362-1.267 1.24-1.267 3.017 0 1.777 1.297 3.495 1.479 3.736.181.241 2.556 3.902 6.188 5.471.865.373 1.54.596 2.066.763.867.276 1.656.237 2.281.144.696-.104 2.145-.875 2.447-1.719.302-.844.302-1.566.211-1.719-.091-.151-.331-.241-.693-.422z"
-/>
-    </svg>
+          <path d="M16 .396c-8.817 0-15.96 7.143-15.96 15.96...z" />
+        </svg>
       </a>
     </div>
   );
 }
-
