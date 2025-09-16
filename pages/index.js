@@ -674,8 +674,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-        </header>
-
+        
         {/* Hero Section - Mobile Optimized */}
         <section className="relative min-h-screen flex items-center py-20 md:py-0">
           {/* Background */}
