@@ -4,33 +4,29 @@ import Image from 'next/image';
 import { useState, useEffect, useCallback, memo } from 'react';
 import dynamic from 'next/dynamic';
 
-// FIXED: Using next/font properly without local font files
-import { Roboto } from 'next/font/google';
+// Optimized Font Loading
+import { Playfair_Display, Inter } from 'next/font/google';
 
-// Self-hosted Roboto with only 400 & 700 weights for maximum performance
-const roboto = Roboto({
-  weight: ['400', '700'],
+// Luxury font combination matching your brand
+const playfair = Playfair_Display({
+  weight: ['400', '700', '900'],
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-roboto',
-  preload: true,
-  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+  variable: '--font-playfair',
 });
 
-// FIXED: Just use system fonts for headings - no file needed!
-const systemHeading = {
-  className: '',
-  style: {
-    fontFamily: "'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-    fontWeight: 600,
-  }
-};
+const inter = Inter({
+  weight: ['300', '400', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
-// Ultra-lazy loading for non-critical components
+// Lazy load components
 const InstagramFeed = dynamic(
   () => import('../components/InstagramFeed'),
   { 
-    loading: () => <div className="h-96 bg-gray-100 animate-pulse rounded-lg" />,
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse rounded-lg" />,
     ssr: false 
   }
 );
@@ -40,657 +36,614 @@ const TestimonialsSection = dynamic(
   { 
     loading: () => <div className="h-64 bg-gray-50 animate-pulse" />,
     ssr: false,
-    suspense: true
   }
 );
 
-const FAQSection = dynamic(
-  () => import('../components/FAQSection'),
-  { 
-    loading: () => null,
-    ssr: false
-  }
-);
-
-// Memoized component with proper equality check
-const ServiceCard = memo(({ icon, title, description }) => (
-  <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1 will-change-transform">
-    <div className="text-4xl mb-4 select-none">{icon}</div>
-    <h3 className="text-xl font-bold text-blue-900 mb-4" style={systemHeading.style}>
-      {title}
-    </h3>
-    <p className={`text-gray-600 ${roboto.className}`}>
-      {description}
-    </p>
-  </div>
-), (prevProps, nextProps) => 
-  prevProps.title === nextProps.title && 
-  prevProps.description === nextProps.description
-);
-
-ServiceCard.displayName = 'ServiceCard';
-
-// Portfolio card component
-const PortfolioCard = memo(({ img, title, desc, budget, duration }) => (
-  <div className="group relative rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer">
-    <div className="aspect-w-4 aspect-h-3 relative h-80">
-      <Image
-        src={img}
-        alt={`${title} - Villa Renovation Dubai`}
-        fill
-        className="object-cover transform group-hover:scale-110 transition-transform duration-700"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        loading="lazy"
-        placeholder="blur"
-        blurDataURL="data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAAAwAgCdASoIAAYAAkA4JZwCdAEO/gjeAA+gAP79O7/7PYkr+8H/v3/85bgAJfUA51AAtQBOYACeAE6YAHC8AaH0AOeGUjX+4EWB/kAA"
-      />
-    </div>
-    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-      <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-        <h3 className="text-2xl font-bold mb-2" style={systemHeading.style}>{title}</h3>
-        <p className={`text-gray-200 mb-3 ${roboto.className}`}>{desc}</p>
-        <div className={`flex gap-4 text-sm ${roboto.className}`}>
-          <span className="flex items-center gap-1">💰 {budget}</span>
-          <span className="flex items-center gap-1">⏱️ {duration}</span>
-        </div>
+// Service Card Component
+const ServiceCard = memo(({ icon, title, description, index }) => (
+  <div 
+    className="group relative bg-white rounded-none shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden"
+    style={{ animationDelay: `${index * 100}ms` }}
+  >
+    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-600 to-amber-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+    <div className="p-8">
+      <div className="text-5xl mb-6 text-amber-600 group-hover:scale-110 transition-transform duration-300">
+        {icon}
       </div>
+      <h3 className={`text-xl font-bold text-gray-900 mb-3 ${playfair.className}`}>
+        {title}
+      </h3>
+      <p className={`text-gray-600 leading-relaxed ${inter.className}`}>
+        {description}
+      </p>
     </div>
+    <div className="absolute bottom-0 right-0 w-20 h-20 bg-amber-50 rounded-tl-full transform translate-x-10 translate-y-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
   </div>
 ));
 
-PortfolioCard.displayName = 'PortfolioCard';
+ServiceCard.displayName = 'ServiceCard';
 
 export default function Home() {
   const [formState, setFormState] = useState({ submitted: false, loading: false });
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [showInstagram, setShowInstagram] = useState(false);
-  const [showTestimonials, setShowTestimonials] = useState(false);
-  const [showFAQ, setShowFAQ] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Static data - no re-computation
+  // Your brand's actual services
   const services = [
-    { icon: "🏗️", title: "Villa Renovation", description: "Complete luxury transformation with premium materials" },
-    { icon: "🍳", title: "Kitchen Remodeling", description: "Modern kitchens with German appliances" },
-    { icon: "🛁", title: "Bathroom Renovation", description: "Spa-inspired luxury bathrooms" },
-    { icon: "🎨", title: "Interior Design", description: "Bespoke interior solutions" },
-    { icon: "🏠", title: "Villa Extensions", description: "Seamless home additions" },
-    { icon: "🌟", title: "Smart Home", description: "Advanced automation systems" }
-  ];
-
-  const portfolioItems = [
     { 
-      img: "/portfolio1.webp", 
-      title: "Palm Jumeirah Villa", 
-      desc: "6-bedroom luxury renovation",
-      budget: "AED 3.2M",
-      duration: "4 months"
+      icon: "🏛️", 
+      title: "Villa Renovation", 
+      description: "Breathe new life into your villa with our expert renovation services. Full makeovers or selective upgrades with timeless design." 
     },
     { 
-      img: "/portfolio2.webp", 
-      title: "Emirates Hills Mansion", 
-      desc: "Modern extension with pool",
-      budget: "AED 4.8M",
-      duration: "6 months"
+      icon: "🏗️", 
+      title: "Villa Extensions", 
+      description: "Expand your living space seamlessly. Premium craftsmanship with compliance to local regulations." 
     },
     { 
-      img: "/portfolio3.webp", 
-      title: "Downtown Penthouse", 
-      desc: "Ultra-luxury with Burj views",
-      budget: "AED 2.1M",
-      duration: "3 months"
+      icon: "✨", 
+      title: "Interior Design", 
+      description: "Bespoke designs that enhance aesthetics, comfort, and reflect your unique vision and personality." 
+    },
+    { 
+      icon: "🏡", 
+      title: "Exterior Renovation", 
+      description: "Transform outdated exteriors into elegant, modern spaces. Façade upgrades, landscaping, and outdoor lighting." 
+    },
+    { 
+      icon: "🏢", 
+      title: "Office Fit-Out", 
+      description: "Create functional, high-performance workspaces that enhance productivity and reflect your brand identity." 
+    },
+    { 
+      icon: "🤖", 
+      title: "Smart Home Automation", 
+      description: "Control lighting, AC, security, and entertainment from your smartphone. The future of luxury living." 
     }
   ];
 
-  const processSteps = [
-    { number: "01", title: "Consultation", description: "Free on-site assessment" },
-    { number: "02", title: "Design", description: "3D renders & planning" },
-    { number: "03", title: "Execution", description: "Expert craftsmanship" },
-    { number: "04", title: "Handover", description: "Quality inspection" }
+  const stats = [
+    { number: "15+", label: "Years of Excellence", icon: "⭐" },
+    { number: "800+", label: "Villas Transformed", icon: "🏡" },
+    { number: "1600+", label: "Happy Families", icon: "❤️" },
+    { number: "100%", label: "Client Satisfaction", icon: "✅" }
   ];
 
-  // Ultra-optimized scroll handler with RAF
+  // Scroll handler
   useEffect(() => {
-    let ticking = false;
-    
-    const updateScrollState = () => {
-      const scrollY = window.scrollY;
-      setScrolled(scrollY > 10);
-      
-      // Progressive loading based on scroll position
-      if (!showTestimonials && scrollY > 600) {
-        setShowTestimonials(true);
-      }
-      if (!showInstagram && scrollY > 1200) {
-        setShowInstagram(true);
-      }
-      if (!showFAQ && scrollY > 1800) {
-        setShowFAQ(true);
-      }
-      
-      ticking = false;
-    };
-    
     const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(updateScrollState);
-        ticking = true;
-      }
+      setScrolled(window.scrollY > 20);
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [showTestimonials, showInstagram, showFAQ]);
+  }, []);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
     setFormState({ submitted: false, loading: true });
-    
-    // Form submission logic
     setTimeout(() => {
       setFormState({ submitted: true, loading: false });
-      // Track conversion if GTM is available
-      if (typeof window !== 'undefined' && window.dataLayer) {
-        window.dataLayer.push({
-          'event': 'form_submit',
-          'form_name': 'consultation_request'
-        });
-      }
     }, 1000);
   }, []);
 
   return (
     <>
       <Head>
-        <title>Luxury Villa Renovation Dubai | Unicorn Renovations</title>
-        <meta name="description" content="Dubai's premier villa renovation company. Transform your villa with luxury remodeling services. ✓ Free Consultation ✓ 800+ Projects ✓ 5-Star Reviews" />
+        <title>Unicorn Group - Luxury Villa Renovation Dubai | We Transform Spaces Into Dreams</title>
+        <meta name="description" content="Unicorn Renovations Group transforms spaces into extraordinary experiences. Dubai's poets of construction creating lyrical sanctuaries. Founded by Renu & Rajeev." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href="https://unicornrenovations.ae" />
-        
-        {/* Critical Resource Hints */}
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://www.google-analytics.com" />
+        <link rel="canonical" href="https://unicornrenovations.com" />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Luxury Villa Renovation Dubai | Unicorn Renovations" />
-        <meta property="og:description" content="Transform your villa into a masterpiece with Dubai's premier renovation company" />
-        <meta property="og:image" content="https://unicornrenovations.ae/hero2.webp" />
-        <meta property="og:url" content="https://unicornrenovations.ae" />
+        <meta property="og:title" content="Unicorn Group - Luxury Villa Renovation Dubai" />
+        <meta property="og:description" content="We don't just renovate; we inspire. Transform your villa into a lyrical sanctuary." />
         
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Luxury Villa Renovation Dubai" />
-        <meta name="twitter:description" content="Transform your villa with Dubai's premier renovation company" />
-        
-        {/* Preload critical images */}
-        <link rel="preload" as="image" href="/hero2.webp" type="image/webp" fetchpriority="high" />
-        
-        {/* Minimal Critical CSS - Most styles handled by Tailwind */}
         <style dangerouslySetInnerHTML={{ __html: `
-          /* CSS Variables for fonts */
           :root {
-            --font-roboto: ${roboto.style.fontFamily};
-            --font-heading: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            --font-playfair: ${playfair.style.fontFamily};
+            --font-inter: ${inter.style.fontFamily};
           }
           
-          /* Prevent CLS */
-          html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
-          }
-          
-          body {
-            margin: 0;
-            font-family: var(--font-roboto);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-          }
-          
-          /* Optimize rendering */
-          img {
-            max-width: 100%;
-            height: auto;
-            content-visibility: auto;
-          }
-          
-          /* Hardware acceleration */
-          .will-change-transform {
-            will-change: transform;
-          }
-          
-          /* Reduce motion for accessibility */
-          @media (prefers-reduced-motion: reduce) {
-            * {
-              animation-duration: 0.01ms !important;
-              animation-iteration-count: 1 !important;
-              transition-duration: 0.01ms !important;
+          /* Smooth animations */
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
             }
           }
+          
+          .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out forwards;
+          }
+          
+          /* Luxury gradient text */
+          .gradient-text {
+            background: linear-gradient(135deg, #D4AF37 0%, #F4E4C1 50%, #D4AF37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+          
+          /* Smooth scroll */
+          html {
+            scroll-behavior: smooth;
+          }
         `}} />
-        
-        {/* Schema.org Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "HomeAndConstructionBusiness",
-              "name": "Unicorn Renovations",
-              "description": "Dubai's premier villa renovation company",
-              "url": "https://unicornrenovations.ae",
-              "telephone": "+971501234567",
-              "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "Al Wasl Road, Jumeirah 1",
-                "addressLocality": "Dubai",
-                "addressCountry": "AE"
-              },
-              "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "4.9",
-                "reviewCount": "287"
-              }
-            })
-          }}
-        />
       </Head>
 
-      {/* Apply font classes to body */}
-      <div className={`min-h-screen bg-white ${roboto.variable}`}>
-        {/* Ultra-light Header */}
+      <div className={`min-h-screen bg-white ${inter.variable} ${playfair.variable}`}>
+        {/* Luxury Header */}
         <header 
-          className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 ${
-            scrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-white/80 backdrop-blur-sm'
+          className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+            scrolled 
+              ? 'bg-white/95 backdrop-blur-md shadow-lg py-4' 
+              : 'bg-transparent py-6'
           }`}
         >
-          <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="/" className="text-2xl font-bold text-amber-600" style={systemHeading.style}>
-              Unicorn Renovations
-            </a>
-            
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex space-x-8">
-              {['Services', 'Portfolio', 'Contact'].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className={`text-gray-700 hover:text-amber-600 font-bold transition-colors ${roboto.className}`}
-                >
-                  {item}
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex justify-between items-center">
+              {/* Logo */}
+              <div className="flex items-center">
+                <a href="/" className={`text-2xl font-black ${playfair.className} ${
+                  scrolled ? 'text-gray-900' : 'text-white'
+                }`}>
+                  UNICORN<span className="text-amber-600">.</span>
                 </a>
-              ))}
-              <a
-                href="tel:+971501234567"
-                className={`bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-full font-bold transition-all ${roboto.className}`}
-              >
-                📞 Call Now
-              </a>
-            </nav>
-
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2"
-              aria-label="Menu"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                  d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-              </svg>
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden bg-white border-t shadow-lg">
-              <nav className="px-4 py-4 space-y-2">
-                {['Services', 'Portfolio', 'Contact'].map((item) => (
+              </div>
+              
+              {/* Desktop Nav */}
+              <nav className="hidden lg:flex items-center space-x-10">
+                {['Services', 'Portfolio', 'About', 'Process', 'Contact'].map((item) => (
                   <a
                     key={item}
                     href={`#${item.toLowerCase()}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`block py-2 text-gray-700 font-bold ${roboto.className}`}
+                    className={`font-medium transition-all duration-300 ${inter.className} ${
+                      scrolled 
+                        ? 'text-gray-700 hover:text-amber-600' 
+                        : 'text-white/90 hover:text-white'
+                    }`}
                   >
                     {item}
                   </a>
                 ))}
+                <a
+                  href="tel:+971501234567"
+                  className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-none font-semibold transition-all duration-300 ${inter.className}`}
+                >
+                  Get Consultation
+                </a>
+              </nav>
+
+              {/* Mobile Menu */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className={`lg:hidden p-2 ${scrolled ? 'text-gray-900' : 'text-white'}`}
+              >
+                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                    d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Menu Overlay */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden fixed inset-0 bg-white z-50 pt-20">
+              <nav className="flex flex-col items-center space-y-8 p-8">
+                {['Services', 'Portfolio', 'About', 'Process', 'Contact'].map((item) => (
+                  <a
+                    key={item}
+                    href={`#${item.toLowerCase()}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`text-2xl font-light text-gray-900 ${playfair.className}`}
+                  >
+                    {item}
+                  </a>
+                ))}
+                <a
+                  href="tel:+971501234567"
+                  className={`px-8 py-4 bg-amber-600 text-white text-xl ${inter.className}`}
+                >
+                  Call Now
+                </a>
               </nav>
             </div>
           )}
         </header>
 
-        {/* Hero Section - Optimized for LCP */}
-        <section className="relative pt-32 pb-24 px-4 bg-gradient-to-br from-amber-50 via-white to-blue-50 min-h-screen flex items-center">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="text-center lg:text-left space-y-6">
-                <div className={`inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-bold ${roboto.className}`}>
-                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse" />
-                  Dubai's #1 Rated Renovation Company
-                </div>
-                
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-blue-900 leading-tight" style={systemHeading.style}>
-                  Transform Your Villa Into a{" "}
-                  <span className="bg-gradient-to-r from-amber-500 to-amber-700 bg-clip-text text-transparent">
-                    Masterpiece
-                  </span>
-                </h1>
-                
-                <p className={`text-lg sm:text-xl text-gray-700 leading-relaxed max-w-xl mx-auto lg:mx-0 ${roboto.className}`}>
-                  Experience luxury villa renovations with <strong>15+ years expertise</strong>, <strong>800+ completed projects</strong>, and master craftsmen dedicated to exceeding expectations.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <a
-                    href="#contact"
-                    className={`bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-4 px-8 rounded-full shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 inline-flex items-center justify-center ${roboto.className}`}
-                  >
-                    Book Free Consultation
-                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </a>
-                  
-                  <a
-                    href="#portfolio"
-                    className={`bg-white text-blue-900 font-bold py-4 px-8 rounded-full border-2 border-blue-900 hover:bg-blue-900 hover:text-white transition-all ${roboto.className}`}
-                  >
-                    View Portfolio
-                  </a>
-                </div>
-                
-                {/* Trust Badges */}
-                <div className={`flex flex-wrap gap-6 justify-center lg:justify-start pt-4 text-sm ${roboto.className}`}>
-                  <span className="flex items-center gap-2">
-                    ✅ <strong>100%</strong> Licensed
-                  </span>
-                  <span className="flex items-center gap-2">
-                    ✅ <strong>5-Year</strong> Warranty
-                  </span>
-                  <span className="flex items-center gap-2">
-                    ✅ <strong>4.9★</strong> Rating
-                  </span>
-                </div>
-              </div>
+        {/* Hero Section - Luxury Style */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/hero-villa.jpg"
+              alt="Luxury Villa"
+              fill
+              className="object-cover"
+              priority
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70" />
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 max-w-7xl mx-auto px-6 text-center text-white">
+            <div className="animate-fadeInUp">
+              <p className={`text-amber-400 text-sm tracking-[0.3em] uppercase mb-6 ${inter.className}`}>
+                Dubai's Poets of Construction
+              </p>
+              <h1 className={`text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight ${playfair.className}`}>
+                We Transform Spaces Into
+                <span className="block gradient-text mt-4">Lyrical Sanctuaries</span>
+              </h1>
+              <p className={`text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto mb-12 font-light leading-relaxed ${inter.className}`}>
+                In the UAE's heart, Unicorn Interiors orchestrates dreams, transcending the mundane. 
+                We infuse poetry into every corner, making homes emotional sanctuaries.
+              </p>
               
-              {/* Hero Image with priority loading */}
-              <div className="relative">
-                <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-                  <Image
-                    src="/hero2.webp"
-                    alt="Luxury Villa Renovation in Dubai"
-                    width={600}
-                    height={450}
-                    priority={true}
-                    quality={85}
-                    className="w-full h-auto"
-                    placeholder="blur"
-                    blurDataURL="data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAAAwAgCdASoIAAYAAkA4JZwCdAEO/gjeAA+gAP79O7/7PYkr+8H/v3/85bgAJfUA51AAtQBOYACeAE6YAHC8AaH0AOeGUjX+4EWB/kAA"
-                  />
-                  <div className={`absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg ${roboto.className}`}>
-                    <span className="text-sm font-bold text-blue-900">800+ Villas Renovated</span>
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <a
+                  href="#contact"
+                  className={`px-10 py-5 bg-amber-600 hover:bg-amber-700 text-white text-lg font-semibold transition-all duration-300 transform hover:scale-105 ${inter.className}`}
+                >
+                  Begin Your Journey
+                </a>
+                <a
+                  href="#portfolio"
+                  className={`px-10 py-5 bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 text-lg font-semibold transition-all duration-300 ${inter.className}`}
+                >
+                  View Our Masterpieces
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </section>
+
+        {/* Philosophy Section */}
+        <section className="py-24 px-6 bg-gray-50">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <div>
+                <h2 className={`text-4xl md:text-5xl font-bold text-gray-900 mb-8 ${playfair.className}`}>
+                  Beyond Construction,<br />
+                  <span className="text-amber-600">We Create Poetry</span>
+                </h2>
+                <p className={`text-lg text-gray-600 mb-6 leading-relaxed ${inter.className}`}>
+                  Founded by <strong>Renu and Rajeev</strong>, Unicorn Renovations Group brings together 
+                  expert designers and master craftsmen who share a passion for transforming ordinary spaces 
+                  into extraordinary experiences.
+                </p>
+                <p className={`text-lg text-gray-600 mb-8 leading-relaxed ${inter.className}`}>
+                  We stay ahead of trends, using the latest designs and materials to create beautiful, 
+                  sustainable spaces. Every project is a harmonious performance where visions become reality.
+                </p>
+                <div className="flex items-center space-x-8">
+                  <div>
+                    <p className={`text-4xl font-bold text-amber-600 ${playfair.className}`}>15+</p>
+                    <p className={`text-sm text-gray-600 ${inter.className}`}>Years Excellence</p>
+                  </div>
+                  <div>
+                    <p className={`text-4xl font-bold text-amber-600 ${playfair.className}`}>800+</p>
+                    <p className={`text-sm text-gray-600 ${inter.className}`}>Villas Transformed</p>
+                  </div>
+                  <div>
+                    <p className={`text-4xl font-bold text-amber-600 ${playfair.className}`}>100%</p>
+                    <p className={`text-sm text-gray-600 ${inter.className}`}>Satisfaction</p>
                   </div>
                 </div>
+              </div>
+              <div className="relative h-[500px]">
+                <Image
+                  src="/renovation-process.jpg"
+                  alt="Luxury Villa Interior"
+                  fill
+                  className="object-cover rounded-none shadow-2xl"
+                />
+                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-amber-600"></div>
+                <div className="absolute -top-6 -right-6 w-32 h-32 bg-gray-900"></div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Services Section */}
-        <section id="services" className="py-20 bg-gradient-to-b from-white to-amber-50 px-4">
+        <section id="services" className="py-24 px-6 bg-white">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl sm:text-5xl font-bold text-blue-900 mb-4" style={systemHeading.style}>
-                Our Premium Services
+            <div className="text-center mb-16">
+              <p className={`text-amber-600 text-sm tracking-[0.3em] uppercase mb-4 ${inter.className}`}>
+                Our Expertise
+              </p>
+              <h2 className={`text-4xl md:text-5xl font-bold text-gray-900 mb-6 ${playfair.className}`}>
+                Services That Transform Lives
               </h2>
-              <p className={`text-lg text-gray-600 max-w-3xl mx-auto ${roboto.className}`}>
-                Comprehensive villa renovation solutions tailored to your vision
+              <p className={`text-xl text-gray-600 max-w-3xl mx-auto ${inter.className}`}>
+                From luxurious villas to stunning pools, we specialize in high-end renovations 
+                that blend timeless design with modern functionality.
               </p>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service, index) => (
-                <ServiceCard key={index} {...service} />
+                <ServiceCard key={index} {...service} index={index} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Stats Section */}
+        <section className="py-24 px-6 bg-gray-900 text-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-5xl mb-4">{stat.icon}</div>
+                  <p className={`text-4xl font-bold text-amber-400 mb-2 ${playfair.className}`}>
+                    {stat.number}
+                  </p>
+                  <p className={`text-gray-400 ${inter.className}`}>{stat.label}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
         {/* Process Section */}
-        <section id="process" className="py-20 bg-white px-4">
+        <section id="process" className="py-24 px-6 bg-white">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl sm:text-5xl font-bold text-blue-900 mb-4" style={systemHeading.style}>
-                Our Proven Process
-              </h2>
-              <p className={`text-lg text-gray-600 max-w-3xl mx-auto ${roboto.className}`}>
-                A transparent approach ensuring your villa transformation exceeds expectations
+            <div className="text-center mb-16">
+              <p className={`text-amber-600 text-sm tracking-[0.3em] uppercase mb-4 ${inter.className}`}>
+                Our Process
               </p>
+              <h2 className={`text-4xl md:text-5xl font-bold text-gray-900 ${playfair.className}`}>
+                A Journey From Vision to Reality
+              </h2>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {processSteps.map((step, index) => (
+
+            <div className="grid md:grid-cols-4 gap-8">
+              {[
+                { step: "01", title: "Consultation", desc: "Understanding your dreams and goals" },
+                { step: "02", title: "Design", desc: "Creating detailed plans with 3D visualization" },
+                { step: "03", title: "Execution", desc: "Master craftsmen bring designs to life" },
+                { step: "04", title: "Perfection", desc: "Final touches and quality inspection" }
+              ].map((item, index) => (
                 <div key={index} className="text-center group">
-                  <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                    <span className={`text-2xl font-bold text-white ${roboto.className}`}>{step.number}</span>
+                  <div className={`text-6xl font-bold text-gray-200 group-hover:text-amber-600 transition-colors duration-300 mb-4 ${playfair.className}`}>
+                    {item.step}
                   </div>
-                  <h3 className="text-xl font-bold text-blue-900 mb-3" style={systemHeading.style}>{step.title}</h3>
-                  <p className={`text-gray-600 text-sm ${roboto.className}`}>{step.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Portfolio Section */}
-        <section id="portfolio" className="py-20 bg-gradient-to-b from-blue-50 to-white px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl sm:text-5xl font-bold text-blue-900 mb-4" style={systemHeading.style}>
-                Our Portfolio
-              </h2>
-              <p className={`text-lg text-gray-600 max-w-3xl mx-auto ${roboto.className}`}>
-                Exceptional villa transformations across Dubai's prestigious communities
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              {portfolioItems.map((project, index) => (
-                <PortfolioCard key={index} {...project} />
-              ))}
-            </div>
-
-            {/* Lazy Load Instagram */}
-            {showInstagram && (
-              <div className="max-w-5xl mx-auto">
-                <h3 className="text-2xl font-bold text-blue-900 text-center mb-8" style={systemHeading.style}>
-                  Follow Our Latest Projects
-                </h3>
-                <InstagramFeed />
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Testimonials - Lazy Loaded */}
-        {showTestimonials && (
-          <TestimonialsSection robotoFont={roboto.className} headingStyle={systemHeading.style} />
-        )}
-
-        {/* Contact Form Section */}
-        <section id="contact" className="py-20 bg-gradient-to-br from-blue-900 to-blue-800 px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-              {formState.submitted ? (
-                <div className="p-12 text-center">
-                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-3xl font-bold text-blue-900 mb-4" style={systemHeading.style}>
-                    Thank You!
+                  <h3 className={`text-xl font-bold text-gray-900 mb-3 ${playfair.className}`}>
+                    {item.title}
                   </h3>
-                  <p className={`text-gray-600 mb-8 max-w-md mx-auto ${roboto.className}`}>
-                    Our renovation specialist will contact you within 24 hours.
+                  <p className={`text-gray-600 ${inter.className}`}>
+                    {item.desc}
                   </p>
-                  <button
-                    onClick={() => setFormState({ submitted: false, loading: false })}
-                    className={`text-amber-600 hover:text-amber-700 font-bold underline ${roboto.className}`}
-                  >
-                    Submit Another Request
-                  </button>
                 </div>
-              ) : (
-                <>
-                  <div className="bg-gradient-to-r from-amber-500 to-amber-600 p-8 text-white">
-                    <h2 className="text-3xl font-bold mb-2" style={systemHeading.style}>
-                      Start Your Renovation Journey
-                    </h2>
-                    <p className={roboto.className}>
-                      Get a free consultation and detailed quote
-                    </p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonial Section */}
+        <section className="py-24 px-6 bg-gray-50">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <p className={`text-amber-600 text-sm tracking-[0.3em] uppercase mb-4 ${inter.className}`}>
+                Testimonials
+              </p>
+              <h2 className={`text-4xl md:text-5xl font-bold text-gray-900 ${playfair.className}`}>
+                Stories of Transformation
+              </h2>
+            </div>
+
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white p-12 shadow-xl">
+                <svg className="w-12 h-12 text-amber-600 mb-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <p className={`text-2xl text-gray-700 mb-8 leading-relaxed italic ${playfair.className}`}>
+                  "Unicorn team turned our villa into a dream home. Their team was professional, creative, 
+                  and paid attention to every little detail. The end result is stunning — it truly feels 
+                  like a luxury sanctuary. We're beyond happy!"
+                </p>
+                <div>
+                  <p className={`font-bold text-gray-900 ${inter.className}`}>Fatima & Ahmed Al Rashid</p>
+                  <p className={`text-gray-600 ${inter.className}`}>Palm Jumeirah Villa</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className="py-24 px-6 bg-gray-900 text-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-16">
+              <div>
+                <p className={`text-amber-400 text-sm tracking-[0.3em] uppercase mb-4 ${inter.className}`}>
+                  Get In Touch
+                </p>
+                <h2 className={`text-4xl md:text-5xl font-bold mb-8 ${playfair.className}`}>
+                  Let's Create Your<br />
+                  Dream Sanctuary
+                </h2>
+                <p className={`text-xl text-gray-400 mb-12 ${inter.className}`}>
+                  Join our journey where renovation is not a service but an emotional sonnet, 
+                  crafting dreams into reality.
+                </p>
+                
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className={`text-gray-400 text-sm ${inter.className}`}>Call Us</p>
+                      <a href="tel:+971501234567" className={`text-xl hover:text-amber-400 transition-colors ${inter.className}`}>
+                        +971 50 123 4567
+                      </a>
+                    </div>
                   </div>
                   
-                  <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <input
-                        type="text"
-                        name="name"
-                        placeholder="Full Name *"
-                        required
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none ${roboto.className}`}
-                      />
-                      <input
-                        type="email"
-                        name="email"
-                        placeholder="Email *"
-                        required
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none ${roboto.className}`}
-                      />
-                      <input
-                        type="tel"
-                        name="phone"
-                        placeholder="Phone *"
-                        required
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none ${roboto.className}`}
-                      />
-                      <select
-                        name="service"
-                        required
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none ${roboto.className}`}
-                      >
-                        <option value="">Select Service *</option>
-                        <option value="villa">Villa Renovation</option>
-                        <option value="kitchen">Kitchen Remodeling</option>
-                        <option value="bathroom">Bathroom Renovation</option>
-                        <option value="extension">Villa Extension</option>
-                      </select>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
                     </div>
+                    <div>
+                      <p className={`text-gray-400 text-sm ${inter.className}`}>Email</p>
+                      <a href="mailto:info@unicornrenovations.com" className={`text-xl hover:text-amber-400 transition-colors ${inter.className}`}>
+                        info@unicornrenovations.com
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className={`text-gray-400 text-sm ${inter.className}`}>Visit Our Studio</p>
+                      <p className={`text-xl ${inter.className}`}>
+                        The Curve Building, Sheikh Zayed Road, Dubai
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Form */}
+              <div className="bg-white text-gray-900 p-10">
+                {formState.submitted ? (
+                  <div className="text-center py-12">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <h3 className={`text-3xl font-bold mb-4 ${playfair.className}`}>
+                      Thank You!
+                    </h3>
+                    <p className={`text-gray-600 ${inter.className}`}>
+                      Our design specialist will contact you within 24 hours.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <h3 className={`text-2xl font-bold mb-6 ${playfair.className}`}>
+                      Request Free Consultation
+                    </h3>
+                    
+                    <input
+                      type="text"
+                      placeholder="Your Name"
+                      required
+                      className={`w-full px-0 py-3 border-0 border-b-2 border-gray-300 focus:border-amber-600 focus:outline-none transition-colors ${inter.className}`}
+                    />
+                    
+                    <input
+                      type="email"
+                      placeholder="Email Address"
+                      required
+                      className={`w-full px-0 py-3 border-0 border-b-2 border-gray-300 focus:border-amber-600 focus:outline-none transition-colors ${inter.className}`}
+                    />
+                    
+                    <input
+                      type="tel"
+                      placeholder="Phone Number"
+                      required
+                      className={`w-full px-0 py-3 border-0 border-b-2 border-gray-300 focus:border-amber-600 focus:outline-none transition-colors ${inter.className}`}
+                    />
+                    
+                    <select
+                      required
+                      className={`w-full px-0 py-3 border-0 border-b-2 border-gray-300 focus:border-amber-600 focus:outline-none transition-colors ${inter.className}`}
+                    >
+                      <option value="">Select Service</option>
+                      <option value="villa-renovation">Villa Renovation</option>
+                      <option value="villa-extension">Villa Extension</option>
+                      <option value="interior-design">Interior Design</option>
+                      <option value="pool">Swimming Pool</option>
+                      <option value="smart-home">Smart Home</option>
+                      <option value="office">Office Fit-Out</option>
+                    </select>
                     
                     <textarea
-                      name="message"
-                      placeholder="Tell us about your project *"
+                      placeholder="Tell us about your dream project..."
                       rows={4}
                       required
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none ${roboto.className}`}
+                      className={`w-full px-0 py-3 border-0 border-b-2 border-gray-300 focus:border-amber-600 focus:outline-none transition-colors resize-none ${inter.className}`}
                     />
                     
                     <button
                       type="submit"
                       disabled={formState.loading}
-                      className={`w-full py-4 px-6 rounded-lg font-bold text-white transition-all ${
-                        formState.loading
-                          ? 'bg-gray-400 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 transform hover:scale-105'
-                      } ${roboto.className}`}
+                      className={`w-full py-4 bg-amber-600 hover:bg-amber-700 text-white font-semibold transition-all duration-300 ${inter.className} ${
+                        formState.loading ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
                     >
-                      {formState.loading ? 'Processing...' : 'Get Free Consultation'}
+                      {formState.loading ? 'Submitting...' : 'Begin Your Journey'}
                     </button>
                   </form>
-                </>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* FAQ - Lazy Loaded */}
-        {showFAQ && <FAQSection robotoFont={roboto.className} headingStyle={systemHeading.style} />}
-
         {/* Footer */}
-        <footer className="bg-gradient-to-b from-blue-900 to-blue-950 text-white py-16 px-4">
+        <footer className="py-12 px-6 bg-black text-white">
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-              <div>
-                <h3 className="text-2xl font-bold mb-4 text-amber-400" style={systemHeading.style}>
-                  Unicorn Renovations
-                </h3>
-                <p className={`text-blue-200 mb-4 ${roboto.className}`}>
-                  Dubai's premier villa renovation company since 2009.
-                </p>
-                <div className="flex gap-4">
-                  {['F', 'I', 'L', 'Y'].map((letter, i) => (
-                    <a
-                      key={i}
-                      href="#"
-                      className="w-10 h-10 bg-blue-800 hover:bg-amber-500 rounded-full flex items-center justify-center transition-colors"
-                      aria-label={`Social ${letter}`}
-                    >
-                      {letter}
-                    </a>
-                  ))}
-                </div>
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div className={`text-2xl font-bold mb-4 md:mb-0 ${playfair.className}`}>
+                UNICORN<span className="text-amber-600">.</span>
               </div>
               
-              <div>
-                <h4 className="font-bold text-lg mb-4 text-amber-400" style={systemHeading.style}>Services</h4>
-                <ul className={`space-y-2 text-blue-200 ${roboto.className}`}>
-                  <li><a href="#" className="hover:text-amber-400 transition-colors">Villa Renovation</a></li>
-                  <li><a href="#" className="hover:text-amber-400 transition-colors">Kitchen Remodeling</a></li>
-                  <li><a href="#" className="hover:text-amber-400 transition-colors">Bathroom Renovation</a></li>
-                  <li><a href="#" className="hover:text-amber-400 transition-colors">Smart Home</a></li>
-                </ul>
-              </div>
-              
-              <div>
-                <h4 className="font-bold text-lg mb-4 text-amber-400" style={systemHeading.style}>Areas</h4>
-                <ul className={`space-y-2 text-blue-200 ${roboto.className}`}>
-                  <li><a href="#" className="hover:text-amber-400 transition-colors">Emirates Hills</a></li>
-                  <li><a href="#" className="hover:text-amber-400 transition-colors">Palm Jumeirah</a></li>
-                  <li><a href="#" className="hover:text-amber-400 transition-colors">Dubai Hills</a></li>
-                  <li><a href="#" className="hover:text-amber-400 transition-colors">Downtown Dubai</a></li>
-                </ul>
-              </div>
-              
-              <div>
-                <h4 className="font-bold text-lg mb-4 text-amber-400" style={systemHeading.style}>Contact</h4>
-                <address className={`not-italic space-y-2 text-blue-200 ${roboto.className}`}>
-                  <p>Al Wasl Road, Jumeirah 1</p>
-                  <p>Dubai, UAE</p>
-                  <p><a href="tel:+971501234567" className="hover:text-amber-400">+971 50 123 4567</a></p>
-                  <p><a href="mailto:info@unicornrenovations.ae" className="hover:text-amber-400">info@unicornrenovations.ae</a></p>
-                </address>
-              </div>
-            </div>
-            
-            <div className="border-t border-blue-800 pt-8 text-center">
-              <p className={`text-sm text-blue-300 ${roboto.className}`}>
-                © {new Date().getFullYear()} Unicorn Renovations LLC. All rights reserved.
+              <p className={`text-gray-400 text-sm ${inter.className}`}>
+                © {new Date().getFullYear()} Unicorn Renovations Group. Crafting Dreams Into Reality.
               </p>
+              
+              <div className="flex space-x-6 mt-4 md:mt-0">
+                {['Instagram', 'Facebook', 'LinkedIn'].map((social) => (
+                  <a
+                    key={social}
+                    href="#"
+                    className={`text-gray-400 hover:text-amber-600 transition-colors ${inter.className}`}
+                  >
+                    {social}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </footer>
 
-        {/* Floating WhatsApp Button */}
+        {/* WhatsApp Button */}
         <a
           href="https://wa.me/971501234567"
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 z-40"
-          aria-label="Chat on WhatsApp"
+          className="fixed bottom-6 right-6 w-16 h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-2xl hover:shadow-xl transition-all transform hover:scale-110 z-40"
+          aria-label="WhatsApp"
         >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
           </svg>
         </a>
