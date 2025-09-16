@@ -181,18 +181,30 @@ export default function Home() {
         <header 
           className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
             scrolled 
-              ? 'bg-white/95 backdrop-blur-md shadow-lg py-4' 
-              : 'bg-transparent py-6'
+              ? 'bg-white/95 backdrop-blur-md shadow-lg py-3 md:py-4' 
+              : 'bg-transparent py-4 md:py-6'
           }`}
         >
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
             <div className="flex justify-between items-center">
-              {/* Logo */}
+              {/* Logo - Links to main website */}
               <div className="flex items-center">
-                <a href="/" className={`text-2xl font-black ${playfair.className} ${
-                  scrolled ? 'text-gray-900' : 'text-white'
-                }`}>
-                  UNICORN<span className="text-amber-600">.</span>
+                <a 
+                  href="https://www.unicornrenovations.com" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${playfair.className} ${
+                    scrolled ? 'text-gray-900' : 'text-white'
+                  }`}
+                >
+                  <div className="text-xl md:text-2xl font-black">
+                    UNICORN<span className="text-amber-600">.</span>
+                  </div>
+                  <div className={`text-[8px] md:text-xs tracking-[0.2em] uppercase ${inter.className} ${
+                    scrolled ? 'text-gray-600' : 'text-white/80'
+                  }`}>
+                    Poets of Construction
+                  </div>
                 </a>
               </div>
               
@@ -212,6 +224,14 @@ export default function Home() {
                   </a>
                 ))}
                 <a
+                  href="https://www.unicornrenovations.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`px-4 py-2 border border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white transition-all duration-300 ${inter.className}`}
+                >
+                  Main Website
+                </a>
+                <a
                   href="tel:+971501234567"
                   className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-none font-semibold transition-all duration-300 ${inter.className}`}
                 >
@@ -219,12 +239,13 @@ export default function Home() {
                 </a>
               </nav>
 
-              {/* Mobile Menu */}
+              {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className={`lg:hidden p-2 ${scrolled ? 'text-gray-900' : 'text-white'}`}
+                aria-label="Menu"
               >
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                     d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
                 </svg>
@@ -232,26 +253,55 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Mobile Menu Overlay */}
+          {/* Mobile Menu Overlay - Optimized */}
           {mobileMenuOpen && (
-            <div className="lg:hidden fixed inset-0 bg-white z-50 pt-20">
-              <nav className="flex flex-col items-center space-y-8 p-8">
+            <div className="lg:hidden fixed inset-0 bg-white z-50">
+              <div className="flex justify-between items-center p-4 border-b">
+                <div className={`text-xl font-black ${playfair.className}`}>
+                  UNICORN<span className="text-amber-600">.</span>
+                </div>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 text-gray-900"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <nav className="flex flex-col p-6 space-y-6">
                 {['Services', 'Portfolio', 'About', 'Process', 'Contact'].map((item) => (
                   <a
                     key={item}
                     href={`#${item.toLowerCase()}`}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`text-2xl font-light text-gray-900 ${playfair.className}`}
+                    className={`text-xl text-gray-900 ${inter.className}`}
                   >
                     {item}
                   </a>
                 ))}
-                <a
-                  href="tel:+971501234567"
-                  className={`px-8 py-4 bg-amber-600 text-white text-xl ${inter.className}`}
-                >
-                  Call Now
-                </a>
+                <div className="pt-6 space-y-4 border-t">
+                  <a
+                    href="https://www.unicornrenovations.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block w-full px-6 py-4 bg-gray-900 text-white text-center text-lg ${inter.className}`}
+                  >
+                    Visit Main Website →
+                  </a>
+                  <a
+                    href="tel:+971501234567"
+                    className={`block w-full px-6 py-4 bg-amber-600 text-white text-center text-lg font-semibold ${inter.className}`}
+                  >
+                    📞 Call Now
+                  </a>
+                  <a
+                    href="https://wa.me/971501234567"
+                    className={`block w-full px-6 py-4 bg-green-500 text-white text-center text-lg font-semibold ${inter.className}`}
+                  >
+                    💬 WhatsApp Us
+                  </a>
+                </div>
               </nav>
             </div>
           )}
