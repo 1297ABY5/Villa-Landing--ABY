@@ -259,10 +259,26 @@ export default function Home() {
 
         {/* Hero Section - Luxury Style */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          {/* Background Image */}
+          {/* Background - Luxury Gradient (No Image Required) */}
           <div className="absolute inset-0 z-0">
+            {/* Option 1: Beautiful gradient background - no image needed */}
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-amber-900" />
+            
+            {/* Animated gradient overlay for luxury effect */}
+            <div className="absolute inset-0 opacity-50">
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
+            </div>
+            
+            {/* Pattern overlay for texture */}
+            <div className="absolute inset-0 opacity-10" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }} />
+            
+            {/* Option 2: If you want to use a placeholder image service, uncomment below */}
+            {/* 
             <Image
-              src="/hero-villa.jpg"
+              src="https://source.unsplash.com/1600x900/?luxury,villa,dubai"
               alt="Luxury Villa"
               fill
               className="object-cover"
@@ -270,6 +286,7 @@ export default function Home() {
               quality={90}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70" />
+            */}
           </div>
 
           {/* Content */}
@@ -345,13 +362,27 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="relative h-[500px]">
+              <div className="relative h-[500px] bg-gradient-to-br from-amber-100 to-amber-50">
+                {/* Decorative elements instead of image */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-8xl text-amber-600/20 mb-4">🏛️</div>
+                    <p className={`text-3xl font-bold text-amber-600/30 ${playfair.className}`}>
+                      Excellence in Every Detail
+                    </p>
+                  </div>
+                </div>
+                
+                {/* If you want to add your own image later, replace the above with: */}
+                {/* 
                 <Image
-                  src="/renovation-process.jpg"
+                  src="/your-villa-image.jpg"
                   alt="Luxury Villa Interior"
                   fill
-                  className="object-cover rounded-none shadow-2xl"
+                  className="object-cover shadow-2xl"
                 />
+                */}
+                
                 <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-amber-600"></div>
                 <div className="absolute -top-6 -right-6 w-32 h-32 bg-gray-900"></div>
               </div>
@@ -431,6 +462,59 @@ export default function Home() {
                   </p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Instagram Gallery Section */}
+        <section id="portfolio" className="py-24 px-6 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <p className={`text-amber-600 text-sm tracking-[0.3em] uppercase mb-4 ${inter.className}`}>
+                Follow Our Journey
+              </p>
+              <h2 className={`text-4xl md:text-5xl font-bold text-gray-900 mb-6 ${playfair.className}`}>
+                Latest Projects on Instagram
+              </h2>
+              <p className={`text-xl text-gray-600 max-w-3xl mx-auto mb-4 ${inter.className}`}>
+                See our villa transformations, from Victory Heights to Arabian Ranches and the Meadows
+              </p>
+              <a 
+                href="https://instagram.com/unicornrenovations" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center text-amber-600 hover:text-amber-700 font-semibold ${inter.className}`}
+              >
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
+                </svg>
+                @unicornrenovations
+              </a>
+            </div>
+
+            {/* Instagram Feed Widget */}
+            <div className="max-w-6xl mx-auto">
+              <InstagramFeed />
+            </div>
+
+            {/* Portfolio Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-16 border-t border-gray-200">
+              <div className="text-center">
+                <p className={`text-3xl font-bold text-amber-600 mb-2 ${playfair.className}`}>800+</p>
+                <p className={`text-gray-600 ${inter.className}`}>Villas Renovated</p>
+              </div>
+              <div className="text-center">
+                <p className={`text-3xl font-bold text-amber-600 mb-2 ${playfair.className}`}>1,600+</p>
+                <p className={`text-gray-600 ${inter.className}`}>Bathrooms Designed</p>
+              </div>
+              <div className="text-center">
+                <p className={`text-3xl font-bold text-amber-600 mb-2 ${playfair.className}`}>800+</p>
+                <p className={`text-gray-600 ${inter.className}`}>Kitchens Delivered</p>
+              </div>
+              <div className="text-center">
+                <p className={`text-3xl font-bold text-amber-600 mb-2 ${playfair.className}`}>100%</p>
+                <p className={`text-gray-600 ${inter.className}`}>Satisfied Clients</p>
+              </div>
             </div>
           </div>
         </section>
