@@ -509,318 +509,331 @@ export default function Home() {
         `}} />
       </Head>
 
-      <div className={`min-h-screen bg-white ${inter.variable} ${playfair.variable} pb-16 md:pb-0`}>
+      <div className={`min-h-screen bg-white ${inter.variable} ${playfair.variable}`}>
         
-        {/* Urgency Banner */}
-        <div className="bg-red-600 text-white text-center py-2 text-sm md:text-base animate-pulse-slow">
-          <p className={inter.className}>
-            ⚡ Limited Time: Free Design Consultation • Only {urgencySlots} Slots Available Today • 
-            <a href="#contact" className="underline font-bold ml-1">Book Now</a>
-          </p>
-        </div>
-
-        {/* Trust Badges Bar */}
-        <div className="bg-gray-50 py-3 border-b">
-          <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-center items-center gap-4 md:gap-8 text-xs md:text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span className={`text-gray-700 ${inter.className}`}>Dubai Municipality Approved</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span className={`text-gray-700 ${inter.className}`}>RERA Certified</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span className={`text-gray-700 ${inter.className}`}>15+ Years Experience</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-yellow-500">★★★★★</span>
-              <span className={`text-gray-700 ${inter.className}`}>4.9/5 (287 Reviews)</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Header */}
+        {/* Header - Fixed and Simplified */}
         <header 
-          className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+          className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
             scrolled 
-              ? 'bg-white/95 backdrop-blur-md shadow-lg py-3 md:py-4' 
-              : 'bg-transparent py-4 md:py-6'
+              ? 'bg-white shadow-lg' 
+              : 'bg-white/95 backdrop-blur-sm'
           }`}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-6">
-            <div className="flex justify-between items-center">
-              {/* Logo */}
-              <div className="flex items-center">
-                <a 
-                  href="https://www.unicornrenovations.com" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${playfair.className} ${
-                    scrolled ? 'text-gray-900' : 'text-white'
-                  }`}
-                  onClick={() => {
-                    if (window.gtag) {
-                      window.gtag('event', 'click', {
-                        event_category: 'navigation',
-                        event_label: 'logo_to_main_site'
-                      });
-                    }
-                  }}
-                >
-                  <div className="text-xl md:text-2xl font-black">
-                    UNICORN<span className="text-amber-600">.</span>
-                  </div>
-                  <div className={`text-[8px] md:text-xs tracking-[0.2em] uppercase ${inter.className} ${
-                    scrolled ? 'text-gray-600' : 'text-white/80'
-                  }`}>
-                    {dynamicContent.location}'s Renovation Experts
-                  </div>
-                </a>
-              </div>
-              
-              {/* Desktop Nav */}
-              <nav className="hidden lg:flex items-center space-x-10">
-                {['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'].map((item) => (
-                  <a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    className={`font-medium transition-all duration-300 ${inter.className} ${
-                      scrolled 
-                        ? 'text-gray-700 hover:text-amber-600' 
-                        : 'text-white/90 hover:text-white'
-                    }`}
+          {/* Main Navigation */}
+          <div className="border-b border-gray-100">
+            <div className="max-w-7xl mx-auto px-4 md:px-6">
+              <div className="flex justify-between items-center h-16 md:h-20">
+                {/* Logo */}
+                <div className="flex items-center">
+                  <a 
+                    href="https://www.unicornrenovations.com" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${playfair.className}`}
                     onClick={() => {
                       if (window.gtag) {
-                        window.gtag('event', 'navigation_click', {
+                        window.gtag('event', 'click', {
                           event_category: 'navigation',
-                          event_label: item.toLowerCase()
+                          event_label: 'logo_to_main_site'
                         });
                       }
                     }}
                   >
-                    {item}
+                    <div className="text-2xl md:text-3xl font-black text-gray-900">
+                      UNICORN<span className="text-amber-600">.</span>
+                    </div>
+                    <div className={`text-[10px] md:text-xs tracking-widest uppercase ${inter.className} text-gray-600`}>
+                      {dynamicContent.location} Renovations
+                    </div>
                   </a>
-                ))}
-                <a
-                  href="tel:+971501234567"
-                  className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-none font-semibold transition-all duration-300 ${inter.className}`}
-                  onClick={() => {
-                    if (window.gtag) {
-                      window.gtag('event', 'click_to_call', {
-                        event_category: 'engagement',
-                        event_label: 'header_cta'
-                      });
-                    }
-                  }}
-                >
-                  Get Free Quote
-                </a>
-              </nav>
-
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`lg:hidden p-2 ${scrolled ? 'text-gray-900' : 'text-white'}`}
-                aria-label="Menu"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                    d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="lg:hidden fixed inset-0 bg-white z-50">
-              <div className="flex justify-between items-center p-4 border-b">
-                <div className={`text-xl font-black ${playfair.className}`}>
-                  UNICORN<span className="text-amber-600">.</span>
                 </div>
+                
+                {/* Desktop Nav */}
+                <nav className="hidden lg:flex items-center space-x-8 xl:space-x-10">
+                  {['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'].map((item) => (
+                    <a
+                      key={item}
+                      href={`#${item.toLowerCase()}`}
+                      className={`font-medium text-gray-700 hover:text-amber-600 transition-colors ${inter.className}`}
+                      onClick={() => {
+                        if (window.gtag) {
+                          window.gtag('event', 'navigation_click', {
+                            event_category: 'navigation',
+                            event_label: item.toLowerCase()
+                          });
+                        }
+                      }}
+                    >
+                      {item}
+                    </a>
+                  ))}
+                  <a
+                    href="tel:+971501234567"
+                    className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-all ${inter.className}`}
+                    onClick={() => {
+                      if (window.gtag) {
+                        window.gtag('event', 'click_to_call', {
+                          event_category: 'engagement',
+                          event_label: 'header_cta'
+                        });
+                      }
+                    }}
+                  >
+                    Get Free Quote
+                  </a>
+                </nav>
+
+                {/* Mobile Menu Button */}
                 <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 text-gray-900"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="lg:hidden p-3 -mr-2"
+                  aria-label="Menu"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                      d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
                   </svg>
                 </button>
               </div>
-              <nav className="flex flex-col p-6 space-y-6">
-                {['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'].map((item) => (
-                  <a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`text-xl text-gray-900 ${inter.className}`}
-                  >
-                    {item}
-                  </a>
-                ))}
-                <div className="pt-6 space-y-4 border-t">
-                  <a
-                    href="tel:+971501234567"
-                    className={`block w-full px-6 py-4 bg-amber-600 text-white text-center text-lg font-semibold ${inter.className}`}
-                  >
-                    📞 Call Now
-                  </a>
-                  <a
-                    href="https://wa.me/971501234567"
-                    className={`block w-full px-6 py-4 bg-green-500 text-white text-center text-lg font-semibold ${inter.className}`}
-                  >
-                    💬 WhatsApp Us
-                  </a>
-                </div>
-              </nav>
             </div>
-          )}
+          </div>
+          
+          {/* Trust Bar - Only on Desktop */}
+          <div className="hidden md:block bg-gray-50 py-2 border-b">
+            <div className="max-w-7xl mx-auto px-6 flex justify-center items-center gap-8 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-green-600">✓</span>
+                <span className={`text-gray-700 ${inter.className}`}>Dubai Municipality Approved</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-green-600">✓</span>
+                <span className={`text-gray-700 ${inter.className}`}>15+ Years Experience</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-yellow-500">★★★★★</span>
+                <span className={`text-gray-700 ${inter.className}`}>4.9/5 (287 Reviews)</span>
+              </div>
+            </div>
+          </div>
         </header>
 
-        {/* Hero Section - Dynamic Content */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden fixed inset-0 bg-white z-[60]">
+            <div className="flex justify-between items-center p-4 border-b bg-white">
+              <div className={`text-2xl font-black ${playfair.className}`}>
+                UNICORN<span className="text-amber-600">.</span>
+              </div>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-3 -mr-2"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <nav className="flex flex-col p-6 space-y-4">
+              {['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`text-lg py-3 px-4 text-gray-900 hover:bg-amber-50 rounded-lg transition-colors ${inter.className}`}
+                >
+                  {item}
+                </a>
+              ))}
+              <div className="pt-6 space-y-3 border-t mt-6">
+                <a
+                  href="tel:+971501234567"
+                  className={`block w-full px-6 py-4 bg-amber-600 text-white text-center text-lg font-semibold rounded-lg ${inter.className}`}
+                >
+                  📞 Call Now: +971 50 123 4567
+                </a>
+                <a
+                  href="https://wa.me/971501234567"
+                  className={`block w-full px-6 py-4 bg-green-500 text-white text-center text-lg font-semibold rounded-lg ${inter.className}`}
+                >
+                  💬 WhatsApp Chat
+                </a>
+              </div>
+            </nav>
+          </div>
+        )}
+
+        {/* Spacer for fixed header */}
+        <div className="h-16 md:h-28"></div>
+
+        {/* Urgency Banner - Sticky Below Header */}
+        <div className="sticky top-16 md:top-28 bg-red-600 text-white py-2 md:py-3 z-40">
+          <div className="container mx-auto px-4">
+            <p className={`text-center text-sm md:text-base ${inter.className}`}>
+              ⚡ Limited Time Offer: <strong>Free Design Consultation</strong> • Only {urgencySlots} Slots Today • 
+              <a href="#contact" className="underline font-bold ml-2">Book Now →</a>
+            </p>
+          </div>
+        </div>
+        </header>
+
+        {/* Hero Section - Mobile Optimized */}
+        <section className="relative min-h-screen flex items-center py-20 md:py-0">
           {/* Background */}
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-amber-900" />
-            <div className="absolute inset-0 opacity-50">
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
-            </div>
+            <div className="absolute inset-0 bg-black/30" />
           </div>
 
-          {/* Content - Dynamic Based on Keywords */}
-          <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 text-center text-white">
-            <div className="animate-fadeInUp">
-              <p className={`text-amber-400 text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mb-4 md:mb-6 ${inter.className}`}>
-                {dynamicContent.location}'s Most Trusted Since 2009
-              </p>
-              <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 md:mb-8 leading-tight ${playfair.className}`}>
-                {dynamicContent.headline}
-                <span className="block gradient-text mt-2 md:mt-4">
-                  {dynamicContent.subheadline}
+          {/* Content - Better Mobile Spacing */}
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8 text-white">
+            <div className="text-center">
+              {/* Badge */}
+              <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 md:mb-8">
+                <span className={`text-amber-400 text-xs md:text-sm tracking-wider uppercase font-semibold ${inter.className}`}>
+                  {dynamicContent.location}'s #1 Renovation Company
                 </span>
+              </div>
+              
+              {/* Main Headline - Larger on Mobile */}
+              <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight ${playfair.className}`}>
+                {dynamicContent.headline}
               </h1>
-              <p className={`text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 max-w-3xl mx-auto mb-8 md:mb-12 font-light leading-relaxed px-4 md:px-0 ${inter.className}`}>
+              
+              {/* Subheadline */}
+              <div className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 ${playfair.className}`}>
+                <span className="gradient-text">{dynamicContent.subheadline}</span>
+              </div>
+              
+              {/* Description - Larger Text */}
+              <p className={`text-lg md:text-xl lg:text-2xl text-gray-100 max-w-3xl mx-auto mb-8 md:mb-10 leading-relaxed ${inter.className}`}>
                 Transform your {dynamicContent.service.toLowerCase()} with our expert team. 
-                800+ successful projects, 15+ years experience, and 100% client satisfaction guaranteed.
+                <span className="block mt-2">
+                  <strong>800+ Projects</strong> • <strong>15+ Years Experience</strong> • <strong>100% Satisfaction</strong>
+                </span>
               </p>
               
-              {/* Multiple CTAs */}
-              <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center px-4 md:px-0">
+              {/* CTA Buttons - Bigger on Mobile */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
                 <a
-                  href="#contact"
-                  className={`px-8 md:px-10 py-4 md:py-5 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 ${inter.className}`}
+                  href="#quick-quote"
+                  className={`px-8 py-4 md:px-10 md:py-5 bg-amber-600 hover:bg-amber-700 text-white text-lg md:text-xl font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
                   onClick={() => {
                     if (window.gtag) {
                       window.gtag('event', 'cta_click', {
                         event_category: 'engagement',
-                        event_label: 'hero_primary_cta',
-                        value: 'Get Free Quote'
+                        event_label: 'hero_primary_cta'
                       });
                     }
                   }}
                 >
-                  Get Free Quote in 60 Seconds
+                  Get Free Quote →
                 </a>
                 <a
                   href="tel:+971501234567"
-                  className={`px-8 md:px-10 py-4 md:py-5 bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 text-base md:text-lg font-semibold transition-all duration-300 ${inter.className}`}
+                  className={`px-8 py-4 md:px-10 md:py-5 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-lg md:text-xl font-bold rounded-lg transition-all ${inter.className}`}
                   onClick={() => {
                     if (window.gtag) {
                       window.gtag('event', 'click_to_call', {
                         event_category: 'engagement',
-                        event_label: 'hero_secondary_cta'
+                        event_label: 'hero_call_cta'
                       });
                     }
                   }}
                 >
-                  📞 Call Now: +971 50 123 4567
+                  📞 +971 50 123 4567
                 </a>
               </div>
               
-              {/* Social Proof */}
-              <div className="mt-12 flex flex-wrap justify-center gap-8 text-white/80">
+              {/* Trust Indicators - Mobile Visible */}
+              <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-white/90">
                 <div className="flex items-center gap-2">
-                  <span className="text-green-400">✓</span>
-                  <span className={inter.className}>Dubai Municipality Approved</span>
+                  <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span className={`text-sm md:text-base ${inter.className}`}>Dubai Approved</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-400">✓</span>
-                  <span className={inter.className}>5 Year Warranty</span>
+                  <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span className={`text-sm md:text-base ${inter.className}`}>5 Year Warranty</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-400">✓</span>
-                  <span className={inter.className}>Free Consultation</span>
+                  <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span className={`text-sm md:text-base ${inter.className}`}>Free Consultation</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Scroll Indicator */}
-          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
           </div>
         </section>
 
-        {/* Google Reviews Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-8">
-              <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-4 ${playfair.className}`}>
-                Trusted by 800+ Homeowners in {dynamicContent.location}
+        {/* Google Reviews Section - Mobile Optimized */}
+        <section id="reviews" className="py-12 md:py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <div className="text-center mb-8 md:mb-12">
+              <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 ${playfair.className}`}>
+                Trusted by 800+ Homeowners
               </h2>
-              <div className="flex justify-center items-center gap-4">
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-2 md:gap-4">
                 <div className="flex text-yellow-500">
                   {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <svg key={i} className="w-6 h-6 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   ))}
                 </div>
-                <span className={`text-lg font-bold text-gray-900 ${inter.className}`}>
+                <span className={`text-base md:text-lg font-bold text-gray-900 ${inter.className}`}>
                   4.9/5 Based on 287 Google Reviews
                 </span>
               </div>
             </div>
             
-            {/* Review Cards */}
-            <div className="grid md:grid-cols-3 gap-6">
+            {/* Review Cards - Mobile Responsive */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {[
                 {
                   name: "Ahmed Al Maktoum",
                   location: "Palm Jumeirah",
-                  text: "Exceptional service! Unicorn transformed our villa beyond expectations.",
+                  text: "Exceptional service! Unicorn transformed our villa beyond expectations. The team was professional and delivered on time.",
                   rating: 5,
                   date: "2 weeks ago"
                 },
                 {
                   name: "Sarah Williams",
                   location: "Emirates Hills",
-                  text: "Professional team, on-time delivery, and stunning results. Highly recommended!",
+                  text: "Professional team, on-time delivery, and stunning results. They renovated our entire villa and we couldn't be happier!",
                   rating: 5,
                   date: "1 month ago"
                 },
                 {
                   name: "Khalid Al Rashid",
                   location: "Dubai Hills",
-                  text: "Best renovation company in Dubai. Quality work and transparent pricing.",
+                  text: "Best renovation company in Dubai. Quality work, transparent pricing, and excellent communication throughout the project.",
                   rating: 5,
                   date: "3 weeks ago"
                 }
               ].map((review, index) => (
-                <div key={index} className="bg-white p-6 rounded-lg shadow-lg">
-                  <div className="flex mb-4">
+                <div key={index} className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="flex mb-3">
                     {[...Array(review.rating)].map((_, i) => (
                       <svg key={i} className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                     ))}
                   </div>
-                  <p className={`text-gray-700 mb-4 ${inter.className}`}>"{review.text}"</p>
-                  <div className="flex justify-between items-center">
+                  <p className={`text-gray-700 mb-4 text-sm md:text-base ${inter.className}`}>
+                    "{review.text}"
+                  </p>
+                  <div className="flex justify-between items-end">
                     <div>
                       <p className={`font-bold text-gray-900 ${inter.className}`}>{review.name}</p>
                       <p className={`text-sm text-gray-600 ${inter.className}`}>{review.location}</p>
@@ -836,10 +849,82 @@ export default function Home() {
                 href="https://www.google.com/search?q=unicorn+renovations+dubai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`inline-flex items-center text-amber-600 hover:text-amber-700 font-semibold ${inter.className}`}
+                className={`inline-flex items-center px-6 py-3 bg-white border-2 border-gray-300 hover:border-amber-600 rounded-lg text-gray-700 hover:text-amber-600 font-semibold transition-all ${inter.className}`}
               >
+                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
                 View All Google Reviews
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section - Mobile Optimized */}
+        <section id="services" className="py-12 md:py-20 px-4 md:px-6 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-10 md:mb-16">
+              <p className={`text-amber-600 text-xs md:text-sm tracking-[0.2em] uppercase mb-3 font-semibold ${inter.className}`}>
+                Our Expertise
+              </p>
+              <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 ${playfair.className}`}>
+                {dynamicContent.keyword} Services
+              </h2>
+              <p className={`text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto ${inter.className}`}>
+                Complete solutions for your {dynamicContent.service.toLowerCase()} project. 
+                All services include free consultation, 3D design, and 5-year warranty.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+              {services.map((service, index) => (
+                <a
+                  key={index}
+                  href={service.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-white p-6 md:p-8 rounded-xl border-2 border-gray-200 hover:border-amber-600 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  onClick={() => {
+                    if (window.gtag) {
+                      window.gtag('event', 'service_click', {
+                        event_category: 'engagement',
+                        event_label: service.title
+                      });
+                    }
+                  }}
+                >
+                  <div className="text-4xl md:text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                    {service.icon}
+                  </div>
+                  <h3 className={`text-lg md:text-xl font-bold text-gray-900 mb-3 ${playfair.className}`}>
+                    {service.title}
+                  </h3>
+                  <p className={`text-sm md:text-base text-gray-600 leading-relaxed ${inter.className}`}>
+                    {service.description}
+                  </p>
+                  <div className={`mt-4 text-amber-600 font-semibold text-sm inline-flex items-center ${inter.className}`}>
+                    Learn More 
+                    <svg className="w-4 h-4 ml-1 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+            
+            {/* CTA Button */}
+            <div className="text-center mt-10 md:mt-12">
+              <a
+                href="https://www.unicornrenovations.com/services"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-lg font-bold rounded-lg shadow-lg transition-all transform hover:scale-105 ${inter.className}`}
+              >
+                View All Services
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </a>
@@ -847,145 +932,196 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Services Section */}
-        <section id="services" className="py-16 md:py-24 px-4 md:px-6 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12 md:mb-16">
-              <p className={`text-amber-600 text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mb-4 ${inter.className}`}>
-                Our Expertise
-              </p>
-              <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 ${playfair.className}`}>
-                {dynamicContent.keyword} Services in {dynamicContent.location}
-              </h2>
-              <p className={`text-base md:text-xl text-gray-600 max-w-3xl mx-auto ${inter.className}`}>
-                Complete solutions for your {dynamicContent.service.toLowerCase()} project. 
-                All services include free consultation, 3D design, and 5-year warranty.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {services.map((service, index) => (
-                <ServiceCard key={index} {...service} index={index} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Quick Quote Form - Above the Fold on Mobile */}
-        <section className="py-16 bg-amber-50">
-          <div className="max-w-2xl mx-auto px-4">
-            <div className="bg-white rounded-lg shadow-xl p-8">
-              <h3 className={`text-2xl font-bold text-gray-900 mb-2 text-center ${playfair.className}`}>
-                Get Your Free Quote in 60 Seconds
-              </h3>
-              <p className={`text-gray-600 text-center mb-6 ${inter.className}`}>
-                No obligations • Instant pricing • {urgencySlots} slots left today
-              </p>
+        {/* Quick Quote Form - Mobile Optimized */}
+        <section id="quick-quote" className="py-12 md:py-20 bg-amber-50">
+          <div className="max-w-3xl mx-auto px-4 md:px-6">
+            <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+              {/* Form Header */}
+              <div className="bg-gradient-to-r from-amber-600 to-amber-700 p-6 md:p-8 text-white">
+                <h3 className={`text-2xl md:text-3xl font-bold mb-2 ${playfair.className}`}>
+                  Get Your Free Quote in 60 Seconds
+                </h3>
+                <p className={`text-white/90 ${inter.className}`}>
+                  No obligations • Instant pricing • Only {urgencySlots} slots left today
+                </p>
+              </div>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    onFocus={() => handleFormFieldFocus('name')}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none ${inter.className}`}
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone Number"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    onFocus={() => handleFormFieldFocus('phone')}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none ${inter.className}`}
-                  />
-                </div>
+              {/* Form Body */}
+              <div className="p-6 md:p-8">
+                {formState.submitted ? (
+                  <div className="text-center py-8">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <h4 className={`text-2xl font-bold text-gray-900 mb-4 ${playfair.className}`}>
+                      Thank You!
+                    </h4>
+                    <p className={`text-gray-600 mb-6 ${inter.className}`}>
+                      We'll call you within 30 minutes with your personalized quote.
+                    </p>
+                    <button
+                      onClick={() => setFormState({ submitted: false, loading: false })}
+                      className={`text-amber-600 hover:text-amber-700 font-semibold ${inter.className}`}
+                    >
+                      Submit Another Request →
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className={`block text-sm font-semibold text-gray-700 mb-1 ${inter.className}`}>
+                          Your Name *
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="John Smith"
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          onFocus={() => handleFormFieldFocus('name')}
+                          className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-base ${inter.className}`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`block text-sm font-semibold text-gray-700 mb-1 ${inter.className}`}>
+                          Phone Number *
+                        </label>
+                        <input
+                          type="tel"
+                          placeholder="+971 50 123 4567"
+                          required
+                          value={formData.phone}
+                          onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                          onFocus={() => handleFormFieldFocus('phone')}
+                          className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-base ${inter.className}`}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className={`block text-sm font-semibold text-gray-700 mb-1 ${inter.className}`}>
+                        Service Required *
+                      </label>
+                      <select
+                        required
+                        value={formData.service}
+                        onChange={(e) => setFormData({...formData, service: e.target.value})}
+                        onFocus={() => handleFormFieldFocus('service')}
+                        className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-base ${inter.className}`}
+                      >
+                        <option value="">Select Service</option>
+                        <option value="villa-renovation">Complete Villa Renovation</option>
+                        <option value="swimming-pool">Swimming Pool Construction</option>
+                        <option value="kitchen">Kitchen Remodeling</option>
+                        <option value="bathroom">Bathroom Renovation</option>
+                        <option value="extension">Villa Extension</option>
+                        <option value="interior">Interior Design</option>
+                        <option value="smart-home">Smart Home Automation</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className={`block text-sm font-semibold text-gray-700 mb-1 ${inter.className}`}>
+                        Email (Optional)
+                      </label>
+                      <input
+                        type="email"
+                        placeholder="john@example.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        onFocus={() => handleFormFieldFocus('email')}
+                        className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-base ${inter.className}`}
+                      />
+                    </div>
+                    
+                    <button
+                      type="submit"
+                      disabled={formState.loading}
+                      className={`w-full py-4 bg-amber-600 hover:bg-amber-700 text-white text-lg font-bold rounded-lg shadow-lg transition-all ${inter.className} ${
+                        formState.loading ? 'opacity-50 cursor-not-allowed' : 'transform hover:scale-[1.02]'
+                      }`}
+                    >
+                      {formState.loading ? (
+                        <span className="flex items-center justify-center">
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Getting Your Quote...
+                        </span>
+                      ) : (
+                        'Get Instant Quote →'
+                      )}
+                    </button>
+                  </form>
+                )}
                 
-                <select
-                  required
-                  value={formData.service}
-                  onChange={(e) => setFormData({...formData, service: e.target.value})}
-                  onFocus={() => handleFormFieldFocus('service')}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none ${inter.className}`}
-                >
-                  <option value="">Select Service</option>
-                  <option value="villa-renovation">Villa Renovation</option>
-                  <option value="swimming-pool">Swimming Pool</option>
-                  <option value="kitchen">Kitchen Remodeling</option>
-                  <option value="bathroom">Bathroom Renovation</option>
-                  <option value="extension">Villa Extension</option>
-                </select>
-                
-                <button
-                  type="submit"
-                  disabled={formState.loading}
-                  className={`w-full py-4 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg transition-all ${inter.className} ${
-                    formState.loading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-                >
-                  {formState.loading ? 'Getting Your Quote...' : 'Get Instant Quote →'}
-                </button>
-              </form>
-              
-              <div className="mt-6 flex justify-center gap-8 text-sm text-gray-600">
-                <span className="flex items-center gap-1">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  No Spam
-                </span>
-                <span className="flex items-center gap-1">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Instant Quote
-                </span>
-                <span className="flex items-center gap-1">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Free Service
-                </span>
+                {/* Trust Indicators */}
+                {!formState.submitted && (
+                  <div className="mt-6 pt-6 border-t flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+                    <span className="flex items-center gap-1">
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      No Spam
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      100% Free
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      Instant Response
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="py-16 md:py-20 bg-gray-900 text-white">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Stats Section - Mobile Optimized */}
+        <section className="py-12 md:py-20 bg-gradient-to-r from-gray-900 to-gray-800 text-white">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-5xl mb-4">{stat.icon}</div>
+                  <div className="text-4xl md:text-5xl mb-3">{stat.icon}</div>
                   <p className={`text-3xl md:text-4xl font-bold text-amber-400 mb-2 ${playfair.className}`}>
                     {stat.number}
                   </p>
-                  <p className={`text-gray-400 ${inter.className}`}>{stat.label}</p>
+                  <p className={`text-sm md:text-base text-gray-300 ${inter.className}`}>{stat.label}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Instagram Feed */}
-        <section id="portfolio" className="py-16 md:py-24 px-4 md:px-6 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <p className={`text-amber-600 text-xs md:text-sm tracking-[0.2em] uppercase mb-4 ${inter.className}`}>
+        {/* Instagram Feed - Mobile Optimized */}
+        <section id="portfolio" className="py-12 md:py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <div className="text-center mb-8 md:mb-12">
+              <p className={`text-amber-600 text-xs md:text-sm tracking-[0.2em] uppercase mb-3 font-semibold ${inter.className}`}>
                 Follow Our Journey
               </p>
-              <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-6 ${playfair.className}`}>
+              <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 ${playfair.className}`}>
                 Latest {dynamicContent.keyword} Projects
               </h2>
+              <p className={`text-base md:text-lg text-gray-600 mb-6 ${inter.className}`}>
+                See our villa transformations from across Dubai
+              </p>
               <a 
                 href="https://instagram.com/unicornrenovations" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`inline-flex items-center text-amber-600 hover:text-amber-700 font-semibold ${inter.className}`}
+                className={`inline-flex items-center text-amber-600 hover:text-amber-700 font-semibold text-base ${inter.className}`}
               >
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
@@ -994,18 +1130,136 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="max-w-6xl mx-auto">
+            {/* Instagram Widget Container */}
+            <div className="max-w-6xl mx-auto bg-gray-50 rounded-xl p-4 md:p-8">
               <InstagramFeed />
+            </div>
+            
+            {/* Portfolio Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-10 md:mt-16 pt-10 md:pt-16 border-t border-gray-200">
+              <div className="text-center">
+                <p className={`text-2xl md:text-3xl font-bold text-amber-600 mb-1 ${playfair.className}`}>800+</p>
+                <p className={`text-sm md:text-base text-gray-600 ${inter.className}`}>Villas</p>
+              </div>
+              <div className="text-center">
+                <p className={`text-2xl md:text-3xl font-bold text-amber-600 mb-1 ${playfair.className}`}>1600+</p>
+                <p className={`text-sm md:text-base text-gray-600 ${inter.className}`}>Bathrooms</p>
+              </div>
+              <div className="text-center">
+                <p className={`text-2xl md:text-3xl font-bold text-amber-600 mb-1 ${playfair.className}`}>800+</p>
+                <p className={`text-sm md:text-base text-gray-600 ${inter.className}`}>Kitchens</p>
+              </div>
+              <div className="text-center">
+                <p className={`text-2xl md:text-3xl font-bold text-amber-600 mb-1 ${playfair.className}`}>100%</p>
+                <p className={`text-sm md:text-base text-gray-600 ${inter.className}`}>Happy Clients</p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="py-12 px-4 md:px-6 bg-black text-white">
-          <div className="max-w-7xl mx-auto text-center">
-            <p className={`text-gray-400 text-sm ${inter.className}`}>
-              © {new Date().getFullYear()} Unicorn Renovations. {dynamicContent.keyword} Specialists in {dynamicContent.location}.
+        {/* Final CTA Section - Mobile Optimized */}
+        <section className="py-16 md:py-20 bg-gradient-to-r from-amber-600 to-amber-700 text-white">
+          <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
+            <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${playfair.className}`}>
+              Ready to Transform Your Villa?
+            </h2>
+            <p className={`text-lg md:text-xl mb-8 text-white/90 ${inter.className}`}>
+              Join 800+ happy homeowners who trusted us with their dream renovation
             </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="#quick-quote"
+                className={`px-8 py-4 bg-white text-amber-600 hover:bg-gray-100 text-lg font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
+              >
+                Get Free Quote Now
+              </a>
+              <a
+                href="tel:+971501234567"
+                className={`px-8 py-4 bg-transparent border-2 border-white text-white hover:bg-white hover:text-amber-600 text-lg font-bold rounded-lg transition-all ${inter.className}`}
+              >
+                📞 +971 50 123 4567
+              </a>
+            </div>
+            <p className={`mt-6 text-sm text-white/80 ${inter.className}`}>
+              ✓ Free Consultation • ✓ No Obligations • ✓ Instant Quote
+            </p>
+          </div>
+        </section>
+
+        {/* Footer - Mobile Optimized */}
+        <footer className="py-12 md:py-16 px-4 md:px-6 bg-black text-white">
+          <div className="max-w-7xl mx-auto">
+            {/* Quick Links */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+              <div>
+                <h4 className={`text-xl font-bold mb-4 text-amber-400 ${playfair.className}`}>
+                  Unicorn Renovations
+                </h4>
+                <p className={`text-gray-400 text-sm mb-4 ${inter.className}`}>
+                  Dubai's premier {dynamicContent.keyword.toLowerCase()} company. 
+                  Transforming homes into masterpieces since 2009.
+                </p>
+                <div className="flex gap-4">
+                  <a href="https://instagram.com/unicornrenovations" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-amber-400">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
+                    </svg>
+                  </a>
+                  <a href="https://facebook.com/unicornrenovations" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-amber-400">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className={`text-lg font-bold mb-4 text-amber-400 ${inter.className}`}>Quick Links</h4>
+                <ul className={`space-y-2 text-sm ${inter.className}`}>
+                  <li><a href="https://www.unicornrenovations.com" className="text-gray-400 hover:text-amber-400">Main Website</a></li>
+                  <li><a href="#services" className="text-gray-400 hover:text-amber-400">Our Services</a></li>
+                  <li><a href="#portfolio" className="text-gray-400 hover:text-amber-400">Portfolio</a></li>
+                  <li><a href="#reviews" className="text-gray-400 hover:text-amber-400">Reviews</a></li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className={`text-lg font-bold mb-4 text-amber-400 ${inter.className}`}>Contact Info</h4>
+                <ul className={`space-y-3 text-sm text-gray-400 ${inter.className}`}>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
+                    The Curve Building, Sheikh Zayed Road, Dubai
+                  </li>
+                  <li>
+                    <a href="tel:+971501234567" className="hover:text-amber-400 flex items-center">
+                      <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                      </svg>
+                      +971 50 123 4567
+                    </a>
+                  </li>
+                  <li>
+                    <a href="mailto:info@unicornrenovations.com" className="hover:text-amber-400 flex items-center">
+                      <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                      </svg>
+                      info@unicornrenovations.com
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Bottom Bar */}
+            <div className="border-t border-gray-800 pt-8 mt-8">
+              <p className={`text-center text-xs md:text-sm text-gray-400 ${inter.className}`}>
+                © {new Date().getFullYear()} Unicorn Renovations. All rights reserved. 
+                {dynamicContent.keyword} Specialists in {dynamicContent.location}.
+              </p>
+            </div>
           </div>
         </footer>
 
@@ -1062,13 +1316,13 @@ export default function Home() {
           </div>
         )}
 
-        {/* WhatsApp Button */}
+        {/* WhatsApp Button - Better Mobile Position */}
         <a
           href="https://wa.me/971501234567"
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed bottom-20 md:bottom-6 right-4 md:right-6 w-14 h-14 md:w-16 md:h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-2xl hover:shadow-xl transition-all transform hover:scale-110 z-40 animate-pulse-slow"
-          aria-label="WhatsApp"
+          className="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-14 h-14 md:w-16 md:h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-2xl hover:shadow-xl transition-all transform hover:scale-110 z-40"
+          aria-label="WhatsApp Chat"
           onClick={() => {
             if (window.gtag) {
               window.gtag('event', 'whatsapp_click', {
@@ -1083,12 +1337,12 @@ export default function Home() {
           </svg>
         </a>
         
-        {/* Mobile Bottom Bar */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+        {/* Mobile Bottom Bar - Fixed Height and Better Design */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 z-40 shadow-2xl">
           <div className="grid grid-cols-2 h-16">
             <a
               href="tel:+971501234567"
-              className="flex flex-col items-center justify-center text-gray-600 hover:text-amber-600 transition-colors border-r"
+              className="flex flex-col items-center justify-center bg-white hover:bg-gray-50 transition-colors border-r border-gray-200"
               onClick={() => {
                 if (window.gtag) {
                   window.gtag('event', 'mobile_bottom_call', {
@@ -1097,14 +1351,14 @@ export default function Home() {
                 }
               }}
             >
-              <svg className="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 mb-1 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              <span className={`text-xs font-bold ${inter.className}`}>Call Now</span>
+              <span className={`text-xs font-bold text-gray-700 ${inter.className}`}>Call Now</span>
             </a>
             <a
-              href="#contact"
-              className="flex flex-col items-center justify-center text-gray-600 hover:text-amber-600 transition-colors"
+              href="#quick-quote"
+              className="flex flex-col items-center justify-center bg-amber-600 hover:bg-amber-700 text-white transition-colors"
             >
               <svg className="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
@@ -1113,6 +1367,9 @@ export default function Home() {
             </a>
           </div>
         </div>
+        
+        {/* Add padding to bottom of page for mobile bar */}
+        <div className="h-16 md:hidden"></div>
       </div>
     </>
   );
