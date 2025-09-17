@@ -204,7 +204,8 @@ useEffect(() => {
   setFormState({ submitted: false, loading: true });
 
     
-// Defer Google Analytics and Facebook Pixel loading
+// This should be with your other useEffects, NOT inside handleSubmit
+// Around line 200, BEFORE the handleSubmit function
 useEffect(() => {
   const timer = setTimeout(() => {
     // Load Google Analytics
@@ -221,26 +222,36 @@ useEffect(() => {
       gtag('config', 'AW-612864132');
     };
     
-    // Load Facebook Pixel via script element
-    const fbScript = document.createElement('script');
-    fbScript.innerHTML = `
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1234567890123456'); // Replace with your actual Facebook Pixel ID
-      fbq('track', 'PageView');
-    `;
-    document.head.appendChild(fbScript);
-  }, 3000); // Load after 3 seconds
+    // Load Facebook Pixel
+    (function(f,b,e,v,n,t,s){
+      if(f.fbq)return;
+      n=f.fbq=function(){
+        n.callMethod ? n.callMethod.apply(n,arguments) : n.queue.push(arguments)
+      };
+      if(!f._fbq)f._fbq=n;
+      n.push=n;
+      n.loaded=!0;
+      n.version='2.0';
+      n.queue=[];
+      t=b.createElement(e);
+      t.async=!0;
+      t.src=v;
+      s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)
+    })(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    
+    window.fbq('init', 'YOUR_ACTUAL_PIXEL_ID'); // Replace with your actual Facebook Pixel ID
+    window.fbq('track', 'PageView');
+  }, 3000);
   
   return () => clearTimeout(timer);
 }, []);
-    
+
+// THEN your handleSubmit function starts here (WITHOUT the useEffect inside)
+const handleSubmit = useCallback(async (e) => {
+  e.preventDefault();
+  setFormState({ submitted: false, loading: true });
+  
   // Create WhatsApp message with form data
   const message = `
 *New Client Requirements*
@@ -259,19 +270,19 @@ useEffect(() => {
   // Open WhatsApp in new window
   window.open(whatsappUrl, '_blank');
   
-  // Track the submission (around line 205)
-if (typeof window !== 'undefined' && window.gtag) {
-  window.gtag('event', 'conversion', {
-    'send_to': 'AW-612864132/YOUR_CONVERSION_LABEL', // Get this from Google Ads
-    'value': 5000,
-    'currency': 'AED'
-  });
-}
+  // Track the submission
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'conversion', {
+      'send_to': 'AW-612864132/YOUR_CONVERSION_LABEL',
+      'value': 5000,
+      'currency': 'AED'
+    });
+  }
   
   setTimeout(() => {
     setFormState({ submitted: true, loading: false });
   }, 1500);
-}, [formData, dynamicContent]);
+}, [formData]);
 
   // Track form field interactions
   const handleFormFieldFocus = (fieldName) => {
@@ -339,36 +350,23 @@ if (typeof window !== 'undefined' && window.gtag) {
   return (
     <>
       <Head>
-        <title>{dynamicContent.headline} | Unicorn Renovations Dubai</title>
-        <meta name="description" content={`${dynamicContent.keyword} in ${dynamicContent.location}. Dubai's premier renovation company with 15+ years expertise. ✓ Free Consultation ✓ 800+ Projects ✓ Dubai Municipality Approved`} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {/* ADD THESE TWO LINES HERE - Line 285 */}
+    <Head>
+  <title>{dynamicContent.headline} | Unicorn Renovations Dubai</title>
+  <meta name="description" content={`${dynamicContent.keyword} in ${dynamicContent.location}. Dubai's premier renovation company with 15+ years expertise. ✓ Free Consultation ✓ 800+ Projects ✓ Dubai Municipality Approved`} />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
   <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="canonical" href={`https://unicornrenovations.com/${dynamicContent.service.toLowerCase().replace(/\s+/g, '-')}`} />
-        
-        {/* Open Graph */}
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={`${dynamicContent.headline} | Unicorn Renovations`} />
-        <meta property="og:description" content={`Transform your villa with ${dynamicContent.location}'s premier renovation company`} />
-        <meta property="og:image" content="https://unicornrenovations.com/og-image.jpg" />
-        <meta property="og:url" content="https://unicornrenovations.com" />
-        
-        
-          
-          // Facebook Pixel
-          !function(f,b,e,v,n,t,s)
-          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-          n.queue=[];t=b.createElement(e);t.async=!0;
-          t.src=v;s=b.getElementsByTagName(e)[0];
-          s.parentNode.insertBefore(t,s)}(window, document,'script',
-          'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', 'YOUR_PIXEL_ID');
-          fbq('track', 'PageView');
-        `}} />
-        
+  <link rel="canonical" href={`https://unicornrenovations.com/${dynamicContent.service.toLowerCase().replace(/\s+/g, '-')}`} />
+  
+  {/* Open Graph */}
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={`${dynamicContent.headline} | Unicorn Renovations`} />
+  <meta property="og:description" content={`Transform your villa with ${dynamicContent.location}'s premier renovation company`} />
+  <meta property="og:image" content="https://unicornrenovations.com/og-image.jpg" />
+  <meta property="og:url" content="https://unicornrenovations.com" />
+  
+  {/* Your Schema markup scripts continue here... */}
+              
         {/* Enhanced Local Business Schema */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: `
           {
