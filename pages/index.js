@@ -279,7 +279,7 @@ const handleSubmit = useCallback(async (e) => {
   setTimeout(() => {
     setFormState({ submitted: true, loading: false });
   }, 1500);
-}, [formData]);
+}, [formData, dynamicContent]);
 
   // Track form field interactions
   const handleFormFieldFocus = (fieldName) => {
@@ -1402,4 +1402,3 @@ const handleSubmit = useCallback(async (e) => {
       </div>
     </>
   );
-}
