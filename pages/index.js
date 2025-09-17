@@ -198,10 +198,7 @@ useEffect(() => {
   }, 5000); // Load after 5 seconds
   return () => clearTimeout(timer);
 }, []);
-  // Enhanced form submission with conversion tracking
-  const handleSubmit = useCallback(async (e) => {
-  e.preventDefault();
-  setFormState({ submitted: false, loading: true });
+
 
     
 // This should be with your other useEffects, NOT inside handleSubmit
@@ -221,8 +218,7 @@ useEffect(() => {
       gtag('js', new Date());
       gtag('config', 'AW-612864132');
     };
-    
-    // Load Facebook Pixel
+   // Load Facebook Pixel
     (function(f,b,e,v,n,t,s){
       if(f.fbq)return;
       n=f.fbq=function(){
@@ -242,7 +238,8 @@ useEffect(() => {
     
     window.fbq('init', 'YOUR_ACTUAL_PIXEL_ID'); // Replace with your actual Facebook Pixel ID
     window.fbq('track', 'PageView');
-  }, 3000);
+  }, 3000); 
+    
   
   return () => clearTimeout(timer);
 }, []);
