@@ -51,8 +51,9 @@ export default function Home() {
   const [timeOnPage, setTimeOnPage] = useState(0);
   const [scrollDepth, setScrollDepth] = useState(0);
   const [urgencySlots, setUrgencySlots] = useState(3);
-  const [formData, setFormData] = useState({
   const [loadInstagram, setLoadInstagram] = useState(false); 
+  const [formData, setFormData] = useState({
+  
     name: '',
     email: '',
     phone: '',
