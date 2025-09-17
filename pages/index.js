@@ -346,7 +346,7 @@ const handleSubmit = useCallback(async (e) => {
 
   return (
     <>
-      <Head>
+    
     <Head>
   <title>{dynamicContent.headline} | Unicorn Renovations Dubai</title>
   <meta name="description" content={`${dynamicContent.keyword} in ${dynamicContent.location}. Dubai's premier renovation company with 15+ years expertise. ✓ Free Consultation ✓ 800+ Projects ✓ Dubai Municipality Approved`} />
