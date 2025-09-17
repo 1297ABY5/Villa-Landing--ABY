@@ -52,6 +52,7 @@ export default function Home() {
   const [scrollDepth, setScrollDepth] = useState(0);
   const [urgencySlots, setUrgencySlots] = useState(3);
   const [formData, setFormData] = useState({
+  const [loadInstagram, setLoadInstagram] = useState(false); 
     name: '',
     email: '',
     phone: '',
@@ -189,7 +190,13 @@ export default function Home() {
     
     return () => clearInterval(timer);
   }, []);
-
+// Defer Instagram loading
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setLoadInstagram(true);
+  }, 5000); // Load after 5 seconds
+  return () => clearTimeout(timer);
+}, []);
   // Enhanced form submission with conversion tracking
   const handleSubmit = useCallback(async (e) => {
   e.preventDefault();
@@ -308,15 +315,21 @@ export default function Home() {
         <meta property="og:url" content="https://unicornrenovations.com" />
         
         {/* Google Ads Conversion Tracking */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXX"></script>
-        <script dangerouslySetInnerHTML={{ __html: `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'AW-XXXXXXXXX');
-          gtag('config', 'AW-XXXXXXXXX', {
-            'allow_enhanced_conversions': true
-          });
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-612864132"></script>
+<script dangerouslySetInnerHTML={{ __html: `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-612864132');
+  gtag('event', 'page_view', {
+    'send_to': 'AW-612864132',
+    'value': '1',
+    'items': [{
+      'id': 'villa-renovation',
+      'location_id': 'dubai',
+      'google_business_vertical': 'real_estate'
+    }]
+  });
           
           // Facebook Pixel
           !function(f,b,e,v,n,t,s)
@@ -1122,7 +1135,13 @@ export default function Home() {
 
             {/* Instagram Widget Container */}
             <div className="max-w-6xl mx-auto bg-gray-50 rounded-xl p-4 md:p-8">
-              <InstagramFeed />
+              {loadInstagram ? (
+  <InstagramFeed />
+) : (
+  <div className="h-96 bg-gray-50 animate-pulse rounded-lg flex items-center justify-center">
+    <p className="text-gray-400">Loading Instagram feed...</p>
+  </div>
+)}
             </div>
             
             {/* Portfolio Stats */}
