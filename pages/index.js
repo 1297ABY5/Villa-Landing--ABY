@@ -202,7 +202,38 @@ useEffect(() => {
   const handleSubmit = useCallback(async (e) => {
   e.preventDefault();
   setFormState({ submitted: false, loading: true });
+  // Defer Google Analytics and Facebook Pixel loading
+useEffect(() => {
+  const timer = setTimeout(() => {
+    // Load Google Analytics
+    const gtagScript = document.createElement('script');
+    gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-612864132';
+    gtagScript.async = true;
+    document.head.appendChild(gtagScript);
+    
+    gtagScript.onload = () => {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'AW-612864132');
+    };
+    
+    // Load Facebook Pixel
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1234567890123456'); // Replace with your actual Facebook Pixel ID
+    fbq('track', 'PageView');
+  }, 3000); // Load after 3 seconds
   
+  return () => clearTimeout(timer);
+}, []);
   // Create WhatsApp message with form data
   const message = `
 *New Client Requirements*
@@ -221,16 +252,14 @@ useEffect(() => {
   // Open WhatsApp in new window
   window.open(whatsappUrl, '_blank');
   
-  // Track the submission
-  if (window.gtag) {
-    window.gtag('event', 'generate_lead', {
-      currency: 'AED',
-      value: 5000,
-      form_type: 'consultation',
-      service: formData.service || dynamicContent.service,
-      location: dynamicContent.location
-    });
-  }
+  // Track the submission (around line 205)
+if (typeof window !== 'undefined' && window.gtag) {
+  window.gtag('event', 'conversion', {
+    'send_to': 'AW-612864132/YOUR_CONVERSION_LABEL', // Get this from Google Ads
+    'value': 5000,
+    'currency': 'AED'
+  });
+}
   
   setTimeout(() => {
     setFormState({ submitted: true, loading: false });
@@ -306,6 +335,9 @@ useEffect(() => {
         <title>{dynamicContent.headline} | Unicorn Renovations Dubai</title>
         <meta name="description" content={`${dynamicContent.keyword} in ${dynamicContent.location}. Dubai's premier renovation company with 15+ years expertise. ✓ Free Consultation ✓ 800+ Projects ✓ Dubai Municipality Approved`} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* ADD THESE TWO LINES HERE - Line 285 */}
+  <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="canonical" href={`https://unicornrenovations.com/${dynamicContent.service.toLowerCase().replace(/\s+/g, '-')}`} />
         
         {/* Open Graph */}
@@ -315,22 +347,7 @@ useEffect(() => {
         <meta property="og:image" content="https://unicornrenovations.com/og-image.jpg" />
         <meta property="og:url" content="https://unicornrenovations.com" />
         
-        {/* Google Ads Conversion Tracking */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-612864132"></script>
-<script dangerouslySetInnerHTML={{ __html: `
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-612864132');
-  gtag('event', 'page_view', {
-    'send_to': 'AW-612864132',
-    'value': '1',
-    'items': [{
-      'id': 'villa-renovation',
-      'location_id': 'dubai',
-      'google_business_vertical': 'real_estate'
-    }]
-  });
+        
           
           // Facebook Pixel
           !function(f,b,e,v,n,t,s)
