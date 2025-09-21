@@ -884,7 +884,65 @@ onClick={() => {
             </div>
           </div>
         </section>
+{/* Keyword-Specific Content Block - Place this around line 850 */}
+{dynamicContent.keyword.toLowerCase().includes('pool') && (
+  <section className="py-12 bg-blue-50">
+    <div className="max-w-4xl mx-auto px-4">
+      <h2 className={`text-3xl font-bold mb-4 ${playfair.className}`}>
+        Swimming Pool Construction in {dynamicContent.location}
+      </h2>
+      <div className="grid md:grid-cols-2 gap-6">
+        <div>
+          <h3 className="font-bold mb-2">Our Pool Services Include:</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li>✓ Custom pool design</li>
+            <li>✓ Municipality permits handled</li>
+            <li>✓ 5-year waterproofing warranty</li>
+            <li>✓ Smart pool automation</li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="font-bold mb-2">Pool Construction Timeline:</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li>Week 1-2: Design & Permits</li>
+            <li>Week 3-6: Excavation & Structure</li>
+            <li>Week 7-8: Finishing & Testing</li>
+            <li>Week 9: Handover</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
 
+{dynamicContent.keyword.toLowerCase().includes('kitchen') && (
+  <section className="py-12 bg-amber-50">
+    <div className="max-w-4xl mx-auto px-4">
+      <h2 className={`text-3xl font-bold mb-4 ${playfair.className}`}>
+        Kitchen Renovation in {dynamicContent.location}
+      </h2>
+      <p className="mb-6">Transform your kitchen with German appliances, Italian marble, and smart storage solutions.</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div>
+          <p className="text-3xl font-bold text-amber-600">6-8</p>
+          <p className="text-sm">Weeks Timeline</p>
+        </div>
+        <div>
+          <p className="text-3xl font-bold text-amber-600">5</p>
+          <p className="text-sm">Year Warranty</p>
+        </div>
+        <div>
+          <p className="text-3xl font-bold text-amber-600">100%</p>
+          <p className="text-sm">Custom Design</p>
+        </div>
+        <div>
+          <p className="text-3xl font-bold text-amber-600">Free</p>
+          <p className="text-sm">3D Design</p>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
         {/* Services Section - Mobile Optimized WITH IMAGES FIXED */}
         <section id="services" className="py-12 md:py-20 px-4 md:px-6 bg-white">
           <div className="max-w-7xl mx-auto">
@@ -971,7 +1029,33 @@ onClick={() => {
             </div>
           </div>
         </section>
-
+{/* Location-Specific Trust Block - Add around line 970 */}
+{dynamicContent.location && (
+  <section className="py-8 bg-gray-100">
+    <div className="max-w-4xl mx-auto px-4 text-center">
+      <h3 className={`text-2xl font-bold mb-4 ${playfair.className}`}>
+        Why Choose Us for {dynamicContent.keyword} in {dynamicContent.location}?
+      </h3>
+      <div className="grid md:grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded-lg">
+          <p className="font-bold">Local Expertise</p>
+          <p className="text-sm text-gray-600">
+            {dynamicContent.location === 'Dubai' && '15+ years serving Dubai communities'}
+            {dynamicContent.location === 'Abu Dhabi' && 'Licensed in Abu Dhabi Municipality'}
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-lg">
+          <p className="font-bold">Municipality Approved</p>
+          <p className="text-sm text-gray-600">All permits and approvals handled</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg">
+          <p className="font-bold">Same-Day Quote</p>
+          <p className="text-sm text-gray-600">Get instant pricing for {dynamicContent.service}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
         {/* Quick Quote Form - Mobile Optimized */}
         <section id="quick-quote" className="py-12 md:py-20 bg-amber-50">
           <div className="max-w-3xl mx-auto px-4 md:px-6">
@@ -1021,7 +1105,7 @@ onClick={() => {
                           required
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
-                          onFocus={() => handleFormFieldFocus('name')}
+                         
                           className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-base ${inter.className}`}
                           onFocus={() => {
                           handleFormFieldFocus('name');
@@ -1154,7 +1238,40 @@ onClick={() => {
             </div>
           </div>
         </section>
-
+{/* Dynamic FAQ for Specific Keywords */}
+<section className="py-12 bg-white">
+  <div className="max-w-4xl mx-auto px-4">
+    <h2 className={`text-3xl font-bold mb-8 text-center ${playfair.className}`}>
+      Common Questions About {dynamicContent.keyword} in {dynamicContent.location}
+    </h2>
+    
+    {dynamicContent.keyword.toLowerCase().includes('pool') && (
+      <div className="space-y-4">
+        <details className="bg-gray-50 p-4 rounded-lg">
+          <summary className="font-bold cursor-pointer">How much does a swimming pool cost in {dynamicContent.location}?</summary>
+          <p className="mt-2 text-gray-600">Swimming pools in {dynamicContent.location} typically range from AED 150,000 to AED 500,000 depending on size, features, and finishes.</p>
+        </details>
+        <details className="bg-gray-50 p-4 rounded-lg">
+          <summary className="font-bold cursor-pointer">Do I need permits for a pool in {dynamicContent.location}?</summary>
+          <p className="mt-2 text-gray-600">Yes, Dubai Municipality requires permits. We handle all approvals as part of our service.</p>
+        </details>
+      </div>
+    )}
+    
+    {dynamicContent.keyword.toLowerCase().includes('kitchen') && (
+      <div className="space-y-4">
+        <details className="bg-gray-50 p-4 rounded-lg">
+          <summary className="font-bold cursor-pointer">How long does kitchen renovation take?</summary>
+          <p className="mt-2 text-gray-600">A complete kitchen renovation in {dynamicContent.location} typically takes 6-8 weeks from design to completion.</p>
+        </details>
+        <details className="bg-gray-50 p-4 rounded-lg">
+          <summary className="font-bold cursor-pointer">Can I use my kitchen during renovation?</summary>
+          <p className="mt-2 text-gray-600">We can set up a temporary kitchen area to minimize disruption during your renovation.</p>
+        </details>
+      </div>
+    )}
+  </div>
+</section>
         {/* Instagram Feed - Mobile Optimized */}
         <section id="portfolio" className="py-12 md:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
