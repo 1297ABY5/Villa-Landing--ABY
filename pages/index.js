@@ -682,101 +682,97 @@ const handleSubmit = useCallback(async (e) => {
           </div>
         </div>
         
-        {/* Hero Section - Mobile Optimized */}
+{/* Hero Section - Mobile Optimized */}
 <section className="relative min-h-screen flex items-center py-20 md:py-0">
-{/* Separate images for mobile and desktop */}
-<img 
-  src="/download.webp"
-  alt=""
-  className="md:hidden absolute inset-0 w-full h-full object-cover"
-/>
-<img 
-  src="/before-after.avif"
-  alt=""
-  className="hidden md:block absolute inset-0 w-full h-full object-cover"
-/>
-<div className="absolute inset-0 bg-black/40 z-0" />
+  {/* Separate images for mobile and desktop */}
+  <img 
+    src="/download.webp"
+    alt=""
+    className="md:hidden absolute inset-0 w-full h-full object-cover"
+  />
+  <img 
+    src="/before-after.avif"
+    alt=""
+    className="hidden md:block absolute inset-0 w-full h-full object-cover"
+  />
+  <div className="absolute inset-0 bg-black/40 z-0" />
 
-
-    {/* Content - Optimized to fit one screen */}
-<div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-white">
-  <div className="text-center">
-    {/* Badge - Smaller */}
-    <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 mb-3 md:mb-6">
-      <span className={`text-amber-400 text-[10px] md:text-sm tracking-wider uppercase font-semibold ${inter.className}`}>
-        {dynamicContent.location}'s #1 Renovation Company
-      </span>
-    </div>
-    
-    {/* Main Headline - Reduced size on mobile */}
-    <h1 className={`text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-2 md:mb-4 leading-tight ${playfair.className}`}>
-      {dynamicContent.headline}
-    </h1>
-    
-    {/* Subheadline - Smaller */}
-    <div className={`text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-6 ${playfair.className}`}>
-      <span className="gradient-text">{dynamicContent.subheadline}</span>
-    </div>
-    
-    {/* Description - Shorter on mobile */}
-    <p className={`text-sm md:text-xl lg:text-2xl text-gray-100 max-w-3xl mx-auto mb-4 md:mb-8 leading-tight md:leading-relaxed ${inter.className}`}>
-      <span className="hidden md:block">
-        Transform your {dynamicContent.service.toLowerCase()} with our expert team.
-      </span>
-      <span className="block">
-        <strong>800+ Projects</strong> • <strong>15+ Years</strong> • <strong>100% Satisfaction</strong>
-      </span>
-    </p>
-    
-    {/* CTA Buttons - Smaller padding */}
-    <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4 md:mb-8">
-      <a
-        href="#quick-quote"
-        className={`px-6 py-3 md:px-10 md:py-5 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-xl font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
-      >
-        Get Free Quote →
-      </a>
+  {/* Content - Optimized to fit one screen */}
+  <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-white">
+    <div className="text-center">
+      {/* Badge - Smaller */}
+      <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 mb-3 md:mb-6">
+        <span className={`text-amber-400 text-[10px] md:text-sm tracking-wider uppercase font-semibold ${inter.className}`}>
+          {dynamicContent.location}'s #1 Renovation Company
+        </span>
+      </div>
       
-      <a
-        href="tel:+971585658002"
-        className={`px-6 py-3 md:px-10 md:py-5 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-base md:text-xl font-bold rounded-lg transition-all ${inter.className}`}
-      >
-        📞 +971 58 565 8002
-      </a>
+      {/* Main Headline - Reduced size on mobile */}
+      <h1 className={`text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-2 md:mb-4 leading-tight ${playfair.className}`}>
+        {dynamicContent.headline}
+      </h1>
+      
+      {/* Subheadline - Smaller */}
+      <div className={`text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-6 ${playfair.className}`}>
+        <span className="gradient-text">{dynamicContent.subheadline}</span>
+      </div>
+      
+      {/* Description - Shorter on mobile */}
+      <p className={`text-sm md:text-xl lg:text-2xl text-gray-100 max-w-3xl mx-auto mb-4 md:mb-8 leading-tight md:leading-relaxed ${inter.className}`}>
+        <span className="hidden md:block">
+          Transform your {dynamicContent.service.toLowerCase()} with our expert team.
+        </span>
+        <span className="block">
+          <strong>800+ Projects</strong> • <strong>15+ Years</strong> • <strong>100% Satisfaction</strong>
+        </span>
+      </p>
+      
+      {/* CTA Buttons - Smaller padding */}
+      <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4 md:mb-8">
+        
+          href="#quick-quote"
+          className={`px-6 py-3 md:px-10 md:py-5 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-xl font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
+        >
+          Get Free Quote →
+        </a>
+        
+          href="tel:+971585658002"
+          className={`px-6 py-3 md:px-10 md:py-5 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-base md:text-xl font-bold rounded-lg transition-all ${inter.className}`}
+        >
+          📞 +971 58 565 8002
+        </a>
+      </div>
+      
+      {/* Trust Indicators - Only on desktop */}
+      <div className="hidden md:flex flex-wrap justify-center gap-4 md:gap-6 text-white/90">
+        <div className="flex items-center gap-2">
+          <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+          <span className={`text-sm md:text-base ${inter.className}`}>Dubai Approved</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+          <span className={`text-sm md:text-base ${inter.className}`}>5 Year Warranty</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+          <span className={`text-sm md:text-base ${inter.className}`}>Free Consultation</span>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-              
-    {/* Trust Indicators - Only on desktop */}
-    <div className="hidden md:flex flex-wrap justify-center gap-4 md:gap-6 text-white/90">
-      <div className="flex items-center gap-2">
-        <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-        </svg>
-        <span className={`text-sm md:text-base ${inter.className}`}>Dubai Approved</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-        </svg>
-        <span className={`text-sm md:text-base ${inter.className}`}>5 Year Warranty</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-        </svg>
-        <span className={`text-sm md:text-base ${inter.className}`}>Free Consultation</span>
-      </div>
-    </div>
-  </div>
-</div>
 
-{/* Scroll Indicator - Only on desktop */}
-<div className="hidden md:block absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-  <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-  </svg>
-</div>
+  {/* Scroll Indicator - Only on desktop */}
+  <div className="hidden md:block absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+    <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+    </svg>
+  </div>
 </section>
         {/* Google Reviews Section - Mobile Optimized */}
         <section id="reviews" className="py-12 md:py-20 bg-gray-50">
