@@ -242,7 +242,7 @@ useEffect(() => {
     
     window.fbq('init', 'YOUR_ACTUAL_PIXEL_ID'); // Replace with your actual Facebook Pixel ID
     window.fbq('track', 'PageView');
-  }, 3000); 
+  }, 100); 
     
   
   return () => clearTimeout(timer);
@@ -1023,6 +1023,7 @@ onClick={() => {
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
                           onFocus={() => handleFormFieldFocus('name')}
                           className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-base ${inter.className}`}
+                          onFocus={() => {
                           handleFormFieldFocus('name');
     // ADD THIS:
     if (window.gtag && !window.formStarted) {
