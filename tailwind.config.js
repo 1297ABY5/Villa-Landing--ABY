@@ -12,11 +12,12 @@ module.exports = {
     extend: {
       // --- FONTS ---
       fontFamily: {
-        // Body text → Roboto (with fallbacks)
-        sans: ["Roboto", "Arial", "Helvetica", "sans-serif"],
+        fontFamily: {
+        // This tells Tailwind to use the CSS variable created by next/font
+        sans: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
+        heading: ["var(--font-playfair)", ...defaultTheme.fontFamily.serif],
+      },
 
-        // Headings → Segoe UI (with fallbacks)
-        heading: ["Segoe UI", "Tahoma", "Geneva", "Verdana", "sans-serif"],
       },
 
       // --- EXPANDED COLOR PALETTE ---
