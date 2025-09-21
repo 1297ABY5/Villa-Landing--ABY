@@ -688,7 +688,7 @@ const handleSubmit = useCallback(async (e) => {
 <picture className="absolute inset-0 z-0">
   <source
     media="(max-width: 768px)"
-    srcSet="/portfolio3.webp"
+    srcSet="/download.webp"
   />
   <img
     src="/before-after.avif"
