@@ -347,15 +347,21 @@ const handleSubmit = useCallback(async (e) => {
   return (
     <>
     
-    <Head>
+   <Head>
   <title>{dynamicContent.headline} | Unicorn Renovations Dubai</title>
   <link rel="preload" as="image" href="/before-after.avif" />
   <meta name="description" content={`${dynamicContent.keyword} in ${dynamicContent.location}. Dubai's premier renovation company with 15+ years expertise. ✓ Free Consultation ✓ 800+ Projects ✓ Dubai Municipality Approved`} />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  {/* Favicon */}
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  
   <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
   <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
   <link rel="canonical" href={`https://unicornrenovations.com/${dynamicContent.service.toLowerCase().replace(/\s+/g, '-')}`} />
-  
   {/* Open Graph */}
   <meta property="og:type" content="website" />
   <meta property="og:title" content={`${dynamicContent.headline} | Unicorn Renovations`} />
