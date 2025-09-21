@@ -257,8 +257,7 @@ useEffect(() => {
     window.fbq('init', 'YOUR_ACTUAL_PIXEL_ID'); // Replace with actual ID
     window.fbq('track', 'PageView');
   } // This closing brace was missing
-  
-  return () => clearTimeout(timer);
+
 }, []);
 // THEN your handleSubmit function starts here (WITHOUT the useEffect inside)
 const handleSubmit = useCallback(async (e) => {
@@ -497,51 +496,7 @@ const handleSubmit = useCallback(async (e) => {
           }
         `}} />
         
-        <style dangerouslySetInnerHTML={{ __html: `
-          :root {
-            --font-playfair: ${playfair.style.fontFamily};
-            --font-inter: ${inter.style.fontFamily};
-          }
-          
-          @keyframes fadeInUp {
-            from {
-              opacity: 0;
-              transform: translateY(30px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          
-          .animate-fadeInUp {
-            animation: fadeInUp 0.8s ease-out forwards;
-          }
-          
-          .gradient-text {
-            background: linear-gradient(135deg, #D4AF37 0%, #F4E4C1 50%, #D4AF37 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-          }
-          
-          @keyframes pulse {
-            0%, 100% {
-              opacity: 1;
-            }
-            50% {
-              opacity: 0.7;
-            }
-          }
-          
-          .animate-pulse-slow {
-            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-          }
-          
-          html {
-            scroll-behavior: smooth;
-          }
-        `}} />
+        
       </Head>
 
       <div className={`min-h-screen bg-white ${inter.variable} ${playfair.variable}`}>
