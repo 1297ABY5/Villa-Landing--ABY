@@ -698,7 +698,7 @@ const handleSubmit = useCallback(async (e) => {
 <div className="absolute inset-0 bg-black/40 z-0" />
 
 
-          {/* Content - Optimized to fit one screen */}
+       {/* Content - Optimized to fit one screen */}
 <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-white">
   <div className="text-center">
     {/* Badge - Smaller */}
@@ -744,7 +744,7 @@ const handleSubmit = useCallback(async (e) => {
       </a>
     </div>
               
-              {/* Trust Indicators - Only on desktop */}
+    {/* Trust Indicators - Only on desktop */}
     <div className="hidden md:flex flex-wrap justify-center gap-4 md:gap-6 text-white/90">
       <div className="flex items-center gap-2">
         <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -774,8 +774,7 @@ const handleSubmit = useCallback(async (e) => {
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
   </svg>
 </div>
-        </section>
-
+</section>
         {/* Google Reviews Section - Mobile Optimized */}
         <section id="reviews" className="py-12 md:py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
