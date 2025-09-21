@@ -684,13 +684,20 @@ const handleSubmit = useCallback(async (e) => {
         
         {/* Hero Section - Mobile Optimized */}
 <section className="relative min-h-screen flex items-center py-20 md:py-0">
-  {/* Background Image */}
-  <img 
+  {/* Background - Mobile and Desktop */}
+<picture className="absolute inset-0 z-0">
+  <source
+    media="(max-width: 768px)"
+    srcSet="/portfolio3.webp"
+  />
+  <img
     src="/before-after.avif"
     alt=""
-    className="absolute inset-0 w-full h-full object-cover z-0"
+    className="absolute inset-0 w-full h-full object-cover"
   />
-  <div className="absolute inset-0 bg-black/40 z-0" />
+</picture>
+<div className="absolute inset-0 bg-black/40 z-0" />
+
 
           {/* Content - Better Mobile Spacing */}
           <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8 text-white">
