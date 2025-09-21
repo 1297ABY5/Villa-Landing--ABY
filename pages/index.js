@@ -204,11 +204,23 @@ useEffect(() => {
 // This should be with your other useEffects, NOT inside handleSubmit
 // Around line 200, BEFORE the handleSubmit function
 useEffect(() => {
-  const timer = setTimeout(() => {
+  // Wait for page to be idle or 2 seconds max
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      loadAnalytics();
+    }, { timeout: 2000 });
+  } else {
+    setTimeout(() => {
+      loadAnalytics();
+    }, 2000); // Increase from 100ms to 2000ms
+  }
+  
+  function loadAnalytics() {
     // Load Google Analytics
     const gtagScript = document.createElement('script');
     gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-612864132';
     gtagScript.async = true;
+    gtagScript.defer = true; // Add defer
     document.head.appendChild(gtagScript);
     
     gtagScript.onload = () => {
@@ -218,9 +230,10 @@ useEffect(() => {
       gtag('js', new Date());
       gtag('config', 'AW-612864132');
       gtag('config', 'AW-612864132', {
-  'phone_conversion_number': '+971585658002',
-  'allow_enhanced_conversions': true
-});
+        'phone_conversion_number': '+971585658002',
+        'allow_enhanced_conversions': true
+      });
+    };
     };
    // Load Facebook Pixel
     (function(f,b,e,v,n,t,s){
@@ -362,7 +375,13 @@ const handleSubmit = useCallback(async (e) => {
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-  
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
+  <link rel="preconnect" href="https://connect.facebook.net" />
+  <link rel="dns-prefetch" href="https://www.google.com" />
+    
   <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
   <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
   <link rel="canonical" href={`https://unicornrenovations.com/${dynamicContent.service.toLowerCase().replace(/\s+/g, '-')}`} />
@@ -705,19 +724,21 @@ const handleSubmit = useCallback(async (e) => {
   {/* CORRECTED: Replaced <img> with optimized Next.js <Image> component for max pagespeed */}
   <Image
     src="/download.webp"
-    alt="Modern villa exterior for mobile view"
-    fill
-    className="md:hidden object-cover"
-    priority
-    quality={80}
+  alt="Modern villa exterior"
+  fill
+  sizes="(max-width: 768px) 100vw, 1px" // Only load on mobile
+  className="md:hidden object-cover"
+  priority
+  quality={70} // Reduce from 80
   />
   <Image
-    src="/before-after.avif"
-    alt="Luxurious villa interior for desktop view"
-    fill
-    className="hidden md:block object-cover"
-    priority
-    quality={80}
+  src="/before-after.avif"
+  alt="Luxurious villa interior"
+  fill
+  sizes="(min-width: 769px) 100vw, 1px" // Only load on desktop
+  className="hidden md:block object-cover"
+  priority={false} // Remove priority for desktop on mobile
+  quality={70} // Reduce from 80
   />
   <div className="absolute inset-0 bg-black/40 z-0" aria-hidden="true" />
 
@@ -981,8 +1002,11 @@ onClick={() => {
                     {service.image ? (
                       <Image
                         src={service.image}
-                        alt={service.title}
-                        fill
+  alt={service.title}
+  fill
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px" // Max 400px
+  loading="lazy"
+  quality={60} // Reduce quality
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
