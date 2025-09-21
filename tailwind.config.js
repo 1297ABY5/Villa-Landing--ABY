@@ -1,6 +1,6 @@
 // tailwind.config.js
-
 const plugin = require('tailwindcss/plugin');
+const defaultTheme = require('tailwindcss/defaultTheme'); // ADD THIS LINE
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -11,15 +11,11 @@ module.exports = {
   theme: {
     extend: {
       // --- FONTS ---
-      fontFamily: {
-        fontFamily: {
+      fontFamily: {  // REMOVED duplicate "fontFamily: {"
         // This tells Tailwind to use the CSS variable created by next/font
         sans: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
         heading: ["var(--font-playfair)", ...defaultTheme.fontFamily.serif],
       },
-
-      },
-
       // --- EXPANDED COLOR PALETTE ---
       colors: {
         'brand-dark': '#1a202c',
@@ -28,13 +24,11 @@ module.exports = {
         'brand-gold-dark': '#b38e55',
         'brand-light': '#f7fafc',
       },
-
       // --- CUSTOM SHADOWS ---
       boxShadow: {
         'soft': '0 4px 25px 0 rgba(0, 0, 0, 0.05)',
         'glow-gold': '0 0 25px 0 rgba(197, 157, 95, 0.25)',
       },
-
       // --- KEYFRAMES ---
       keyframes: {
         'fade-in-up': {
@@ -54,7 +48,6 @@ module.exports = {
           'to': { transform: 'translateX(200%) skewX(-20deg)' },
         },
       },
-
       // --- ANIMATIONS ---
       animation: {
         'fade-in-up': 'fade-in-up 1s ease-out forwards',
@@ -64,7 +57,6 @@ module.exports = {
       },
     },
   },
-
   // --- PLUGINS ---
   plugins: [
     plugin(function({ addUtilities }) {
@@ -76,7 +68,6 @@ module.exports = {
         '.animation-delay-700': { 'animation-delay': '700ms' },
       });
     }),
-
     plugin(function({ addUtilities, theme }) {
       const textShadows = {
         '.text-shadow-sm': {
