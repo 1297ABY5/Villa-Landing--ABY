@@ -217,6 +217,10 @@ useEffect(() => {
       window.gtag = gtag;
       gtag('js', new Date());
       gtag('config', 'AW-612864132');
+      gtag('config', 'AW-612864132', {
+  'phone_conversion_number': '+971585658002',
+  'allow_enhanced_conversions': true
+});
     };
    // Load Facebook Pixel
     (function(f,b,e,v,n,t,s){
@@ -584,14 +588,19 @@ const handleSubmit = useCallback(async (e) => {
                     href="tel:+971585658002"
                     className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-all ${inter.className}`}
                     onClick={() => {
-                      if (window.gtag) {
-                        window.gtag('event', 'click_to_call', {
-                          event_category: 'engagement',
-                          event_label: 'header_cta'
-                        });
-                      }
-                    }}
-                  >
+    if (window.gtag) {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
+        'value': 3000,
+        'currency': 'AED'
+      });
+      window.gtag('event', 'click_to_call', {
+        event_category: 'engagement',
+        event_label: 'header_cta'
+      });
+    }
+  }}
+>
                     Get Free Quote
                   </a>
                 </nav>
@@ -746,6 +755,19 @@ const handleSubmit = useCallback(async (e) => {
         <a
           href="tel:+971585658002"
           className={`px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-base md:text-lg font-bold rounded-lg transition-all ${inter.className}`}
+onClick={() => {
+    if (window.gtag) {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
+        'value': 3000,
+        'currency': 'AED'
+      });
+      window.gtag('event', 'click_to_call', {
+        event_category: 'engagement',
+        event_label: 'hero_call_cta'  
+      });
+    }
+  }}
         >
           📞 Speak to an Expert
         </a>
@@ -1001,6 +1023,16 @@ const handleSubmit = useCallback(async (e) => {
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
                           onFocus={() => handleFormFieldFocus('name')}
                           className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-base ${inter.className}`}
+                          handleFormFieldFocus('name');
+    // ADD THIS:
+    if (window.gtag && !window.formStarted) {
+      window.gtag('event', 'begin_checkout', {
+        'value': 1000,
+        'currency': 'AED'
+      });
+      window.formStarted = true;
+    }
+  }}
                         />
                       </div>
                       <div>
