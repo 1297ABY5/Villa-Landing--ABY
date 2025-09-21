@@ -698,65 +698,51 @@ const handleSubmit = useCallback(async (e) => {
 <div className="absolute inset-0 bg-black/40 z-0" />
 
 
-          {/* Content - Better Mobile Spacing */}
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8 text-white">
-            <div className="text-center">
-              {/* Badge */}
-              <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 md:mb-8">
-                <span className={`text-amber-400 text-xs md:text-sm tracking-wider uppercase font-semibold ${inter.className}`}>
-                  {dynamicContent.location}'s #1 Renovation Company
-                </span>
-              </div>
-              
-              {/* Main Headline - Larger on Mobile */}
-              <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight ${playfair.className}`}>
-                {dynamicContent.headline}
-              </h1>
-              
-              {/* Subheadline */}
-              <div className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 ${playfair.className}`}>
-                <span className="gradient-text">{dynamicContent.subheadline}</span>
-              </div>
-              
-              {/* Description - Larger Text */}
-              <p className={`text-lg md:text-xl lg:text-2xl text-gray-100 max-w-3xl mx-auto mb-8 md:mb-10 leading-relaxed ${inter.className}`}>
-                Transform your {dynamicContent.service.toLowerCase()} with our expert team. 
-                <span className="block mt-2">
-                  <strong>800+ Projects</strong> • <strong>15+ Years Experience</strong> • <strong>100% Satisfaction</strong>
-                </span>
-              </p>
-              
-              {/* CTA Buttons - Bigger on Mobile */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                <a
-                  href="#quick-quote"
-                  className={`px-8 py-4 md:px-10 md:py-5 bg-amber-600 hover:bg-amber-700 text-white text-lg md:text-xl font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
-                  onClick={() => {
-                    if (window.gtag) {
-                      window.gtag('event', 'cta_click', {
-                        event_category: 'engagement',
-                        event_label: 'hero_primary_cta'
-                      });
-                    }
-                  }}
-                >
-                  Get Free Quote →
-                </a>
-                <a
-                  href="tel:+971585658002"
-                  className={`px-8 py-4 md:px-10 md:py-5 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-lg md:text-xl font-bold rounded-lg transition-all ${inter.className}`}
-                  onClick={() => {
-                    if (window.gtag) {
-                      window.gtag('event', 'click_to_call', {
-                        event_category: 'engagement',
-                        event_label: 'hero_call_cta'
-                      });
-                    }
-                  }}
-                >
-                  📞 +971 58 565 8002
-                </a>
-              </div>
+          {/* Content - Optimized to fit one screen */}
+<div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-white">
+  <div className="text-center">
+    {/* Badge - Smaller */}
+    <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 mb-3 md:mb-6">
+      <span className={`text-amber-400 text-[10px] md:text-sm tracking-wider uppercase font-semibold ${inter.className}`}>
+        {dynamicContent.location}'s #1 Renovation Company
+      </span>
+    </div>
+    
+    {/* Main Headline - Reduced size on mobile */}
+    <h1 className={`text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-2 md:mb-4 leading-tight ${playfair.className}`}>
+      {dynamicContent.headline}
+    </h1>
+    
+    {/* Subheadline - Smaller */}
+    <div className={`text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-6 ${playfair.className}`}>
+      <span className="gradient-text">{dynamicContent.subheadline}</span>
+    </div>
+    
+    {/* Description - Shorter on mobile */}
+    <p className={`text-sm md:text-xl lg:text-2xl text-gray-100 max-w-3xl mx-auto mb-4 md:mb-8 leading-tight md:leading-relaxed ${inter.className}`}>
+      <span className="hidden md:block">
+        Transform your {dynamicContent.service.toLowerCase()} with our expert team.
+      </span>
+      <span className="block">
+        <strong>800+ Projects</strong> • <strong>15+ Years</strong> • <strong>100% Satisfaction</strong>
+      </span>
+    </p>
+    
+    {/* CTA Buttons - Smaller padding */}
+    <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4 md:mb-8">
+      
+        href="#quick-quote"
+        className={`px-6 py-3 md:px-10 md:py-5 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-xl font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
+      >
+        Get Free Quote →
+      </a>
+      
+        href="tel:+971585658002"
+        className={`px-6 py-3 md:px-10 md:py-5 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-base md:text-xl font-bold rounded-lg transition-all ${inter.className}`}
+      >
+        📞 +971 58 565 8002
+      </a>
+    </div>
               
               {/* Trust Indicators - Mobile Visible */}
               <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-white/90">
