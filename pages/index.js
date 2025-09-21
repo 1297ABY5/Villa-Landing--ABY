@@ -698,7 +698,7 @@ const handleSubmit = useCallback(async (e) => {
 <div className="absolute inset-0 bg-black/40 z-0" />
 
 
-       {/* Content - Optimized to fit one screen */}
+    {/* Content - Optimized to fit one screen */}
 <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-white">
   <div className="text-center">
     {/* Badge - Smaller */}
@@ -730,21 +730,22 @@ const handleSubmit = useCallback(async (e) => {
     
     {/* CTA Buttons - Smaller padding */}
     <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4 md:mb-8">
-      
-       href="#quick-quote"
+      <a
+        href="#quick-quote"
         className={`px-6 py-3 md:px-10 md:py-5 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-xl font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
       >
         Get Free Quote →
       </a>
       
+      <a
         href="tel:+971585658002"
         className={`px-6 py-3 md:px-10 md:py-5 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-base md:text-xl font-bold rounded-lg transition-all ${inter.className}`}
       >
         📞 +971 58 565 8002
       </a>
-        📞 +971 58 565 8002
-      </a>
     </div>
+  </div>
+</div>
               
     {/* Trust Indicators - Only on desktop */}
     <div className="hidden md:flex flex-wrap justify-center gap-4 md:gap-6 text-white/90">
