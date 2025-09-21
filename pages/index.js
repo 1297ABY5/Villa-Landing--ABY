@@ -685,22 +685,27 @@ const handleSubmit = useCallback(async (e) => {
         {/* Hero Section - Mobile Optimized */}
 <section className="relative min-h-screen flex items-center py-20 md:py-0">
   {/* Background - Mobile and Desktop */}
-<picture className="absolute inset-0 z-0">
-  <source
-    media="(max-width: 768px)"
-    srcSet="/download.webp"
-  />
-  <img
-    src="/before-after.avif"
-    alt=""
-    className="absolute inset-0 w-full h-full object-cover"
+<div className="absolute inset-0 z-0 w-full h-full">
+  <picture>
+    <source
+      media="(max-width: 768px)"
+      srcSet="/download.webp"
+    />
+    <img
+      src="/before-after.avif"
+      alt=""
+      className="w-full h-full object-cover"
       style={{ 
-      minHeight: '100vh',
-      minWidth: '100vw',
-      objectFit: 'cover'
-    }}
-  />
-</picture>
+        position: 'absolute',
+        inset: 0,
+        minHeight: '100vh',
+        minWidth: '100vw',
+        objectFit: 'cover',
+        objectPosition: 'center'
+      }}
+    />
+  </picture>
+</div>
 <div className="absolute inset-0 bg-black/40 z-0" />
 
 
