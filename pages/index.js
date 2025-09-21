@@ -212,7 +212,7 @@ useEffect(() => {
   } else {
     setTimeout(() => {
       loadAnalytics();
-    }, 2000); // Increase from 100ms to 2000ms
+    }, 2000);
   }
   
   function loadAnalytics() {
@@ -220,7 +220,7 @@ useEffect(() => {
     const gtagScript = document.createElement('script');
     gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-612864132';
     gtagScript.async = true;
-    gtagScript.defer = true; // Add defer
+    gtagScript.defer = true;
     document.head.appendChild(gtagScript);
     
     gtagScript.onload = () => {
@@ -234,8 +234,8 @@ useEffect(() => {
         'allow_enhanced_conversions': true
       });
     };
-    };
-   // Load Facebook Pixel
+    
+    // Load Facebook Pixel
     (function(f,b,e,v,n,t,s){
       if(f.fbq)return;
       n=f.fbq=function(){
@@ -248,19 +248,18 @@ useEffect(() => {
       n.queue=[];
       t=b.createElement(e);
       t.async=!0;
+      t.defer=!0;
       t.src=v;
       s=b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t,s)
     })(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
     
-    window.fbq('init', 'YOUR_ACTUAL_PIXEL_ID'); // Replace with your actual Facebook Pixel ID
+    window.fbq('init', 'YOUR_ACTUAL_PIXEL_ID'); // Replace with actual ID
     window.fbq('track', 'PageView');
-  }, 100); 
-    
+  } // This closing brace was missing
   
   return () => clearTimeout(timer);
 }, []);
-
 // THEN your handleSubmit function starts here (WITHOUT the useEffect inside)
 const handleSubmit = useCallback(async (e) => {
   e.preventDefault();
