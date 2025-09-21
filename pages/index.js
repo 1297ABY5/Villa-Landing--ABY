@@ -74,6 +74,9 @@ export default function Home() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const keyword = urlParams.get('keyword') || urlParams.get('utm_term') || 'Villa Renovation';
+    if (!urlParams.get('keyword') && !urlParams.get('utm_term')) {
+  window.history.replaceState({}, '', '?keyword=Villa+Renovation&location=Dubai');
+}
     const location = urlParams.get('loc') || urlParams.get('location') || 'Dubai';
     const service = urlParams.get('service') || urlParams.get('utm_content') || 'Renovation';
     const campaign = urlParams.get('utm_campaign') || 'general';
