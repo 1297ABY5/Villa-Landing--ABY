@@ -744,36 +744,36 @@ const handleSubmit = useCallback(async (e) => {
       </a>
     </div>
               
-              {/* Trust Indicators - Mobile Visible */}
-              <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-white/90">
-                <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span className={`text-sm md:text-base ${inter.className}`}>Dubai Approved</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span className={`text-sm md:text-base ${inter.className}`}>5 Year Warranty</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span className={`text-sm md:text-base ${inter.className}`}>Free Consultation</span>
-                </div>
-              </div>
-            </div>
-          </div>
+              {/* Trust Indicators - Only on desktop */}
+    <div className="hidden md:flex flex-wrap justify-center gap-4 md:gap-6 text-white/90">
+      <div className="flex items-center gap-2">
+        <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+        </svg>
+        <span className={`text-sm md:text-base ${inter.className}`}>Dubai Approved</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+        </svg>
+        <span className={`text-sm md:text-base ${inter.className}`}>5 Year Warranty</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+        </svg>
+        <span className={`text-sm md:text-base ${inter.className}`}>Free Consultation</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-          </div>
+{/* Scroll Indicator - Only on desktop */}
+<div className="hidden md:block absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+  <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+  </svg>
+</div>
         </section>
 
         {/* Google Reviews Section - Mobile Optimized */}
