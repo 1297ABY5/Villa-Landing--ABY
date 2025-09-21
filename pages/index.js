@@ -694,6 +694,11 @@ const handleSubmit = useCallback(async (e) => {
     src="/before-after.avif"
     alt=""
     className="absolute inset-0 w-full h-full object-cover"
+      style={{ 
+      minHeight: '100vh',
+      minWidth: '100vw',
+      objectFit: 'cover'
+    }}
   />
 </picture>
 <div className="absolute inset-0 bg-black/40 z-0" />
