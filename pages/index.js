@@ -77,10 +77,16 @@ export default function Home() {
     const location = urlParams.get('loc') || urlParams.get('location') || 'Dubai';
     const service = urlParams.get('service') || urlParams.get('utm_content') || 'Renovation';
     const campaign = urlParams.get('utm_campaign') || 'general';
-    
-    // Update dynamic content based on parameters
-    setDynamicContent({
-      headline: `Premium ${keyword} Services in ${location}`,
+    const matchType = urlParams.get('matchtype') || 'broad';
+
+const headlineMap = {
+  'exact': `#1 ${keyword} Company - ${location} Municipality Approved`,
+  'phrase': `Professional ${keyword} Services in ${location}`,
+  'broad': `Premium ${keyword} Services in ${location}`,
+};
+
+setDynamicContent({
+  headline: headlineMap[matchType] || `Premium ${keyword} Services in ${location}`,
       subheadline: `${location}'s Most Trusted ${service} Company`,
       keyword,
       location,
@@ -264,6 +270,20 @@ const handleSubmit = useCallback(async (e) => {
   e.preventDefault();
   setFormState({ submitted: false, loading: true });
   
+  // ADD THIS: Service-based value mapping
+  const serviceValues = {
+    'villa-renovation': 150000,
+    'swimming-pool': 80000,
+    'kitchen': 45000,
+    'bathroom': 25000,
+    'extension': 120000,
+    'interior': 60000,
+    'smart-home': 35000
+  };
+  
+  // Get dynamic value based on selected service
+  const estimatedValue = serviceValues[formData.service] || 50000;
+  
   // Create WhatsApp message with form data
   const message = `
 *New Client Requirements*
@@ -272,6 +292,7 @@ const handleSubmit = useCallback(async (e) => {
 *Phone:* ${formData.phone}
 *Email:* ${formData.email || 'Not provided'}
 *Service:* ${formData.service}
+*Estimated Value:* AED ${estimatedValue.toLocaleString()}
 *Message:* ${formData.message || 'No message'}
 *Time:* ${new Date().toLocaleString()}
   `.trim();
@@ -282,12 +303,20 @@ const handleSubmit = useCallback(async (e) => {
   // Open WhatsApp in new window
   window.open(whatsappUrl, '_blank');
   
-  // Track the submission
+  // Track the submission with DYNAMIC VALUE
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'conversion', {
       'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
-      'value': 5000,
-      'currency': 'AED'
+      'value': estimatedValue,  // Changed from fixed 5000 to dynamic
+      'currency': 'AED',
+      'transaction_id': `lead_${Date.now()}_${formData.service}` // Added unique ID
+    });
+    
+    // BONUS: Track service-specific conversion for better insights
+    window.gtag('event', `${formData.service}_lead`, {
+      'event_category': 'conversions',
+      'event_label': formData.service,
+      'value': estimatedValue
     });
   }
   
@@ -365,6 +394,8 @@ const handleSubmit = useCallback(async (e) => {
    <Head>
   <title>{dynamicContent.headline} | Unicorn Renovations Dubai</title>
   <link rel="preload" as="image" href="/before-after.avif" />
+    <link rel="preload" as="font" type="font/woff2" crossOrigin="anonymous" 
+      href="/_next/static/media/playfair-display.woff2" />
   <meta name="description" content={`${dynamicContent.keyword} in ${dynamicContent.location}. Dubai's premier renovation company with 15+ years expertise. ✓ Free Consultation ✓ 800+ Projects ✓ Dubai Municipality Approved`} />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
