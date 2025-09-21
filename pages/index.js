@@ -181,7 +181,23 @@ setDynamicContent({
       return () => document.removeEventListener('mouseleave', handleMouseLeave);
     }
   }, [showExitPopup, timeOnPage]);
-
+useEffect(() => {
+  let interactions = 0;
+  
+  const trackEngagement = () => {
+    interactions++;
+    if (interactions === 3 && window.gtag) {
+      window.gtag('event', 'engaged_user', {
+        event_category: 'UX',
+        event_label: 'quality_signal'
+      });
+    }
+  };
+  
+  ['click', 'scroll', 'touchstart'].forEach(event => {
+    document.addEventListener(event, trackEngagement, { once: true, passive: true });
+  });
+}, []);
   // Urgency countdown
   useEffect(() => {
     const timer = setInterval(() => {
