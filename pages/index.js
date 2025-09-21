@@ -349,6 +349,7 @@ const handleSubmit = useCallback(async (e) => {
     
     <Head>
   <title>{dynamicContent.headline} | Unicorn Renovations Dubai</title>
+  <link rel="preload" as="image" href="/before-after.avif" />
   <meta name="description" content={`${dynamicContent.keyword} in ${dynamicContent.location}. Dubai's premier renovation company with 15+ years expertise. ✓ Free Consultation ✓ 800+ Projects ✓ Dubai Municipality Approved`} />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
@@ -682,12 +683,14 @@ const handleSubmit = useCallback(async (e) => {
         </div>
         
         {/* Hero Section - Mobile Optimized */}
-        <section className="relative min-h-screen flex items-center py-20 md:py-0">
-          {/* Background */}
-          <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-amber-900" />
-            <div className="absolute inset-0 bg-black/30" />
-          </div>
+<section className="relative min-h-screen flex items-center py-20 md:py-0">
+  {/* Background Image */}
+  <img 
+    src="/before-after.avif"
+    alt=""
+    className="absolute inset-0 w-full h-full object-cover z-0"
+  />
+  <div className="absolute inset-0 bg-black/40 z-0" />
 
           {/* Content - Better Mobile Spacing */}
           <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8 text-white">
