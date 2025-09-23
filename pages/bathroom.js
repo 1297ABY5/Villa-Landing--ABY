@@ -1,1061 +1,575 @@
+// pages/bathroom-renovation.js
 import Head from 'next/head';
-import { useState, useCallback, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import Script from 'next/script';
+import { Playfair_Display, Inter } from 'next/font/google';
 
-export default function BathroomRenovationPremium() {
-  const [formData, setFormData] = useState({ 
-    name: '', 
-    phone: '', 
-    size: '', 
-    timeline: '',
-    message: ''
+const playfair = Playfair_Display({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-playfair',
+});
+
+const inter = Inter({
+  weight: ['400', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+export default function BathroomRenovation() {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    bathroomType: '',
+    timeline: ''
   });
   const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [trustProofVisible, setTrustProofVisible] = useState(false);
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const formRef = useRef(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Enhanced UAE phone validation
-  const validatePhone = (phone) => {
-    const cleaned = phone.replace(/\D/g, '');
-    const uaePattern = /^(?:\+971|0)?5[0-9]{8}$/;
-    return uaePattern.test(cleaned) && cleaned.length >= 9;
-  };
+  // Track scroll for header
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  // Premium form submission
+  // Load analytics after page load
+  useEffect(() => {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => loadAnalytics(), { timeout: 2000 });
+    } else {
+      setTimeout(loadAnalytics, 2000);
+    }
+    
+    function loadAnalytics() {
+      const gtagScript = document.createElement('script');
+      gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-612864132';
+      gtagScript.async = true;
+      document.head.appendChild(gtagScript);
+      
+      gtagScript.onload = () => {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'AW-612864132');
+      };
+    }
+  }, []);
+
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    setErrors({});
-    
-    // Enhanced validation
-    const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Please enter your full name';
-    if (!validatePhone(formData.phone)) newErrors.phone = 'Please enter a valid UAE number (05x xxx xxxx)';
-    if (!formData.size) newErrors.size = 'Please select bathroom size';
-    if (!formData.timeline) newErrors.timeline = 'Please select preferred timeline';
-    
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      // Scroll to first error
-      const firstError = Object.keys(newErrors)[0];
-      document.getElementById(firstError)?.scrollIntoView({ behavior: 'smooth' });
-      return;
-    }
-
     setLoading(true);
-
-    // Enhanced conversion tracking
-    if (typeof window !== 'undefined') {
-      // Google Ads
-      if (window.gtag) {
-        const value = formData.size === 'luxury' ? 50000 : 
-                     formData.size === 'master' ? 35000 : 25000;
-        window.gtag('event', 'conversion', { 
-          'send_to': 'AW-612864132/PREMIUM_BATHROOM_LEAD',
-          'value': value,
-          'currency': 'AED'
-        });
-      }
-      
-      // Facebook Pixel
-      if (window.fbq) {
-        window.fbq('track', 'Lead', { currency: 'AED', value: value });
-      }
-    }
-
-    // Premium WhatsApp message
-    const message = `🏆 PREMIUM BATHROOM QUOTE REQUEST 🏆
-
-👤 Name: ${formData.name}
-📞 Phone: ${formData.phone}
-📏 Size: ${formData.size}
-⏰ Timeline: ${formData.timeline}
-💬 Message: ${formData.message || 'Not specified'}
-
-Please provide a detailed quote with material options.`;
-
-    // Smart device detection
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const whatsappUrl = `https://wa.me/971585658002?text=${encodeURIComponent(message)}`;
-
-    if (isMobile) {
-      window.open(whatsappUrl, '_blank');
-    } else {
-      // Desktop fallback with better UX
-      window.open(whatsappUrl, '_blank', 'width=600,height=700');
-    }
-
-    // Premium backend integration
-    try {
-      await fetch('/api/premium-lead', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'X-Premium-Source': 'bathroom-renovation-premium'
-        },
-        body: JSON.stringify({
-          ...formData,
-          timestamp: new Date().toISOString(),
-          source: 'premium-landing-page',
-          estimated_value: formData.size === 'luxury' ? 50000 : 
-                         formData.size === 'master' ? 35000 : 25000
-        })
-      });
-    } catch (error) {
-      console.error('Premium lead submission error:', error);
-    }
-
-    setSubmitted(true);
-    setLoading(false);
     
-    // Scroll to thank you message
+    const value = formData.bathroomType === 'master' ? 35000 : 
+                 formData.bathroomType === 'luxury' ? 50000 : 25000;
+    
+    // WhatsApp message
+    const message = `
+*Bathroom Renovation Quote Request*
+------------------------
+*Name:* ${formData.name}
+*Phone:* ${formData.phone}
+*Type:* ${formData.bathroomType}
+*Timeline:* ${formData.timeline}
+*Estimated Value:* AED ${value.toLocaleString()}
+    `.trim();
+    
+    const whatsappUrl = `https://wa.me/971585658002?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    
+    // Track conversion
+    if (window.gtag) {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-612864132/BATHROOM_LEAD',
+        'value': value,
+        'currency': 'AED'
+      });
+    }
+    
     setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 500);
+      setSubmitted(true);
+      setLoading(false);
+    }, 1500);
   }, [formData]);
 
-  // Premium testimonials data
-  const testimonials = [
+  const bathroomPackages = [
     {
-      name: "Ahmed K.",
-      location: "Palm Jumeirah",
-      text: "Finished my master bathroom in exactly 21 days. No hidden costs, professional team!",
-      rating: 5
+      title: "Standard Bathroom",
+      price: "25,000",
+      timeline: "21 Days",
+      size: "4-6m²",
+      features: [
+        "Italian ceramic tiles",
+        "Grohe fixtures",
+        "LED mirror",
+        "Waterproofing warranty",
+        "Full demolition & disposal"
+      ],
+      popular: false
     },
     {
-      name: "Sarah M.",
-      location: "Dubai Marina", 
-      text: "The 5-year waterproofing warranty gave me peace of mind. Highly recommend!",
-      rating: 5
+      title: "Master Bathroom",
+      price: "35,000",
+      timeline: "21 Days",
+      size: "6-10m²",
+      features: [
+        "Premium porcelain tiles",
+        "Kohler fixtures",
+        "Rain shower system",
+        "Heated towel rack",
+        "Smart lighting"
+      ],
+      popular: true
     },
     {
-      name: "Michael R.",
-      location: "Arabian Ranches",
-      text: "They handled everything including permits. A truly stress-free renovation!",
-      rating: 5
+      title: "Luxury Spa Bathroom",
+      price: "50,000+",
+      timeline: "28 Days",
+      size: "10m²+",
+      features: [
+        "Marble/Natural stone",
+        "Villeroy & Boch fixtures",
+        "Japanese toilet",
+        "Steam shower",
+        "Custom vanity"
+      ],
+      popular: false
     }
   ];
 
-  // Premium effects
-  useEffect(() => {
-    // Trust proof popup
-    const timer = setTimeout(() => setTrustProofVisible(true), 3000);
-    
-    // Auto-rotate testimonials
-    const testimonialInterval = setInterval(() => {
-      setActiveTestimonial(prev => (prev + 1) % testimonials.length);
-    }, 5000);
+  const testimonials = [
+    {
+      name: "Fatima Al Rashid",
+      location: "Palm Jumeirah",
+      text: "My master bathroom looks like a 5-star hotel spa! Completed in exactly 21 days as promised.",
+      rating: 5,
+      type: "Master Bathroom"
+    },
+    {
+      name: "James Mitchell",
+      location: "Dubai Marina",
+      text: "The waterproofing warranty gave me peace of mind. 2 years later, still perfect!",
+      rating: 5,
+      type: "Standard Bathroom"
+    },
+    {
+      name: "Aisha Patel",
+      location: "Arabian Ranches",
+      text: "They handled everything including DEWA approvals. Stress-free renovation!",
+      rating: 5,
+      type: "Luxury Bathroom"
+    }
+  ];
 
-    // Scroll progress
-    const updateScrollProgress = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (scrollTop / docHeight) * 100;
-      setScrollProgress(progress);
-    };
-
-    window.addEventListener('scroll', updateScrollProgress);
-    
-    return () => {
-      clearTimeout(timer);
-      clearInterval(testimonialInterval);
-      window.removeEventListener('scroll', updateScrollProgress);
-    };
-  }, []);
+  const bathroomProcess = [
+    { day: "Day 1-3", title: "Design & Planning", description: "3D design, material selection, permits" },
+    { day: "Day 4-7", title: "Demolition", description: "Safe removal, waste disposal, prep work" },
+    { day: "Day 8-14", title: "Plumbing & Waterproofing", description: "New pipes, 5-layer waterproofing" },
+    { day: "Day 15-18", title: "Tiling & Fixtures", description: "Premium installation, grouting" },
+    { day: "Day 19-21", title: "Finishing & Handover", description: "Cleaning, testing, warranty docs" }
+  ];
 
   return (
     <>
       <Head>
-        <title>Luxury Bathroom Renovation Dubai 🏆 | Fixed AED 25,000 | 21-Day Guarantee</title>
-        <meta name="description" content="Dubai's premier bathroom renovation service. 5-year warranty, European materials, fixed pricing from AED 25,000. 287+ luxury bathrooms completed. ★★★★★" />
-        <meta name="keywords" content="luxury bathroom renovation dubai, premium bathroom remodeling, bathroom renovation cost dubai, 5-star bathroom makeover" />
-        <link rel="canonical" href="https://dubailuxrenovate.com/bathroom-renovation" />
+        <title>Bathroom Renovation Dubai - Fixed AED 25,000 | 21-Day Completion | 5-Year Warranty</title>
+        <meta name="description" content="Bathroom renovation Dubai from AED 25,000. 21-day completion guarantee, 5-year waterproofing warranty. 287+ bathrooms completed. Dubai Municipality approved. Get instant quote." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href="https://unicornrenovations.com/bathroom-renovation" />
         
-        {/* Open Graph */}
-        <meta property="og:title" content="Luxury Bathroom Renovation Dubai | Fixed Price AED 25,000" />
-        <meta property="og:description" content="Transform your bathroom into a luxury spa. 21-day completion guarantee, 5-year warranty, premium European materials." />
-        <meta property="og:image" content="https://dubailuxrenovate.com/og-bathroom-premium.jpg" />
-        <meta property="og:url" content="https://dubailuxrenovate.com/bathroom-renovation" />
-        <meta property="og:type" content="website" />
-
-        {/* Schema Markup */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "HomeRenovation",
-              "name": "Unicorn Renovations - Luxury Bathroom Specialist",
-              "description": "Premium bathroom renovation services in Dubai with 5-year warranty",
-              "telephone": "+971-58-565-8002",
-              "areaServed": "Dubai",
-              "serviceType": "Bathroom Renovation",
-              "offers": {
-                "@type": "Offer",
-                "priceSpecification": {
-                  "@type": "PriceSpecification",
-                  "priceCurrency": "AED",
-                  "minPrice": "25000",
-                  "maxPrice": "50000"
-                }
-              },
-              "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "4.9",
-                "ratingCount": "287"
+        {/* Schema markup for bathroom renovation */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: `
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Bathroom Renovation Dubai",
+            "description": "Professional bathroom renovation services in Dubai with fixed pricing and guaranteed timeline",
+            "provider": {
+              "@type": "LocalBusiness",
+              "name": "Unicorn Renovations",
+              "telephone": "+971585658002",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Dubai",
+                "addressCountry": "AE"
               }
-            })
-          }}
-        />
+            },
+            "areaServed": "Dubai",
+            "offers": {
+              "@type": "AggregateOffer",
+              "priceCurrency": "AED",
+              "lowPrice": "25000",
+              "highPrice": "50000",
+              "offerCount": "3"
+            }
+          }
+        `}} />
       </Head>
 
-      {/* Enhanced Tracking */}
       <Script
-        id="gtag"
+        id="gtag-bathroom"
         strategy="afterInteractive"
-        src="https://www.googletagmanager.com/gtag/js?id=AW-612864132"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-612864132');
+            gtag('event', 'page_view', {
+              'page_title': 'Bathroom Renovation Dubai',
+              'page_location': window.location.href,
+              'service': 'bathroom_renovation'
+            });
+          `
+        }}
       />
-      <Script id="gtag-config" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'AW-612864132');
-          
-          // Enhanced tracking
-          gtag('event', 'page_view', {
-            'page_title': 'Premium Bathroom Renovation',
-            'page_location': window.location.href
-          });
-        `}
-      </Script>
 
-      {/* Premium CSS */}
-      <style jsx global>{`
-        * { 
-          margin: 0; 
-          padding: 0; 
-          box-sizing: border-box; 
-        }
-        body { 
-          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          line-height: 1.6;
-        }
-        .container { 
-          max-width: 1200px; 
-          margin: 0 auto; 
-          padding: 0 20px; 
-        }
-        .btn { 
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 18px 32px; 
-          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-          color: white; 
-          text-decoration: none; 
-          border-radius: 12px; 
-          font-weight: bold; 
-          font-size: 18px;
-          border: none;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-          position: relative;
-          overflow: hidden;
-        }
-        .btn::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-          transition: left 0.5s;
-        }
-        .btn:hover::before {
-          left: 100%;
-        }
-        .btn:hover { 
-          transform: translateY(-3px); 
-          box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-        }
-        .btn:active {
-          transform: translateY(-1px);
-        }
-        .btn-secondary {
-          background: linear-gradient(135deg, #059669 0%, #047857 100%);
-          box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
-        }
-        .btn-secondary:hover {
-          box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
-        }
+      <div className={`min-h-screen bg-white ${inter.variable} ${playfair.variable}`}>
         
-        /* Premium animations */
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        @keyframes slideIn {
-          from { transform: translateX(-100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.7; }
-        }
-        @keyframes progress {
-          from { width: 0%; }
-          to { width: var(--progress-width, 0%); }
-        }
-        
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animate-pulse { animation: pulse 2s ease-in-out infinite; }
-        
-        @media (prefers-reduced-motion: reduce) {
-          * { animation: none !important; transition: none !important; }
-        }
-      `}</style>
-
-      {/* Scroll Progress Bar */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '3px',
-        background: 'linear-gradient(90deg, #f59e0b, #059669)',
-        transform: 'scaleX(0)',
-        transformOrigin: 'left',
-        transition: 'transform 0.3s ease',
-        zIndex: 10000
-      }} style={{ transform: `scaleX(${scrollProgress / 100})` }} />
-
-      {/* Premium Trust Bar */}
-      <div style={{ 
-        background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', 
-        color: 'white', 
-        padding: '14px 0',
-        fontSize: '14px',
-        fontWeight: '500'
-      }}>
-        <div className="container" style={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-          gap: '20px',
-          alignItems: 'center'
-        }}>
-          <span>🏆 Dubai's #1 Bathroom Specialist</span>
-          <span>⭐ 4.9/5 (287+ Reviews)</span>
-          <span>🛡️ 5-Year Comprehensive Warranty</span>
-          <span>⚡ 21-Day Completion Guarantee</span>
-        </div>
-      </div>
-
-      {/* Premium Hero Section */}
-      <section style={{ 
-        background: 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #0f172a 100%)', 
-        color: 'white', 
-        padding: '80px 20px',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {/* Animated background elements */}
-        <div style={{
-          position: 'absolute',
-          top: '10%',
-          left: '10%',
-          width: '200px',
-          height: '200px',
-          background: 'radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%)',
-          animation: 'float 6s ease-in-out infinite'
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '20%',
-          right: '10%',
-          width: '150px',
-          height: '150px',
-          background: 'radial-gradient(circle, rgba(5,150,105,0.1) 0%, transparent 70%)',
-          animation: 'float 4s ease-in-out infinite 1s'
-        }} />
-        
-        <div className="container" style={{ 
-          textAlign: 'center',
-          position: 'relative',
-          zIndex: 2
-        }}>
-          <h1 style={{ 
-            fontSize: 'clamp(3rem, 6vw, 5rem)', 
-            fontWeight: 'bold', 
-            marginBottom: '24px',
-            lineHeight: '1.1'
-          }}>
-            Luxury Bathroom
-            <span style={{ 
-              display: 'block', 
-              background: 'linear-gradient(135deg, #fbbf24, #f59e0b, #d97706)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontSize: '0.9em',
-              marginTop: '10px'
-            }}>
-              Renovation Dubai
-            </span>
-          </h1>
-          
-          <p style={{ 
-            fontSize: 'clamp(1.25rem, 2.5vw, 1.5rem)', 
-            marginBottom: '40px', 
-            opacity: 0.9,
-            maxWidth: '600px',
-            margin: '0 auto 40px',
-            lineHeight: '1.4'
-          }}>
-            Transform your bathroom into a <strong>5-star luxury spa</strong> with our premium renovation service
-          </p>
-
-          <div style={{ 
-            display: 'flex', 
-            gap: '20px', 
-            justifyContent: 'center', 
-            flexWrap: 'wrap',
-            marginBottom: '60px'
-          }}>
-            <a href="tel:0585658002" className="btn">
-              <span style={{ fontSize: '1.2em' }}>📞</span>
-              058-565-8002
-            </a>
-            <a href="#premium-quote" className="btn btn-secondary">
-              <span style={{ fontSize: '1.2em' }}>💎</span>
-              Premium Quote
-            </a>
-          </div>
-
-          {/* Enhanced Trust Indicators */}
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-            gap: '20px',
-            maxWidth: '800px',
-            margin: '0 auto'
-          }}>
-            {[
-              { number: "287+", label: "Luxury Bathrooms", icon: "🏆" },
-              { number: "4.9★", label: "Customer Rating", icon: "⭐" },
-              { number: "21", label: "Days Average", icon: "⚡" },
-              { number: "5YR", label: "Warranty", icon: "🛡️" }
-            ].map((item, index) => (
-              <div key={index} style={{ 
-                background: 'rgba(255,255,255,0.1)', 
-                padding: '24px 16px', 
-                borderRadius: '16px',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                animation: `float ${3 + index}s ease-in-out infinite`
-              }}>
-                <div style={{ fontSize: '1.5em', marginBottom: '8px' }}>{item.icon}</div>
-                <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '4px' }}>{item.number}</div>
-                <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>{item.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div style={{
-          position: 'absolute',
-          bottom: '30px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          animation: 'bounce 2s ease-in-out infinite'
-        }}>
-          <div style={{
-            width: '24px',
-            height: '40px',
-            border: '2px solid #f59e0b',
-            borderRadius: '12px',
-            display: 'flex',
-            justifyContent: 'center',
-            paddingTop: '8px'
-          }}>
-            <div style={{
-              width: '2px',
-              height: '8px',
-              background: '#f59e0b',
-              borderRadius: '1px',
-              animation: 'pulse 2s ease-in-out infinite'
-            }} />
-          </div>
-        </div>
-      </section>
-
-      {/* Premium Pricing Section */}
-      <section style={{ padding: '100px 20px', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-        <div className="container">
-          <h2 style={{ 
-            fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', 
-            textAlign: 'center', 
-            marginBottom: '60px',
-            background: 'linear-gradient(135deg, #1e293b, #475569)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}>
-            Premium Fixed Pricing
-          </h2>
-          
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '30px',
-            maxWidth: '1000px',
-            margin: '0 auto'
-          }}>
-            {[
-              {
-                title: "Standard",
-                price: "25,000",
-                size: "4-6m² • 21 days",
-                popular: false,
-                features: ["Italian Tiles", "Grohe Fixtures", "Waterproofing", "Full Warranty"],
-                color: "#6b7280"
-              },
-              {
-                title: "Master",
-                price: "35,000", 
-                size: "6-10m² • 21 days",
-                popular: true,
-                features: ["Premium Tiles", "Kohler Fixtures", "Rain Shower", "Full Warranty"],
-                color: "#f59e0b"
-              },
-              {
-                title: "Luxury",
-                price: "50,000+",
-                size: "10m²+ • 28 days", 
-                popular: false,
-                features: ["Marble/Porcelain", "Villeroy & Boch", "Spa Features", "Full Warranty"],
-                color: "#10b981"
-              }
-            ].map((plan, index) => (
-              <div key={index} style={{ 
-                background: 'white',
-                border: `2px solid ${plan.popular ? plan.color : '#e5e7eb'}`,
-                borderRadius: '20px',
-                padding: '40px 30px',
-                textAlign: 'center',
-                boxShadow: plan.popular ? '0 20px 40px rgba(245, 158, 11, 0.15)' : '0 10px 30px rgba(0,0,0,0.08)',
-                transform: plan.popular ? 'scale(1.05)' : 'scale(1)',
-                transition: 'all 0.3s ease',
-                position: 'relative'
-              }}>
-                {plan.popular && (
-                  <span style={{
-                    position: 'absolute',
-                    top: '-12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    background: plan.color,
-                    color: 'white',
-                    padding: '6px 20px',
-                    borderRadius: '20px',
-                    fontSize: '0.875rem',
-                    fontWeight: 'bold'
-                  }}>
-                    🏆 MOST POPULAR
-                  </span>
-                )}
-                <h3 style={{ fontSize: '1.75rem', marginBottom: '16px', color: plan.color }}>{plan.title}</h3>
-                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: plan.color, margin: '24px 0' }}>
-                  AED {plan.price}
+        {/* Header */}
+        <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+          scrolled ? 'bg-white shadow-lg' : 'bg-white/95 backdrop-blur-sm'
+        }`}>
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <div className="flex justify-between items-center h-16 md:h-20">
+              <div className="flex items-center">
+                <div className={`${playfair.className}`}>
+                  <div className="text-2xl md:text-3xl font-black text-gray-900">
+                    UNICORN<span className="text-amber-600">.</span>
+                  </div>
+                  <div className={`text-[10px] md:text-xs tracking-widest uppercase ${inter.className} text-gray-600`}>
+                    Bathroom Specialists
+                  </div>
                 </div>
-                <p style={{ color: '#6b7280', marginBottom: '30px' }}>{plan.size}</p>
-                <ul style={{ listStyle: 'none', marginTop: '20px', textAlign: 'left' }}>
-                  {plan.features.map((feature, i) => (
-                    <li key={i} style={{ padding: '8px 0', borderBottom: '1px solid #f3f4f6' }}>
-                      <span style={{ color: plan.color, marginRight: '8px' }}>✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <a 
-                  href="#premium-quote" 
-                  style={{
-                    display: 'block',
-                    marginTop: '30px',
-                    padding: '16px',
-                    background: plan.color,
-                    color: 'white',
-                    textDecoration: 'none',
-                    borderRadius: '12px',
-                    fontWeight: 'bold',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                >
-                  Select This Plan
+              </div>
+              
+              <nav className="hidden lg:flex items-center space-x-8">
+                <a href="#packages" className={`font-medium text-gray-700 hover:text-amber-600 ${inter.className}`}>
+                  Packages
                 </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                <a href="#process" className={`font-medium text-gray-700 hover:text-amber-600 ${inter.className}`}>
+                  Process
+                </a>
+                <a href="#gallery" className={`font-medium text-gray-700 hover:text-amber-600 ${inter.className}`}>
+                  Gallery
+                </a>
+                <a href="tel:+971585658002" 
+                   className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg ${inter.className}`}>
+                  Get Quote
+                </a>
+              </nav>
 
-      {/* Premium Testimonials */}
-      <section style={{ padding: '80px 20px', background: 'white' }}>
-        <div className="container">
-          <h2 style={{ 
-            fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', 
-            textAlign: 'center', 
-            marginBottom: '60px',
-            color: '#1e293b'
-          }}>
-            What Our Clients Say
-          </h2>
-          
-          <div style={{
-            maxWidth: '600px',
-            margin: '0 auto',
-            background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)',
-            padding: '40px',
-            borderRadius: '20px',
-            textAlign: 'center',
-            position: 'relative'
-          }}>
-            <div style={{ fontSize: '4rem', color: '#f59e0b', marginBottom: '20px' }}>❝</div>
-            <p style={{ 
-              fontSize: '1.25rem', 
-              lineHeight: '1.6', 
-              marginBottom: '30px',
-              fontStyle: 'italic',
-              color: '#475569'
-            }}>
-              {testimonials[activeTestimonial].text}
-            </p>
-            <div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1e293b' }}>
-                {testimonials[activeTestimonial].name}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-3"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                    d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden fixed inset-0 bg-white z-[60]">
+            <div className="flex justify-between items-center p-4 border-b">
+              <div className={`text-2xl font-black ${playfair.className}`}>
+                UNICORN<span className="text-amber-600">.</span>
               </div>
-              <div style={{ color: '#64748b' }}>{testimonials[activeTestimonial].location}</div>
-              <div style={{ marginTop: '10px' }}>
-                {'★'.repeat(testimonials[activeTestimonial].rating)}
+              <button onClick={() => setMobileMenuOpen(false)}>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <nav className="p-6 space-y-4">
+              <a href="#packages" onClick={() => setMobileMenuOpen(false)} 
+                 className="block text-lg py-3 text-gray-900">Packages</a>
+              <a href="#process" onClick={() => setMobileMenuOpen(false)} 
+                 className="block text-lg py-3 text-gray-900">Process</a>
+              <a href="#gallery" onClick={() => setMobileMenuOpen(false)} 
+                 className="block text-lg py-3 text-gray-900">Gallery</a>
+              <a href="tel:+971585658002" 
+                 className="block w-full px-6 py-4 bg-amber-600 text-white text-center text-lg font-semibold rounded-lg">
+                📞 058-565-8002
+              </a>
+            </nav>
+          </div>
+        )}
+
+        <div className="h-16 md:h-20"></div>
+
+        {/* Hero Section */}
+        <section className="relative min-h-[80vh] flex items-center py-20 bg-gradient-to-br from-slate-900 to-slate-700">
+          <div className="absolute inset-0 opacity-20">
+            <Image src="/bathroom-hero.jpg" alt="Luxury bathroom" fill className="object-cover" priority />
+          </div>
+          
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 text-white text-center">
+            <h1 className={`text-4xl md:text-6xl font-bold mb-6 ${playfair.className}`}>
+              Bathroom Renovation Dubai
+            </h1>
+            <p className={`text-xl md:text-2xl mb-8 text-amber-300 ${inter.className}`}>
+              Fixed Price from AED 25,000 • 21-Day Completion • 5-Year Warranty
+            </p>
+            <p className={`text-lg mb-10 max-w-3xl mx-auto opacity-90 ${inter.className}`}>
+              Transform your bathroom into a luxury spa with Dubai's most trusted renovation specialists. 
+              287+ bathrooms completed with 100% on-time delivery.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <a href="#quote" className={`px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg ${inter.className}`}>
+                Get Instant Quote →
+              </a>
+              <a href="tel:+971585658002" className={`px-8 py-4 bg-white/10 border-2 border-white hover:bg-white hover:text-gray-900 font-bold rounded-lg ${inter.className}`}>
+                📞 058-565-8002
+              </a>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+              <div className="bg-white/10 backdrop-blur p-4 rounded-lg">
+                <p className="text-2xl font-bold">287+</p>
+                <p className="text-sm opacity-80">Bathrooms Done</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur p-4 rounded-lg">
+                <p className="text-2xl font-bold">21</p>
+                <p className="text-sm opacity-80">Days Average</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur p-4 rounded-lg">
+                <p className="text-2xl font-bold">5yr</p>
+                <p className="text-sm opacity-80">Warranty</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur p-4 rounded-lg">
+                <p className="text-2xl font-bold">4.9★</p>
+                <p className="text-sm opacity-80">Rating</p>
               </div>
             </div>
-            
-            {/* Testimonial navigation */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '30px' }}>
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveTestimonial(index)}
-                  style={{
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    border: 'none',
-                    background: index === activeTestimonial ? '#f59e0b' : '#cbd5e1',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                />
+          </div>
+        </section>
+
+        {/* Packages Section */}
+        <section id="packages" className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${playfair.className}`}>
+                Fixed Price Bathroom Packages
+              </h2>
+              <p className={`text-xl text-gray-600 ${inter.className}`}>
+                All-inclusive pricing with no hidden costs
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {bathroomPackages.map((pkg, index) => (
+                <div key={index} className={`bg-white rounded-xl ${pkg.popular ? 'ring-2 ring-amber-600 relative' : ''} shadow-lg p-8`}>
+                  {pkg.popular && (
+                    <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-amber-600 text-white px-4 py-1 rounded-full text-sm font-bold">
+                      MOST POPULAR
+                    </span>
+                  )}
+                  
+                  <h3 className={`text-2xl font-bold mb-2 ${playfair.className}`}>{pkg.title}</h3>
+                  <div className="text-4xl font-bold text-amber-600 mb-2">AED {pkg.price}</div>
+                  <p className="text-gray-600 mb-1">{pkg.size}</p>
+                  <p className="text-gray-600 mb-6">{pkg.timeline}</p>
+                  
+                  <ul className="space-y-3 mb-8">
+                    {pkg.features.map((feature, i) => (
+                      <li key={i} className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <a href="#quote" className={`block w-full py-3 text-center font-bold rounded-lg ${
+                    pkg.popular 
+                      ? 'bg-amber-600 text-white hover:bg-amber-700' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  } ${inter.className}`}>
+                    Select Package
+                  </a>
+                </div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Premium Trust Proof Popup */}
-      {trustProofVisible && (
-        <div style={{
-          position: 'fixed',
-          bottom: '20px',
-          left: '20px',
-          background: 'white',
-          padding: '20px',
-          borderRadius: '16px',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-          zIndex: 1000,
-          animation: 'slideIn 0.5s ease',
-          border: '2px solid #10b981',
-          maxWidth: '300px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              background: '#10b981',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: 'bold',
-              marginRight: '10px'
-            }}>✓</div>
-            <div>
-              <p style={{ fontWeight: 'bold', margin: 0 }}>Sarah from Dubai Marina</p>
-              <p style={{ fontSize: '0.8rem', color: '#059669', margin: 0 }}>Just booked master bathroom</p>
+        {/* Process Section */}
+        <section id="process" className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${playfair.className}`}>
+                Your 21-Day Bathroom Renovation Process
+              </h2>
+              <p className={`text-xl text-gray-600 ${inter.className}`}>
+                Transparent timeline with daily updates via WhatsApp
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-5 gap-6">
+              {bathroomProcess.map((step, index) => (
+                <div key={index} className="text-center">
+                  <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl">
+                    {index + 1}
+                  </div>
+                  <h3 className={`font-bold mb-2 ${playfair.className}`}>{step.day}</h3>
+                  <p className="font-semibold text-gray-900 mb-1">{step.title}</p>
+                  <p className="text-sm text-gray-600">{step.description}</p>
+                </div>
+              ))}
             </div>
           </div>
-          <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: 0 }}>2 minutes ago • AED 35,000</p>
-        </div>
-      )}
+        </section>
 
-      {/* Premium Quote Form */}
-      <section id="premium-quote" ref={formRef} style={{ 
-        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', 
-        color: 'white', 
-        padding: '100px 20px'
-      }}>
-        <div className="container" style={{ maxWidth: '600px' }}>
-          <h2 style={{ 
-            fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', 
-            textAlign: 'center', 
-            marginBottom: '20px' 
-          }}>
-            Get Your Premium Quote
-          </h2>
-          <p style={{ 
-            textAlign: 'center', 
-            fontSize: '1.25rem',
-            opacity: 0.8,
-            marginBottom: '50px'
-          }}>
-            Receive a detailed, fixed-price quote within 30 minutes
-          </p>
+        {/* Testimonials */}
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className={`text-4xl md:text-5xl font-bold text-center mb-12 ${playfair.className}`}>
+              287+ Happy Bathroom Transformations
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              {testimonials.map((review, index) => (
+                <div key={index} className="bg-white p-6 rounded-xl shadow-lg">
+                  <div className="flex mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-gray-700 mb-4 italic">"{review.text}"</p>
+                  <div>
+                    <p className="font-bold">{review.name}</p>
+                    <p className="text-sm text-gray-600">{review.location} • {review.type}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-          {!submitted ? (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div>
-                <label htmlFor="name" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Full Name *
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '18px',
-                    borderRadius: '12px',
-                    border: errors.name ? '2px solid #ef4444' : '2px solid #374151',
-                    fontSize: '16px',
-                    background: '#334155',
-                    color: 'white',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#f59e0b';
-                    e.target.style.background = '#475569';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.name ? '#ef4444' : '#374151';
-                    e.target.style.background = '#334155';
-                  }}
-                />
-                {errors.name && (
-                  <p style={{ color: '#ef4444', marginTop: '8px', fontSize: '0.875rem' }}>
-                    {errors.name}
-                  </p>
-                )}
+        {/* Quote Form */}
+        <section id="quote" className="py-20 bg-amber-50">
+          <div className="max-w-2xl mx-auto px-4">
+            <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+              <div className="bg-gradient-to-r from-amber-600 to-amber-700 p-8 text-white">
+                <h3 className={`text-3xl font-bold mb-2 ${playfair.className}`}>
+                  Get Your Bathroom Quote in 60 Seconds
+                </h3>
+                <p>Fixed pricing • No hidden costs • Instant response</p>
               </div>
-
-              <div>
-                <label htmlFor="phone" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  WhatsApp Number *
-                </label>
-                <input
-                  id="phone"
-                  type="tel"
-                  placeholder="05x xxx xxxx"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '18px',
-                    borderRadius: '12px',
-                    border: errors.phone ? '2px solid #ef4444' : '2px solid #374151',
-                    fontSize: '16px',
-                    background: '#334155',
-                    color: 'white',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#f59e0b';
-                    e.target.style.background = '#475569';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.phone ? '#ef4444' : '#374151';
-                    e.target.style.background = '#334155';
-                  }}
-                />
-                {errors.phone && (
-                  <p style={{ color: '#ef4444', marginTop: '8px', fontSize: '0.875rem' }}>
-                    {errors.phone}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="size" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Bathroom Size *
-                </label>
-                <select
-                  id="size"
-                  value={formData.size}
-                  onChange={(e) => setFormData({...formData, size: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '18px',
-                    borderRadius: '12px',
-                    border: errors.size ? '2px solid #ef4444' : '2px solid #374151',
-                    fontSize: '16px',
-                    background: '#334155',
-                    color: 'white',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#f59e0b';
-                    e.target.style.background = '#475569';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.size ? '#ef4444' : '#374151';
-                    e.target.style.background = '#334155';
-                  }}
-                >
-                  <option value="">Select Bathroom Size</option>
-                  <option value="standard">Standard (4-6m²) - AED 25,000</option>
-                  <option value="master">Master (6-10m²) - AED 35,000</option>
-                  <option value="luxury">Luxury (10m²+) - AED 50,000+</option>
-                </select>
-                {errors.size && (
-                  <p style={{ color: '#ef4444', marginTop: '8px', fontSize: '0.875rem' }}>
-                    {errors.size}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="timeline" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Preferred Timeline *
-                </label>
-                <select
-                  id="timeline"
-                  value={formData.timeline}
-                  onChange={(e) => setFormData({...formData, timeline: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '18px',
-                    borderRadius: '12px',
-                    border: errors.timeline ? '2px solid #ef4444' : '2px solid #374151',
-                    fontSize: '16px',
-                    background: '#334155',
-                    color: 'white',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#f59e0b';
-                    e.target.style.background = '#475569';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.timeline ? '#ef4444' : '#374151';
-                    e.target.style.background = '#334155';
-                  }}
-                >
-                  <option value="">Select Timeline</option>
-                  <option value="immediate">Immediately (Next 7 days)</option>
-                  <option value="1month">Within 1 Month</option>
-                  <option value="3months">Within 3 Months</option>
-                  <option value="planning">Just Planning/Researching</option>
-                </select>
-                {errors.timeline && (
-                  <p style={{ color: '#ef4444', marginTop: '8px', fontSize: '0.875rem' }}>
-                    {errors.timeline}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="message" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Additional Requirements
-                </label>
-                <textarea
-                  id="message"
-                  placeholder="Tell us about your dream bathroom, specific materials, or special requirements..."
-                  value={formData.message}
-                  onChange={(e) => setFormData({...formData, message: e.target.value})}
-                  rows={4}
-                  style={{
-                    width: '100%',
-                    padding: '18px',
-                    borderRadius: '12px',
-                    border: '2px solid #374151',
-                    fontSize: '16px',
-                    background: '#334155',
-                    color: 'white',
-                    transition: 'all 0.3s ease',
-                    resize: 'vertical'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#f59e0b';
-                    e.target.style.background = '#475569';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#374151';
-                    e.target.style.background = '#334155';
-                  }}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn"
-                style={{ 
-                  width: '100%', 
-                  padding: '20px',
-                  fontSize: '1.125rem',
-                  opacity: loading ? 0.7 : 1,
-                  cursor: loading ? 'not-allowed' : 'pointer'
-                }}
-              >
-                {loading ? (
-                  <>
-                    <div style={{
-                      width: '20px',
-                      height: '20px',
-                      border: '2px solid transparent',
-                      borderTop: '2px solid white',
-                      borderRadius: '50%',
-                      animation: 'spin 1s linear infinite'
-                    }} />
-                    Processing Your Premium Quote...
-                  </>
+              
+              <div className="p-8">
+                {submitted ? (
+                  <div className="text-center py-8">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <h4 className={`text-2xl font-bold mb-4 ${playfair.className}`}>Thank You!</h4>
+                    <p className="text-gray-600 mb-6">We'll call you within 30 minutes with your bathroom renovation quote.</p>
+                    <a href="tel:+971585658002" className="text-amber-600 font-semibold">
+                      Call Now: 058-565-8002
+                    </a>
+                  </div>
                 ) : (
-                  <>
-                    🏆 Get My Premium Quote Now
-                    <span style={{ transition: 'transform 0.3s ease' }}>→</span>
-                  </>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">Your Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number *</label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">Bathroom Type *</label>
+                      <select
+                        required
+                        value={formData.bathroomType}
+                        onChange={(e) => setFormData({...formData, bathroomType: e.target.value})}
+                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500"
+                      >
+                        <option value="">Select Type</option>
+                        <option value="standard">Standard (4-6m²) - AED 25,000</option>
+                        <option value="master">Master (6-10m²) - AED 35,000</option>
+                        <option value="luxury">Luxury (10m²+) - AED 50,000+</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">When to Start? *</label>
+                      <select
+                        required
+                        value={formData.timeline}
+                        onChange={(e) => setFormData({...formData, timeline: e.target.value})}
+                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500"
+                      >
+                        <option value="">Select Timeline</option>
+                        <option value="immediate">Immediately</option>
+                        <option value="1month">Within 1 Month</option>
+                        <option value="3months">Within 3 Months</option>
+                        <option value="planning">Just Planning</option>
+                      </select>
+                    </div>
+                    
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className={`w-full py-4 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg ${
+                        loading ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      {loading ? 'Sending...' : 'Get Instant Quote →'}
+                    </button>
+                  </form>
                 )}
-              </button>
-            </form>
-          ) : (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎉</div>
-              <h3 style={{ fontSize: '2.5rem', marginBottom: '20px', color: '#f59e0b' }}>
-                Thank You for Choosing Premium!
-              </h3>
-              <p style={{ fontSize: '1.25rem', marginBottom: '30px', opacity: 0.9 }}>
-                Your premium bathroom consultation has been scheduled. Our luxury specialist will contact you within 30 minutes with your detailed quote.
-              </p>
-              <div style={{ 
-                background: 'rgba(255,255,255,0.1)', 
-                padding: '30px', 
-                borderRadius: '16px',
-                display: 'inline-block'
-              }}>
-                <p style={{ marginBottom: '15px', fontWeight: '500' }}>For immediate assistance:</p>
-                <a href="tel:0585658002" style={{
-                  fontSize: '1.5rem',
-                  color: '#f59e0b',
-                  fontWeight: 'bold',
-                  textDecoration: 'none',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseOver={(e) => e.target.style.color = '#fbbf24'}
-                onMouseOut={(e) => e.target.style.color = '#f59e0b'}
-                >
-                  📞 058-565-8002
-                </a>
               </div>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* Premium Mobile CTA */}
-      <div style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        background: 'linear-gradient(135deg, #1e293b, #0f172a)',
-        borderTop: '1px solid #334155',
-        zIndex: 1000,
-        '@media (min-width: 768px)': { display: 'none' }
-      }}>
-        <a href="tel:0585658002" style={{
-          padding: '18px',
-          textAlign: 'center',
-          fontWeight: 'bold',
-          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-          color: 'white',
-          textDecoration: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          transition: 'all 0.3s ease'
-        }}
-        onTouchStart={(e) => e.target.style.opacity = '0.8'}
-        onTouchEnd={(e) => e.target.style.opacity = '1'}
+        {/* WhatsApp Button */}
+        
+          href="https://wa.me/971585658002?text=I%20need%20a%20bathroom%20renovation%20quote"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-8 right-8 w-16 h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-2xl z-40"
         >
-          <span>📞</span>
-          Call Now
-        </a>
-        <a href="#premium-quote" style={{
-          padding: '18px',
-          textAlign: 'center',
-          fontWeight: 'bold',
-          background: 'linear-gradient(135deg, #059669, #047857)',
-          color: 'white',
-          textDecoration: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          transition: 'all 0.3s ease'
-        }}
-        onTouchStart={(e) => e.target.style.opacity = '0.8'}
-        onTouchEnd={(e) => e.target.style.opacity = '1'}
-        >
-          <span>💎</span>
-          Premium Quote
+          <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+          </svg>
         </a>
       </div>
-
-      {/* Additional animations */}
-      <style jsx>{`
-        @keyframes bounce {
-          0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
-          40% { transform: translateY(-10px) translateX(-50%); }
-          60% { transform: translateY(-5px) translateX(-50%); }
-        }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </>
   );
 }
