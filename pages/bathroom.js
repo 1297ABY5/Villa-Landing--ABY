@@ -540,15 +540,15 @@ export default function BathroomRenovation() {
                 
                 {/* Desktop Nav */}
                 <nav className="hidden lg:flex items-center space-x-8 xl:space-x-10">
-                  {['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'].map((item) => (
-                    
-                      key={item}
-                      href={`#${item.toLowerCase()}`}
-                      className={`font-medium text-gray-700 hover:text-amber-600 transition-colors ${inter.className}`}
-                    >
-                      {item}
-                    </a>
-                  ))}
+                 {['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'].map((item) => (
+  
+    key={item}
+    href={`#${item.toLowerCase()}`}
+    className={`font-medium text-gray-700 hover:text-amber-600 transition-colors ${inter.className}`}
+  >
+    {item}
+  </a>
+))}
                   
                     href="tel:+971585658002"
                     className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-all ${inter.className}`}
