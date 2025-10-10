@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useState, useEffect, useCallback, memo, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-
 // Optimized Font Loading
 import { Playfair_Display, Inter } from 'next/font/google';
 
