@@ -4,11 +4,11 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* Elfsight script loads once globally */}
+        {/* Elfsight platform script – load once globally */}
         <script
           src="https://static.elfsight.com/platform/platform.js"
           async
-        ></script>
+        />
       </Head>
       <body>
         <Main />
