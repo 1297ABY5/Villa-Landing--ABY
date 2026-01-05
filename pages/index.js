@@ -1,9 +1,9 @@
 // pages/index.js
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState, useEffect, useCallback, memo, useRef } from 'react';
-import dynamic from 'next/dynamic';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import Script from 'next/script'; // Added for Elfsight
 
 // Optimized Font Loading
 import { Playfair_Display, Inter } from 'next/font/google';
@@ -23,25 +23,6 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-// Lazy load components
-const InstagramFeed = dynamic(
-  () => import('../components/InstagramFeed'),
-  { 
-    loading: () => <div className="h-96 bg-gray-50 animate-pulse rounded-lg" />,
-    ssr: false 
-  }
-);
-
-const TestimonialsSection = dynamic(
-  () => import('../components/TestimonialsSection'),
-  { 
-    loading: () => <div className="h-64 bg-gray-50 animate-pulse" />,
-    ssr: false,
-  }
-);
-
-// Service Card Component - REMOVED (no longer needed)
-
 export default function Home() {
   const router = useRouter();
   const [formState, setFormState] = useState({ submitted: false, loading: false });
@@ -51,9 +32,8 @@ export default function Home() {
   const [timeOnPage, setTimeOnPage] = useState(0);
   const [scrollDepth, setScrollDepth] = useState(0);
   const [urgencySlots, setUrgencySlots] = useState(3);
-  const [loadInstagram, setLoadInstagram] = useState(false); 
-  const [formData, setFormData] = useState({
   
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
@@ -74,22 +54,30 @@ export default function Home() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const keyword = urlParams.get('keyword') || urlParams.get('utm_term') || 'Villa Renovation';
+    
+    // Set default params if missing
     if (!urlParams.get('keyword') && !urlParams.get('utm_term')) {
-  window.history.replaceState({}, '', '?keyword=Villa+Renovation&location=Dubai');
-}
+      if (typeof window !== 'undefined') {
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('keyword', 'Villa Renovation');
+        newUrl.searchParams.set('location', 'Dubai');
+        window.history.replaceState({}, '', newUrl);
+      }
+    }
+
     const location = urlParams.get('loc') || urlParams.get('location') || 'Dubai';
     const service = urlParams.get('service') || urlParams.get('utm_content') || 'Renovation';
     const campaign = urlParams.get('utm_campaign') || 'general';
     const matchType = urlParams.get('matchtype') || 'broad';
 
-const headlineMap = {
-  'exact': `#1 ${keyword} Company - ${location} Municipality Approved`,
-  'phrase': `Professional ${keyword} Services in ${location}`,
-  'broad': `Premium ${keyword} Services in ${location}`,
-};
+    const headlineMap = {
+      'exact': `#1 ${keyword} Company - ${location} Municipality Approved`,
+      'phrase': `Professional ${keyword} Services in ${location}`,
+      'broad': `Premium ${keyword} Services in ${location}`,
+    };
 
-setDynamicContent({
-  headline: headlineMap[matchType] || `Premium ${keyword} Services in ${location}`,
+    setDynamicContent({
+      headline: headlineMap[matchType] || `Premium ${keyword} Services in ${location}`,
       subheadline: `${location}'s Most Trusted ${service} Company`,
       keyword,
       location,
@@ -184,23 +172,26 @@ setDynamicContent({
       return () => document.removeEventListener('mouseleave', handleMouseLeave);
     }
   }, [showExitPopup, timeOnPage]);
-useEffect(() => {
-  let interactions = 0;
-  
-  const trackEngagement = () => {
-    interactions++;
-    if (interactions === 3 && window.gtag) {
-      window.gtag('event', 'engaged_user', {
-        event_category: 'UX',
-        event_label: 'quality_signal'
-      });
-    }
-  };
-  
-  ['click', 'scroll', 'touchstart'].forEach(event => {
-    document.addEventListener(event, trackEngagement, { once: true, passive: true });
-  });
-}, []);
+
+  // General Engagement Tracking
+  useEffect(() => {
+    let interactions = 0;
+    
+    const trackEngagement = () => {
+      interactions++;
+      if (interactions === 3 && window.gtag) {
+        window.gtag('event', 'engaged_user', {
+          event_category: 'UX',
+          event_label: 'quality_signal'
+        });
+      }
+    };
+    
+    ['click', 'scroll', 'touchstart'].forEach(event => {
+      document.addEventListener(event, trackEngagement, { once: true, passive: true });
+    });
+  }, []);
+
   // Urgency countdown
   useEffect(() => {
     const timer = setInterval(() => {
@@ -216,95 +207,85 @@ useEffect(() => {
     
     return () => clearInterval(timer);
   }, []);
-// Defer Instagram loading
-useEffect(() => {
-  const timer = setTimeout(() => {
-    setLoadInstagram(true);
-  }, 5000); // Load after 5 seconds
-  return () => clearTimeout(timer);
-}, []);
 
+  // Analytics Loading (Google & Facebook)
+  useEffect(() => {
+    // Wait for page to be idle or 2 seconds max
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        loadAnalytics();
+      }, { timeout: 2000 });
+    } else {
+      setTimeout(() => {
+        loadAnalytics();
+      }, 2000);
+    }
+    
+    function loadAnalytics() {
+      // Load Google Analytics
+      const gtagScript = document.createElement('script');
+      gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-612864132';
+      gtagScript.async = true;
+      gtagScript.defer = true;
+      document.head.appendChild(gtagScript);
+      
+      gtagScript.onload = () => {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'AW-612864132');
+        gtag('config', 'AW-612864132', {
+          'phone_conversion_number': '+971585658002',
+          'allow_enhanced_conversions': true
+        });
+      };
+      
+      // Load Facebook Pixel
+      (function(f,b,e,v,n,t,s){
+        if(f.fbq)return;
+        n=f.fbq=function(){
+          n.callMethod ? n.callMethod.apply(n,arguments) : n.queue.push(arguments)
+        };
+        if(!f._fbq)f._fbq=n;
+        n.push=n;
+        n.loaded=!0;
+        n.version='2.0';
+        n.queue=[];
+        t=b.createElement(e);
+        t.async=!0;
+        t.defer=!0;
+        t.src=v;
+        s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)
+      })(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      
+      window.fbq('init', 'YOUR_ACTUAL_PIXEL_ID'); // Replace with actual ID
+      window.fbq('track', 'PageView');
+    }
+  }, []);
 
+  // Handle Form Submission
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setFormState({ submitted: false, loading: true });
     
-// This should be with your other useEffects, NOT inside handleSubmit
-// Around line 200, BEFORE the handleSubmit function
-useEffect(() => {
-  // Wait for page to be idle or 2 seconds max
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(() => {
-      loadAnalytics();
-    }, { timeout: 2000 });
-  } else {
-    setTimeout(() => {
-      loadAnalytics();
-    }, 2000);
-  }
-  
-  function loadAnalytics() {
-    // Load Google Analytics
-    const gtagScript = document.createElement('script');
-    gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-612864132';
-    gtagScript.async = true;
-    gtagScript.defer = true;
-    document.head.appendChild(gtagScript);
-    
-    gtagScript.onload = () => {
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag = gtag;
-      gtag('js', new Date());
-      gtag('config', 'AW-612864132');
-      gtag('config', 'AW-612864132', {
-        'phone_conversion_number': '+971585658002',
-        'allow_enhanced_conversions': true
-      });
+    // Service-based value mapping
+    const serviceValues = {
+      'villa-renovation': 150000,
+      'swimming-pool': 80000,
+      'kitchen': 45000,
+      'bathroom': 25000,
+      'extension': 120000,
+      'interior': 60000,
+      'smart-home': 35000
     };
     
-    // Load Facebook Pixel
-    (function(f,b,e,v,n,t,s){
-      if(f.fbq)return;
-      n=f.fbq=function(){
-        n.callMethod ? n.callMethod.apply(n,arguments) : n.queue.push(arguments)
-      };
-      if(!f._fbq)f._fbq=n;
-      n.push=n;
-      n.loaded=!0;
-      n.version='2.0';
-      n.queue=[];
-      t=b.createElement(e);
-      t.async=!0;
-      t.defer=!0;
-      t.src=v;
-      s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)
-    })(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    // Get dynamic value based on selected service
+    const estimatedValue = serviceValues[formData.service] || 50000;
     
-    window.fbq('init', 'YOUR_ACTUAL_PIXEL_ID'); // Replace with actual ID
-    window.fbq('track', 'PageView');
-  } // This closing brace was missing
-
-}, []);
-// THEN your handleSubmit function starts here (WITHOUT the useEffect inside)
-const handleSubmit = useCallback(async (e) => {
-  e.preventDefault();
-  setFormState({ submitted: false, loading: true });
-  
-  // ADD THIS: Service-based value mapping
-  const serviceValues = {
-    'villa-renovation': 150000,
-    'swimming-pool': 80000,
-    'kitchen': 45000,
-    'bathroom': 25000,
-    'extension': 120000,
-    'interior': 60000,
-    'smart-home': 35000
-  };
-  
-  // Get dynamic value based on selected service
-  const estimatedValue = serviceValues[formData.service] || 50000;
-  
-  // Create WhatsApp message with form data
-  const message = `
+    // Create WhatsApp message with form data
+    const message = `
 *New Client Requirements*
 ------------------------
 *Name:* ${formData.name}
@@ -314,35 +295,34 @@ const handleSubmit = useCallback(async (e) => {
 *Estimated Value:* AED ${estimatedValue.toLocaleString()}
 *Message:* ${formData.message || 'No message'}
 *Time:* ${new Date().toLocaleString()}
-  `.trim();
-  
-  // Send to your WhatsApp
-  const whatsappUrl = `https://wa.me/971585658002?text=${encodeURIComponent(message)}`;
-  
-  // Open WhatsApp in new window
-  window.open(whatsappUrl, '_blank');
-  
-  // Track the submission with DYNAMIC VALUE
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'conversion', {
-      'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
-      'value': estimatedValue,  // Changed from fixed 5000 to dynamic
-      'currency': 'AED',
-      'transaction_id': `lead_${Date.now()}_${formData.service}` // Added unique ID
-    });
+    `.trim();
     
-    // BONUS: Track service-specific conversion for better insights
-    window.gtag('event', `${formData.service}_lead`, {
-      'event_category': 'conversions',
-      'event_label': formData.service,
-      'value': estimatedValue
-    });
-  }
-  
-  setTimeout(() => {
-    setFormState({ submitted: true, loading: false });
-  }, 1500);
-}, [formData, dynamicContent]);
+    // Send to your WhatsApp
+    const whatsappUrl = `https://wa.me/971585658002?text=${encodeURIComponent(message)}`;
+    
+    // Open WhatsApp in new window
+    window.open(whatsappUrl, '_blank');
+    
+    // Track the submission with DYNAMIC VALUE
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
+        'value': estimatedValue,
+        'currency': 'AED',
+        'transaction_id': `lead_${Date.now()}_${formData.service}`
+      });
+      
+      window.gtag('event', `${formData.service}_lead`, {
+        'event_category': 'conversions',
+        'event_label': formData.service,
+        'value': estimatedValue
+      });
+    }
+    
+    setTimeout(() => {
+      setFormState({ submitted: true, loading: false });
+    }, 1500);
+  }, [formData, dynamicContent]);
 
   // Track form field interactions
   const handleFormFieldFocus = (fieldName) => {
@@ -354,7 +334,7 @@ const handleSubmit = useCallback(async (e) => {
     }
   };
 
-  // Your brand's actual services with tracking links - UPDATED WITH ICONS
+  // Services Data
   const services = [
     { 
       image: "/villa-renovation.webp",
@@ -409,39 +389,36 @@ const handleSubmit = useCallback(async (e) => {
 
   return (
     <>
-    
-   <Head>
-  <title>{dynamicContent.headline} | Unicorn Renovations Dubai</title>
-  <link rel="preload" as="image" href="/before-after.avif" />
-    <link rel="preload" as="font" type="font/woff2" crossOrigin="anonymous" 
-      href="/_next/static/media/playfair-display.woff2" />
-  <meta name="description" content={`${dynamicContent.keyword} in ${dynamicContent.location}. Dubai's premier renovation company with 15+ years expertise. ✓ Free Consultation ✓ 800+ Projects ✓ Dubai Municipality Approved`} />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
-  {/* Favicon */}
-  <link rel="icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+      <Head>
+        <title>{dynamicContent.headline} | Unicorn Renovations Dubai</title>
+        <link rel="preload" as="image" href="/before-after.avif" />
+        <link rel="preload" as="font" type="font/woff2" crossOrigin="anonymous" 
+          href="/_next/static/media/playfair-display.woff2" />
+        <meta name="description" content={`${dynamicContent.keyword} in ${dynamicContent.location}. Dubai's premier renovation company with 15+ years expertise. ✓ Free Consultation ✓ 800+ Projects ✓ Dubai Municipality Approved`} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-  <link rel="preconnect" href="https://www.googletagmanager.com" />
-  <link rel="preconnect" href="https://connect.facebook.net" />
-  <link rel="dns-prefetch" href="https://www.google.com" />
-    
-  <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
-  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-  <link rel="canonical" href={`https://unicornrenovations.com/${dynamicContent.service.toLowerCase().replace(/\s+/g, '-')}`} />
-  {/* Open Graph */}
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content={`${dynamicContent.headline} | Unicorn Renovations`} />
-  <meta property="og:description" content={`Transform your villa with ${dynamicContent.location}'s premier renovation company`} />
-  <meta property="og:image" content="https://unicornrenovations.com/og-image.jpg" />
-  <meta property="og:url" content="https://unicornrenovations.com" />
-  
-  {/* Your Schema markup scripts continue here... */}
-              
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://connect.facebook.net" />
+        <link rel="dns-prefetch" href="https://www.google.com" />
+        
+        <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
+        <link rel="canonical" href={`https://unicornrenovations.com/${dynamicContent.service.toLowerCase().replace(/\s+/g, '-')}`} />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={`${dynamicContent.headline} | Unicorn Renovations`} />
+        <meta property="og:description" content={`Transform your villa with ${dynamicContent.location}'s premier renovation company`} />
+        <meta property="og:image" content="https://unicornrenovations.com/og-image.jpg" />
+        <meta property="og:url" content="https://unicornrenovations.com" />
+        
         {/* Enhanced Local Business Schema */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: `
           {
@@ -473,14 +450,8 @@ const handleSubmit = useCallback(async (e) => {
               "worstRating": "1"
             },
             "areaServed": [
-              {
-                "@type": "City",
-                "name": "Dubai"
-              },
-              {
-                "@type": "City", 
-                "name": "Abu Dhabi"
-              }
+              { "@type": "City", "name": "Dubai" },
+              { "@type": "City", "name": "Abu Dhabi" }
             ],
             "hasOfferCatalog": {
               "@type": "OfferCatalog",
@@ -507,14 +478,8 @@ const handleSubmit = useCallback(async (e) => {
             "review": [
               {
                 "@type": "Review",
-                "reviewRating": {
-                  "@type": "Rating",
-                  "ratingValue": "5"
-                },
-                "author": {
-                  "@type": "Person",
-                  "name": "Fatima Al-Rashid"
-                }
+                "reviewRating": { "@type": "Rating", "ratingValue": "5" },
+                "author": { "@type": "Person", "name": "Fatima Al-Rashid" }
               }
             ]
           }
@@ -545,8 +510,6 @@ const handleSubmit = useCallback(async (e) => {
             ]
           }
         `}} />
-        
-        
       </Head>
 
       <div className={`min-h-screen bg-white ${inter.variable} ${playfair.variable}`}>
@@ -611,19 +574,19 @@ const handleSubmit = useCallback(async (e) => {
                     href="tel:+971585658002"
                     className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-all ${inter.className}`}
                     onClick={() => {
-    if (window.gtag) {
-      window.gtag('event', 'conversion', {
-        'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
-        'value': 3000,
-        'currency': 'AED'
-      });
-      window.gtag('event', 'click_to_call', {
-        event_category: 'engagement',
-        event_label: 'header_cta'
-      });
-    }
-  }}
->
+                      if (window.gtag) {
+                        window.gtag('event', 'conversion', {
+                          'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
+                          'value': 3000,
+                          'currency': 'AED'
+                        });
+                        window.gtag('event', 'click_to_call', {
+                          event_category: 'engagement',
+                          event_label: 'header_cta'
+                        });
+                      }
+                    }}
+                  >
                     Get Free Quote
                   </a>
                 </nav>
@@ -720,109 +683,110 @@ const handleSubmit = useCallback(async (e) => {
           </div>
         </div>
         
-{/* Hero Section */}
-<section
-  className="relative flex items-center min-h-screen py-20 md:py-0"
-  aria-labelledby="hero-heading"
->
-  {/* CORRECTED: Replaced <img> with optimized Next.js <Image> component for max pagespeed */}
-  <Image
-    src="/download.webp"
-  alt="Modern villa exterior"
-  fill
-  sizes="(max-width: 768px) 100vw, 1px" // Only load on mobile
-  className="md:hidden object-cover"
-  priority
-  quality={70} // Reduce from 80
-  />
-  <Image
-  src="/before-after.avif"
-  alt="Luxurious villa interior"
-  fill
-  sizes="(min-width: 769px) 100vw, 1px" // Only load on desktop
-  className="hidden md:block object-cover"
-  priority={false} // Remove priority for desktop on mobile
-  quality={70} // Reduce from 80
-  />
-  <div className="absolute inset-0 bg-black/40 z-0" aria-hidden="true" />
-
-  <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-white">
-    <div className="text-center">
-      <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 mb-4 md:mb-6">
-        <span className={`text-amber-400 text-[10px] md:text-sm tracking-wider uppercase font-semibold ${inter.className}`}>
-          {dynamicContent.location}'s #1 Renovation Company
-        </span>
-      </div>
-      
-      <h1
-        id="hero-heading"
-        className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-3 md:mb-4 leading-tight ${playfair.className}`}
-      >
-        {dynamicContent.headline}
-      </h1>
-      
-      <div className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-8 ${playfair.className}`}>
-        <span className="gradient-text">{dynamicContent.subheadline}</span>
-      </div>
-      
-      {/* IMPROVED: Description is cleaner for mobile */}
-      <p className={`text-base md:text-xl text-gray-100 max-w-3xl mx-auto mb-6 md:mb-8 leading-normal md:leading-relaxed ${inter.className}`}>
-        Transform your {dynamicContent.service.toLowerCase()} with our expert team. We deliver unparalleled quality and design excellence.
-      </p>
-      
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <a
-          href="#quick-quote"
-          className={`px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-lg font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
+        {/* Hero Section */}
+        <section
+          className="relative flex items-center min-h-screen py-20 md:py-0"
+          aria-labelledby="hero-heading"
         >
-          Get Free Quote →
-        </a>
-        <a
-          href="tel:+971585658002"
-          className={`px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-base md:text-lg font-bold rounded-lg transition-all ${inter.className}`}
-onClick={() => {
-    if (window.gtag) {
-      window.gtag('event', 'conversion', {
-        'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
-        'value': 3000,
-        'currency': 'AED'
-      });
-      window.gtag('event', 'click_to_call', {
-        event_category: 'engagement',
-        event_label: 'hero_call_cta'  
-      });
-    }
-  }}
-        >
-          📞 Speak to an Expert
-        </a>
-      </div>
+          {/* CORRECTED: Replaced <img> with optimized Next.js <Image> component for max pagespeed */}
+          <Image
+            src="/download.webp"
+            alt="Modern villa exterior"
+            fill
+            sizes="(max-width: 768px) 100vw, 1px" // Only load on mobile
+            className="md:hidden object-cover"
+            priority
+            quality={70} // Reduce from 80
+          />
+          <Image
+            src="/before-after.avif"
+            alt="Luxurious villa interior"
+            fill
+            sizes="(min-width: 769px) 100vw, 1px" // Only load on desktop
+            className="hidden md:block object-cover"
+            priority={false} // Remove priority for desktop on mobile
+            quality={70} // Reduce from 80
+          />
+          <div className="absolute inset-0 bg-black/40 z-0" aria-hidden="true" />
 
-      {/* IMPROVED: Upgraded to a responsive "Bento Grid" for trust badges */}
-      <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-2xl mx-auto text-white">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3 text-center">
-              <p className={`font-bold text-lg md:text-xl ${inter.className}`}>800+</p>
-              <p className={`text-xs md:text-sm opacity-80 ${inter.className}`}>Projects Completed</p>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3 text-center">
-              <p className={`font-bold text-lg md:text-xl ${inter.className}`}>15+</p>
-              <p className={`text-xs md:text-sm opacity-80 ${inter.className}`}>Years Experience</p>
-          </div>
-          <div className="col-span-2 md:col-span-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3 text-center">
-              <p className={`font-bold text-lg md:text-xl ${inter.className}`}>100%</p>
-              <p className={`text-xs md:text-sm opacity-80 ${inter.className}`}>Client Satisfaction</p>
-          </div>
-      </div>
-    </div>
-  </div>
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-white">
+            <div className="text-center">
+              <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 mb-4 md:mb-6">
+                <span className={`text-amber-400 text-[10px] md:text-sm tracking-wider uppercase font-semibold ${inter.className}`}>
+                  {dynamicContent.location}'s #1 Renovation Company
+                </span>
+              </div>
+              
+              <h1
+                id="hero-heading"
+                className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-3 md:mb-4 leading-tight ${playfair.className}`}
+              >
+                {dynamicContent.headline}
+              </h1>
+              
+              <div className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-8 ${playfair.className}`}>
+                <span className="gradient-text">{dynamicContent.subheadline}</span>
+              </div>
+              
+              {/* IMPROVED: Description is cleaner for mobile */}
+              <p className={`text-base md:text-xl text-gray-100 max-w-3xl mx-auto mb-6 md:mb-8 leading-normal md:leading-relaxed ${inter.className}`}>
+                Transform your {dynamicContent.service.toLowerCase()} with our expert team. We deliver unparalleled quality and design excellence.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="#quick-quote"
+                  className={`px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-lg font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
+                >
+                  Get Free Quote →
+                </a>
+                <a
+                  href="tel:+971585658002"
+                  className={`px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-base md:text-lg font-bold rounded-lg transition-all ${inter.className}`}
+                  onClick={() => {
+                    if (window.gtag) {
+                      window.gtag('event', 'conversion', {
+                        'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
+                        'value': 3000,
+                        'currency': 'AED'
+                      });
+                      window.gtag('event', 'click_to_call', {
+                        event_category: 'engagement',
+                        event_label: 'hero_call_cta'  
+                      });
+                    }
+                  }}
+                >
+                  📞 Speak to an Expert
+                </a>
+              </div>
 
-  {/* Scroll Indicator */}
-  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-    <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-    </svg>
-  </div>
-</section>
+              {/* IMPROVED: Upgraded to a responsive "Bento Grid" for trust badges */}
+              <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-2xl mx-auto text-white">
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3 text-center">
+                      <p className={`font-bold text-lg md:text-xl ${inter.className}`}>800+</p>
+                      <p className={`text-xs md:text-sm opacity-80 ${inter.className}`}>Projects Completed</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3 text-center">
+                      <p className={`font-bold text-lg md:text-xl ${inter.className}`}>15+</p>
+                      <p className={`text-xs md:text-sm opacity-80 ${inter.className}`}>Years Experience</p>
+                  </div>
+                  <div className="col-span-2 md:col-span-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3 text-center">
+                      <p className={`font-bold text-lg md:text-xl ${inter.className}`}>100%</p>
+                      <p className={`text-xs md:text-sm opacity-80 ${inter.className}`}>Client Satisfaction</p>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+            <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </section>
+
         {/* Google Reviews Section - Mobile Optimized */}
         <section id="reviews" className="py-12 md:py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
@@ -909,65 +873,67 @@ onClick={() => {
             </div>
           </div>
         </section>
-{/* Keyword-Specific Content Block - Place this around line 850 */}
-{dynamicContent.keyword.toLowerCase().includes('pool') && (
-  <section className="py-12 bg-blue-50">
-    <div className="max-w-4xl mx-auto px-4">
-      <h2 className={`text-3xl font-bold mb-4 ${playfair.className}`}>
-        Swimming Pool Construction in {dynamicContent.location}
-      </h2>
-      <div className="grid md:grid-cols-2 gap-6">
-        <div>
-          <h3 className="font-bold mb-2">Our Pool Services Include:</h3>
-          <ul className="space-y-2 text-gray-700">
-            <li>✓ Custom pool design</li>
-            <li>✓ Municipality permits handled</li>
-            <li>✓ 5-year waterproofing warranty</li>
-            <li>✓ Smart pool automation</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="font-bold mb-2">Pool Construction Timeline:</h3>
-          <ul className="space-y-2 text-gray-700">
-            <li>Week 1-2: Design & Permits</li>
-            <li>Week 3-6: Excavation & Structure</li>
-            <li>Week 7-8: Finishing & Testing</li>
-            <li>Week 9: Handover</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-)}
 
-{dynamicContent.keyword.toLowerCase().includes('kitchen') && (
-  <section className="py-12 bg-amber-50">
-    <div className="max-w-4xl mx-auto px-4">
-      <h2 className={`text-3xl font-bold mb-4 ${playfair.className}`}>
-        Kitchen Renovation in {dynamicContent.location}
-      </h2>
-      <p className="mb-6">Transform your kitchen with German appliances, Italian marble, and smart storage solutions.</p>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-        <div>
-          <p className="text-3xl font-bold text-amber-600">6-8</p>
-          <p className="text-sm">Weeks Timeline</p>
-        </div>
-        <div>
-          <p className="text-3xl font-bold text-amber-600">5</p>
-          <p className="text-sm">Year Warranty</p>
-        </div>
-        <div>
-          <p className="text-3xl font-bold text-amber-600">100%</p>
-          <p className="text-sm">Custom Design</p>
-        </div>
-        <div>
-          <p className="text-3xl font-bold text-amber-600">Free</p>
-          <p className="text-sm">3D Design</p>
-        </div>
-      </div>
-    </div>
-  </section>
-)}
+        {/* Keyword-Specific Content Block */}
+        {dynamicContent.keyword.toLowerCase().includes('pool') && (
+          <section className="py-12 bg-blue-50">
+            <div className="max-w-4xl mx-auto px-4">
+              <h2 className={`text-3xl font-bold mb-4 ${playfair.className}`}>
+                Swimming Pool Construction in {dynamicContent.location}
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-bold mb-2">Our Pool Services Include:</h3>
+                  <ul className="space-y-2 text-gray-700">
+                    <li>✓ Custom pool design</li>
+                    <li>✓ Municipality permits handled</li>
+                    <li>✓ 5-year waterproofing warranty</li>
+                    <li>✓ Smart pool automation</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-bold mb-2">Pool Construction Timeline:</h3>
+                  <ul className="space-y-2 text-gray-700">
+                    <li>Week 1-2: Design & Permits</li>
+                    <li>Week 3-6: Excavation & Structure</li>
+                    <li>Week 7-8: Finishing & Testing</li>
+                    <li>Week 9: Handover</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {dynamicContent.keyword.toLowerCase().includes('kitchen') && (
+          <section className="py-12 bg-amber-50">
+            <div className="max-w-4xl mx-auto px-4">
+              <h2 className={`text-3xl font-bold mb-4 ${playfair.className}`}>
+                Kitchen Renovation in {dynamicContent.location}
+              </h2>
+              <p className="mb-6">Transform your kitchen with German appliances, Italian marble, and smart storage solutions.</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                  <p className="text-3xl font-bold text-amber-600">6-8</p>
+                  <p className="text-sm">Weeks Timeline</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-amber-600">5</p>
+                  <p className="text-sm">Year Warranty</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-amber-600">100%</p>
+                  <p className="text-sm">Custom Design</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-amber-600">Free</p>
+                  <p className="text-sm">3D Design</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Services Section - Mobile Optimized WITH IMAGES FIXED */}
         <section id="services" className="py-12 md:py-20 px-4 md:px-6 bg-white">
           <div className="max-w-7xl mx-auto">
@@ -1006,13 +972,12 @@ onClick={() => {
                     {service.image ? (
                       <Image
                         src={service.image}
-  alt={service.title}
-  fill
-  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px" // Max 400px
-  loading="lazy"
-  quality={60} // Reduce quality
+                        alt={service.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px" // Max 400px
+                        loading="lazy"
+                        quality={60} // Reduce quality
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     ) : (
                       // Fallback to icon if image doesn't load
@@ -1057,33 +1022,35 @@ onClick={() => {
             </div>
           </div>
         </section>
-{/* Location-Specific Trust Block - Add around line 970 */}
-{dynamicContent.location && (
-  <section className="py-8 bg-gray-100">
-    <div className="max-w-4xl mx-auto px-4 text-center">
-      <h3 className={`text-2xl font-bold mb-4 ${playfair.className}`}>
-        Why Choose Us for {dynamicContent.keyword} in {dynamicContent.location}?
-      </h3>
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-lg">
-          <p className="font-bold">Local Expertise</p>
-          <p className="text-sm text-gray-600">
-            {dynamicContent.location === 'Dubai' && '15+ years serving Dubai communities'}
-            {dynamicContent.location === 'Abu Dhabi' && 'Licensed in Abu Dhabi Municipality'}
-          </p>
-        </div>
-        <div className="bg-white p-4 rounded-lg">
-          <p className="font-bold">Municipality Approved</p>
-          <p className="text-sm text-gray-600">All permits and approvals handled</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg">
-          <p className="font-bold">Same-Day Quote</p>
-          <p className="text-sm text-gray-600">Get instant pricing for {dynamicContent.service}</p>
-        </div>
-      </div>
-    </div>
-  </section>
-)}
+
+        {/* Location-Specific Trust Block */}
+        {dynamicContent.location && (
+          <section className="py-8 bg-gray-100">
+            <div className="max-w-4xl mx-auto px-4 text-center">
+              <h3 className={`text-2xl font-bold mb-4 ${playfair.className}`}>
+                Why Choose Us for {dynamicContent.keyword} in {dynamicContent.location}?
+              </h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="font-bold">Local Expertise</p>
+                  <p className="text-sm text-gray-600">
+                    {dynamicContent.location === 'Dubai' && '15+ years serving Dubai communities'}
+                    {dynamicContent.location === 'Abu Dhabi' && 'Licensed in Abu Dhabi Municipality'}
+                  </p>
+                </div>
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="font-bold">Municipality Approved</p>
+                  <p className="text-sm text-gray-600">All permits and approvals handled</p>
+                </div>
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="font-bold">Same-Day Quote</p>
+                  <p className="text-sm text-gray-600">Get instant pricing for {dynamicContent.service}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Quick Quote Form - Mobile Optimized */}
         <section id="quick-quote" className="py-12 md:py-20 bg-amber-50">
           <div className="max-w-3xl mx-auto px-4 md:px-6">
@@ -1133,19 +1100,18 @@ onClick={() => {
                           required
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
-                         
+                          
                           className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-base ${inter.className}`}
                           onFocus={() => {
-                          handleFormFieldFocus('name');
-    // ADD THIS:
-    if (window.gtag && !window.formStarted) {
-      window.gtag('event', 'begin_checkout', {
-        'value': 1000,
-        'currency': 'AED'
-      });
-      window.formStarted = true;
-    }
-  }}
+                            handleFormFieldFocus('name');
+                            if (window.gtag && !window.formStarted) {
+                              window.gtag('event', 'begin_checkout', {
+                                'value': 1000,
+                                'currency': 'AED'
+                              });
+                              window.formStarted = true;
+                            }
+                          }}
                         />
                       </div>
                       <div>
@@ -1266,41 +1232,43 @@ onClick={() => {
             </div>
           </div>
         </section>
-{/* Dynamic FAQ for Specific Keywords */}
-<section className="py-12 bg-white">
-  <div className="max-w-4xl mx-auto px-4">
-    <h2 className={`text-3xl font-bold mb-8 text-center ${playfair.className}`}>
-      Common Questions About {dynamicContent.keyword} in {dynamicContent.location}
-    </h2>
-    
-    {dynamicContent.keyword.toLowerCase().includes('pool') && (
-      <div className="space-y-4">
-        <details className="bg-gray-50 p-4 rounded-lg">
-          <summary className="font-bold cursor-pointer">How much does a swimming pool cost in {dynamicContent.location}?</summary>
-          <p className="mt-2 text-gray-600">Swimming pools in {dynamicContent.location} typically range from AED 150,000 to AED 500,000 depending on size, features, and finishes.</p>
-        </details>
-        <details className="bg-gray-50 p-4 rounded-lg">
-          <summary className="font-bold cursor-pointer">Do I need permits for a pool in {dynamicContent.location}?</summary>
-          <p className="mt-2 text-gray-600">Yes, Dubai Municipality requires permits. We handle all approvals as part of our service.</p>
-        </details>
-      </div>
-    )}
-    
-    {dynamicContent.keyword.toLowerCase().includes('kitchen') && (
-      <div className="space-y-4">
-        <details className="bg-gray-50 p-4 rounded-lg">
-          <summary className="font-bold cursor-pointer">How long does kitchen renovation take?</summary>
-          <p className="mt-2 text-gray-600">A complete kitchen renovation in {dynamicContent.location} typically takes 6-8 weeks from design to completion.</p>
-        </details>
-        <details className="bg-gray-50 p-4 rounded-lg">
-          <summary className="font-bold cursor-pointer">Can I use my kitchen during renovation?</summary>
-          <p className="mt-2 text-gray-600">We can set up a temporary kitchen area to minimize disruption during your renovation.</p>
-        </details>
-      </div>
-    )}
-  </div>
-</section>
-        {/* Instagram Feed - Mobile Optimized */}
+
+        {/* Dynamic FAQ for Specific Keywords */}
+        <section className="py-12 bg-white">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className={`text-3xl font-bold mb-8 text-center ${playfair.className}`}>
+              Common Questions About {dynamicContent.keyword} in {dynamicContent.location}
+            </h2>
+            
+            {dynamicContent.keyword.toLowerCase().includes('pool') && (
+              <div className="space-y-4">
+                <details className="bg-gray-50 p-4 rounded-lg">
+                  <summary className="font-bold cursor-pointer">How much does a swimming pool cost in {dynamicContent.location}?</summary>
+                  <p className="mt-2 text-gray-600">Swimming pools in {dynamicContent.location} typically range from AED 150,000 to AED 500,000 depending on size, features, and finishes.</p>
+                </details>
+                <details className="bg-gray-50 p-4 rounded-lg">
+                  <summary className="font-bold cursor-pointer">Do I need permits for a pool in {dynamicContent.location}?</summary>
+                  <p className="mt-2 text-gray-600">Yes, Dubai Municipality requires permits. We handle all approvals as part of our service.</p>
+                </details>
+              </div>
+            )}
+            
+            {dynamicContent.keyword.toLowerCase().includes('kitchen') && (
+              <div className="space-y-4">
+                <details className="bg-gray-50 p-4 rounded-lg">
+                  <summary className="font-bold cursor-pointer">How long does kitchen renovation take?</summary>
+                  <p className="mt-2 text-gray-600">A complete kitchen renovation in {dynamicContent.location} typically takes 6-8 weeks from design to completion.</p>
+                </details>
+                <details className="bg-gray-50 p-4 rounded-lg">
+                  <summary className="font-bold cursor-pointer">Can I use my kitchen during renovation?</summary>
+                  <p className="mt-2 text-gray-600">We can set up a temporary kitchen area to minimize disruption during your renovation.</p>
+                </details>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Instagram Feed - Mobile Optimized - ELFSIGHT INTEGRATION */}
         <section id="portfolio" className="py-12 md:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
             <div className="text-center mb-8 md:mb-12">
@@ -1315,12 +1283,12 @@ onClick={() => {
               </p>
               <a 
                 href="https://instagram.com/unicornrenovations" 
-                target="_blank"
-                rel="noopener noreferrer"
+                target="_blank" 
+                rel="noopener noreferrer" 
                 className={`inline-flex items-center text-amber-600 hover:text-amber-700 font-semibold text-base ${inter.className}`}
               >
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
                 </svg>
                 @unicornrenovations
               </a>
@@ -1328,13 +1296,7 @@ onClick={() => {
 
             {/* Instagram Widget Container */}
             <div className="max-w-6xl mx-auto bg-gray-50 rounded-xl p-4 md:p-8">
-              {loadInstagram ? (
-  <InstagramFeed />
-) : (
-  <div className="h-96 bg-gray-50 animate-pulse rounded-lg flex items-center justify-center">
-    <p className="text-gray-400">Loading Instagram feed...</p>
-  </div>
-)}
+              <div className="elfsight-app-6382b6ca-a83d-4bf1-ab58-16d8558954a4" data-elfsight-app-lazy></div>
             </div>
             
             {/* Portfolio Stats */}
@@ -1404,7 +1366,7 @@ onClick={() => {
                 <div className="flex gap-4">
                   <a href="https://instagram.com/unicornrenovations" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-amber-400">
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
                     </svg>
                   </a>
                   <a href="https://facebook.com/unicornrenovations" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-amber-400">
@@ -1524,7 +1486,7 @@ onClick={() => {
           target="_blank"
           rel="noopener noreferrer"
           className="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-16 h-16 md:w-20 md:h-20 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-2xl hover:shadow-xl transition-all transform hover:scale-110 z-40 pulse-animation"
-  aria-label="WhatsApp Chat"
+          aria-label="WhatsApp Chat"
           onClick={() => {
             if (window.gtag) {
               window.gtag('event', 'whatsapp_click', {
@@ -1572,6 +1534,9 @@ onClick={() => {
         
         {/* Add padding to bottom of page for mobile bar */}
         <div className="h-16 md:hidden"></div>
+
+        {/* Elfsight Platform Script Loaded at the End for Performance */}
+        <Script src="https://elfsightcdn.com/platform.js" strategy="lazyOnload" />
       </div>
     </>
   );
