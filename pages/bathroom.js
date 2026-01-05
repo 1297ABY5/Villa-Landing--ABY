@@ -539,16 +539,17 @@ export default function BathroomRenovation() {
                 
                 {/* Desktop Nav */}
                 <nav className="hidden lg:flex items-center space-x-8 xl:space-x-10">
-                 {['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'].map((item) => (
-  
-    key={item}
-    href={`#${item.toLowerCase()}`}
-    className={`font-medium text-gray-700 hover:text-amber-600 transition-colors ${inter.className}`}
-  >
-    {item}
-  </a>
-))}
+                  {['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'].map((item) => (
+                    <a 
+                      key={item}
+                      href={`#${item.toLowerCase()}`}
+                      className={`font-medium text-gray-700 hover:text-amber-600 transition-colors ${inter.className}`}
+                    >
+                      {item}
+                    </a>
+                  ))}
                   
+                  <a 
                     href="tel:+971585658002"
                     className={`px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-all ${inter.className}`}
                   >
@@ -608,7 +609,7 @@ export default function BathroomRenovation() {
             </div>
             <nav className="flex flex-col p-6 space-y-4">
               {['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'].map((item) => (
-                
+                <a 
                   key={item}
                   href={`#${item.toLowerCase()}`}
                   onClick={() => setMobileMenuOpen(false)}
@@ -618,13 +619,14 @@ export default function BathroomRenovation() {
                 </a>
               ))}
               <div className="pt-6 space-y-3 border-t mt-6">
-                
+                <a 
                   href="tel:+971585658002"
                   className={`block w-full px-6 py-4 bg-amber-600 text-white text-center text-lg font-semibold rounded-lg ${inter.className}`}
                 >
                   📞 Call Now: +971 58 565 8002
                 </a>
                 
+                <a 
                   href="https://wa.me/971585658002"
                   className={`block w-full px-6 py-4 bg-green-500 text-white text-center text-lg font-semibold rounded-lg ${inter.className}`}
                 >
@@ -697,13 +699,14 @@ export default function BathroomRenovation() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                
+                <a 
                   href="#quick-quote"
                   className={`px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white text-base md:text-lg font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
                 >
                   Get Free Quote →
                 </a>
                 
+                <a 
                   href="tel:+971585658002"
                   className={`px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 text-base md:text-lg font-bold rounded-lg transition-all ${inter.className}`}
                 >
@@ -902,7 +905,7 @@ export default function BathroomRenovation() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {services.map((service, index) => (
-                
+                <a 
                   key={index}
                   href={service.link}
                   className="group bg-white rounded-xl border-2 border-gray-200 hover:border-amber-600 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
@@ -1084,13 +1087,14 @@ export default function BathroomRenovation() {
               Join 287+ happy homeowners with stunning bathroom renovations
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              
+              <a 
                 href="#quick-quote"
                 className={`px-8 py-4 bg-white text-amber-600 hover:bg-gray-100 text-lg font-bold rounded-lg shadow-xl transition-all transform hover:scale-105 ${inter.className}`}
               >
                 Get Free Quote Now
               </a>
               
+              <a 
                 href="tel:+971585658002"
                 className={`px-8 py-4 bg-transparent border-2 border-white text-white hover:bg-white hover:text-amber-600 text-lg font-bold rounded-lg transition-all ${inter.className}`}
               >
@@ -1104,7 +1108,7 @@ export default function BathroomRenovation() {
         </section>
 
         {/* WhatsApp Button */}
-        
+        <a 
           href="https://wa.me/971585658002?text=I%20need%20a%20bathroom%20renovation%20quote"
           target="_blank"
           rel="noopener noreferrer"
@@ -1118,7 +1122,7 @@ export default function BathroomRenovation() {
         {/* Mobile Bottom Bar */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 z-40 shadow-2xl">
           <div className="grid grid-cols-2 h-16">
-            
+            <a 
               href="tel:+971585658002"
               className="flex flex-col items-center justify-center bg-white hover:bg-gray-50 transition-colors border-r border-gray-200"
             >
@@ -1128,6 +1132,7 @@ export default function BathroomRenovation() {
               <span className={`text-xs font-bold text-gray-700 ${inter.className}`}>Call Now</span>
             </a>
             
+            <a 
               href="#quick-quote"
               className="flex flex-col items-center justify-center bg-amber-600 hover:bg-amber-700 text-white transition-colors"
             >
