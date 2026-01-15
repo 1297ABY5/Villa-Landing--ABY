@@ -370,16 +370,16 @@ Lead ID: ${formData.leadId}`;
 
         {/* ===== HERO + QUIZ FORM ===== */}
         <section className="relative min-h-screen flex items-center pt-20 pb-12">
-          {/* Background */}
+          {/* Hero Background Image */}
           <div className="absolute inset-0 z-0">
-            <Image
-              src="/before-after.avif"
-              alt="Villa Renovation Dubai"
-              fill
-              className="object-cover"
-              priority
-              quality={60}
+            {/* Using CSS background for reliable cross-browser display */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: 'url(/hero-image-optimized.webp)',
+              }}
             />
+            {/* Dark overlay for text readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
           </div>
 
