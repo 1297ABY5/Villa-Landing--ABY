@@ -1,317 +1,261 @@
-// pages/index.js - ULTIMATE LEAD PRINTING MACHINE v3.1
-// Villa Renovation focused • WhatsApp-first • Ultra-fast • High-trust • Attribution
-
+// pages/index.js - ULTRA-FOCUSED LEAD MACHINE
 import Head from 'next/head';
-import Image from 'next/image';
-import { useState, useEffect, useCallback } from 'react';
-import { Playfair_Display, Inter } from 'next/font/google';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 
-const playfair = Playfair_Display({
-  weight: ['700', '900'],
-  subsets: ['latin'],
-  variable: '--font-playfair',
-});
-
-const inter = Inter({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
-
-export default function VillaLeadMachine() {
-  const [step, setStep] = useState(1);
+export default function LaserLeadPage() {
+  const router = useRouter();
+  const formRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  
+  // SUPER SIMPLE state - ONLY what converts
   const [formData, setFormData] = useState({
-    propertyType: 'Villa',
-    service: 'Full Renovation',
-    community: '',
-    name: '',
     phone: '',
-    leadId: `UR_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+    community: ''
   });
-  const [slotsLeft, setSlotsLeft] = useState(3);
-  const [showFloating, setShowFloating] = useState(false);
-  const [showExit, setShowExit] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-
-  // Dynamic content from URL params (PPC keyword injection)
+  
   const [dynamic, setDynamic] = useState({
     keyword: 'Villa Renovation',
-    location: 'Dubai',
-    headline: 'Luxury Villa Renovation Dubai'
+    location: 'Dubai'
   });
 
-  // 1. Parse URL params & generate lead ID
+  // Load URL params ONCE
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const keyword = params.get('keyword') || params.get('utm_term') || 'Villa Renovation';
-    const location = params.get('location') || params.get('loc') || 'Dubai';
-    const matchType = params.get('matchtype') || 'broad';
-
-    const headlines = {
-      exact: `#1 ${keyword} Company in ${location} • Municipality Approved`,
-      phrase: `Professional ${keyword} Experts • ${location}`,
-      broad: `Premium ${keyword} Services in ${location}`
-    };
-
     setDynamic({
-      keyword,
-      location,
-      headline: headlines[matchType] || `Luxury ${keyword} in ${location}`
+      keyword: params.get('keyword') || 'Villa Renovation',
+      location: params.get('location') || 'Dubai'
     });
-
-    // Track page view with full attribution
-    if (window.gtag) {
-      window.gtag('event', 'page_view', {
-        page_location: window.location.href,
-        keyword,
-        location,
-        lead_id: formData.leadId
-      });
-    }
   }, []);
 
-  // 2. Real-time urgency (very effective in UAE market)
-  useEffect(() => {
-    const updateSlots = () => {
-      const h = new Date().getHours();
-      if (h >= 20) setSlotsLeft(1);
-      else if (h >= 16) setSlotsLeft(2);
-      else if (h >= 12) setSlotsLeft(3);
-      else setSlotsLeft(4);
-    };
-    updateSlots();
-    const timer = setInterval(updateSlots, 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // 3. Floating CTA + Exit intent
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > window.innerHeight * 0.35) setShowFloating(true);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    const timeout = setTimeout(() => setShowFloating(true), 6000);
-
-    const exitHandler = (e) => {
-      if (e.clientY <= 0 && !showExit) {
-        setShowExit(true);
-        if (window.gtag) window.gtag('event', 'exit_intent_triggered');
-      }
-    };
-
-    if (window.innerWidth > 768) document.addEventListener('mouseleave', exitHandler);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('mouseleave', exitHandler);
-      clearTimeout(timeout);
-    };
-  }, [showExit]);
-
-  // 4. WhatsApp deep link – pre-filled with all data
-  const getWhatsAppLink = useCallback((customMsg = '') => {
-    const msg = customMsg || 
-      `🏠 *NEW VILLA LEAD – HIGH PRIORITY*\n\n` +
-      `Lead ID: ${formData.leadId}\n` +
-      `Property: ${formData.propertyType}\n` +
-      `Service: ${formData.service}\n` +
-      `Community: ${formData.community || 'Not specified'}\n` +
-      `Name: ${formData.name || 'Not provided'}\n` +
-      `Phone: ${formData.phone || 'Not provided'}\n\n` +
-      `Seen your ${dynamic.keyword} ad in ${dynamic.location}\n` +
-      `Want FREE 3D design + detailed quote today!`;
-
-    return `https://wa.me/971585658002?text=${encodeURIComponent(msg)}`;
-  }, [formData, dynamic]);
-
-  // 5. Form submission → direct to WhatsApp
-  const handleSubmit = (e) => {
+  // WhatsApp INSTANT submit
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.phone) return;
-
-    window.location.href = getWhatsAppLink();
-
+    setLoading(true);
+    
+    // ULTRA-COMPACT WhatsApp message
+    const message = `Hi! I'm interested in ${dynamic.keyword} in ${dynamic.location}. ${formData.community ? `Community: ${formData.community}` : ''} Phone: ${formData.phone}. Please call me for a free quote.`;
+    
+    // Track conversion
     if (window.gtag) {
       window.gtag('event', 'conversion', {
-        send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC',
-        value: 100000, // estimated avg project value
-        currency: 'AED',
-        transaction_id: formData.leadId
-      });
-      window.gtag('event', 'lead_submitted', {
-        lead_id: formData.leadId,
-        service: formData.service,
-        community: formData.community
+        'send_to': 'AW-612864132/qqQcQNeM-bADEISh7qQC',
+        'value': 100000,
+        'currency': 'AED'
       });
     }
-
-    setSubmitted(true);
-  };
-
-  // 6. Instant WhatsApp (no form needed)
-  const quickWhatsApp = () => {
-    window.open(getWhatsAppLink(`Hi! Interested in ${dynamic.keyword} in ${dynamic.location}. Can we discuss quickly?`), '_blank');
-    if (window.gtag) window.gtag('event', 'quick_whatsapp_click');
+    
+    // INSTANT redirect
+    window.location.href = `https://wa.me/971585658002?text=${encodeURIComponent(message)}`;
   };
 
   return (
     <>
       <Head>
-        <title>{dynamic.headline} • Free 3D Design & Quote Today</title>
-        <meta name="description" content={`Luxury ${dynamic.keyword} in ${dynamic.location}. 800+ villas transformed • 4.9★ Google • Free 3D design & quote. WhatsApp now!`} />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <link rel="preconnect" href="https://wa.me" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <title>{dynamic.keyword} in {dynamic.location} | Free 3D Design</title>
+        <meta name="description" content={`Get instant ${dynamic.keyword} quote in ${dynamic.location}. WhatsApp quote in 30 minutes. 800+ villas completed.`} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        {/* CRITICAL CSS INLINE - NO EXTERNAL DEPENDENCIES */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+          .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+          }
+          .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            font-weight: bold;
+            padding: 16px 24px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+            animation: pulse 2s infinite;
+          }
+          @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+          }
+          .call-btn {
+            background: #EA580C;
+            color: white;
+            font-weight: bold;
+            padding: 16px 24px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            border: 2px solid white;
+          }
+          .trust-badge {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+          }
+        `}} />
       </Head>
 
-      {/* Floating CTAs */}
-      {showFloating && (
-        <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-4">
-          <button
-            onClick={quickWhatsApp}
-            className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform animate-pulse"
-            aria-label="WhatsApp Free Quote"
-          >
-            <svg className="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-            </svg>
-          </button>
+      {/* FLICKER-FREE HERO - LOADS IN <2s */}
+      <section className="hero-bg min-h-screen text-white">
+        <div className="max-w-7xl mx-auto px-4 py-20">
+          
+          {/* SIMPLE HEADER */}
+          <div className="text-center mb-6">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              {dynamic.keyword} in {dynamic.location}
+            </h1>
+            <p className="text-xl opacity-90 mb-8">
+              Get exact pricing + 3D design today. WhatsApp response in 15 minutes.
+            </p>
+          </div>
 
-          <a
-            href="tel:+971585658002"
-            className="w-16 h-16 bg-amber-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
-            aria-label="Call Now"
+          {/* TRUST ROW - MINIMAL */}
+          <div className="flex flex-wrap justify-center gap-3 mb-10">
+            <div className="trust-badge">✓ Dubai Municipality Approved</div>
+            <div className="trust-badge">⭐ 4.9/5 (287 Reviews)</div>
+            <div className="trust-badge">🏠 800+ Villas Completed</div>
+          </div>
+
+          {/* PRIMARY CONVERSION BOX */}
+          <div className="max-w-md mx-auto bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Get Your Exact Quote in 60 Seconds
+            </h2>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* COMMUNITY (QUALIFIES LEADS) */}
+              <div>
+                <label className="block text-sm mb-2">Your Community</label>
+                <select
+                  value={formData.community}
+                  onChange={(e) => setFormData({...formData, community: e.target.value})}
+                  className="w-full p-4 rounded-xl bg-white/10 border border-white/30 text-white"
+                >
+                  <option value="">Select Community</option>
+                  <option value="Palm Jumeirah">Palm Jumeirah</option>
+                  <option value="Emirates Hills">Emirates Hills</option>
+                  <option value="Arabian Ranches">Arabian Ranches</option>
+                  <option value="Dubai Hills">Dubai Hills</option>
+                  <option value="Jumeirah Golf">Jumeirah Golf</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              
+              {/* PHONE - ONLY WHAT WE NEED */}
+              <div>
+                <label className="block text-sm mb-2">WhatsApp Number</label>
+                <input
+                  type="tel"
+                  placeholder="+971 58 565 8002"
+                  required
+                  value={formData.phone}
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  className="w-full p-4 rounded-xl bg-white/10 border border-white/30 text-white placeholder-white/50"
+                />
+              </div>
+              
+              {/* PRIMARY SUBMIT */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="whatsapp-btn w-full text-lg justify-center"
+              >
+                {loading ? 'Sending...' : '📱 Get Instant Quote via WhatsApp'}
+              </button>
+            </form>
+            
+            {/* ALTERNATIVE CTA */}
+            <div className="mt-4">
+              <a href="tel:+971585658002" className="call-btn w-full text-lg justify-center block text-center">
+                📞 Or Call Now: +971 58 565 8002
+              </a>
+            </div>
+          </div>
+
+          {/* URGENCY - BELOW FORM */}
+          <div className="text-center mt-8">
+            <div className="inline-block bg-red-600 text-white px-4 py-2 rounded-full animate-pulse">
+              ⚡ Only 3 consultation slots left for today
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MINIMAL TRUST SECTION */}
+      <section className="bg-gray-50 py-12">
+        <div className="max-w-3xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-8">
+            Why Dubai Homeowners Choose Us
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-6 text-center">
+            <div>
+              <div className="text-4xl mb-2">🏆</div>
+              <h3 className="font-bold">15+ Years Experience</h3>
+              <p className="text-gray-600 text-sm">Since 2009 in Dubai</p>
+            </div>
+            <div>
+              <div className="text-4xl mb-2">💰</div>
+              <h3 className="font-bold">Fixed Price Guarantee</h3>
+              <p className="text-gray-600 text-sm">No hidden costs</p>
+            </div>
+            <div>
+              <div className="text-4xl mb-2">🛡️</div>
+              <h3 className="font-bold">5-Year Warranty</h3>
+              <p className="text-gray-600 text-sm">Complete peace of mind</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SINGLE CALL TO ACTION AT BOTTOM */}
+      <section className="bg-gradient-to-r from-orange-600 to-orange-700 py-16 text-white">
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">
+            Still Thinking About Your {dynamic.keyword}?
+          </h2>
+          <p className="mb-8 text-xl">
+            Get your free 3D design today. WhatsApp now for instant response.
+          </p>
+          <a 
+            href="https://wa.me/971585658002" 
+            className="whatsapp-btn text-2xl py-6 px-10"
           >
-            <svg className="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-            </svg>
+            📱 WhatsApp for Free Design
           </a>
         </div>
-      )}
-
-      {/* Sticky Urgency Bar */}
-      <div className="sticky top-0 bg-gradient-to-r from-red-700 to-red-600 text-white py-3 text-center z-40 shadow-md">
-        <strong>Only {slotsLeft} Slots Left Today!</strong> • Free 3D Design + Quote
-      </div>
-
-      {/* HERO – Conversion-first, 3-second decision */}
-      <section className="relative min-h-[85vh] flex items-center bg-black text-white">
-        <div className="absolute inset-0">
-          <Image
-            src="/villa-hero.avif"
-            alt="Luxury renovated villa in Dubai"
-            fill
-            className="object-cover opacity-70"
-            priority
-            quality={70}
-            sizes="(max-width: 768px) 100vw, 1200px"
-          />
-        </div>
-
-        <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-4 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full mb-8">
-            <span className="text-amber-400 text-xl">★★★★★</span>
-            <span className="text-lg">4.9 • 287 Reviews</span>
-          </div>
-
-          <h1 className={`text-5xl md:text-7xl font-black leading-tight mb-6 ${playfair.variable}`}>
-            {dynamic.headline}
-            <span className="block text-5xl text-amber-400 mt-4">Free 3D Design Today</span>
-          </h1>
-
-          <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto">
-            800+ Villas Transformed • Dubai Municipality Approved • Instant WhatsApp Quote
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-2xl mx-auto">
-            <button
-              onClick={quickWhatsApp}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white text-2xl font-bold py-6 px-12 rounded-2xl shadow-2xl flex items-center justify-center gap-4 transition-transform hover:scale-105"
-            >
-              <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-              WhatsApp Free Quote
-            </button>
-
-            <a
-              href="tel:+971585658002"
-              className="flex-1 bg-white/10 backdrop-blur-lg border-2 border-white hover:bg-white hover:text-black text-white text-2xl font-bold py-6 px-12 rounded-2xl flex items-center justify-center gap-4 transition-all"
-            >
-              <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-              </svg>
-              Call Now
-            </a>
-          </div>
-
-          <p className="mt-8 text-lg opacity-90">
-            ✓ Free • No Obligation • Response in < 30 min • 800+ Villas Done
-          </p>
-        </div>
       </section>
 
-      {/* Trust Stack – Quick credibility */}
-      <section className="py-12 bg-white">
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-8 text-center">
-          <div>
-            <div className="text-6xl font-black text-amber-600 mb-2">800+</div>
-            <p className="text-xl font-bold">Villas Transformed</p>
-          </div>
-          <div>
-            <div className="text-6xl font-black text-amber-600 mb-2">15+</div>
-            <p className="text-xl font-bold">Years Experience</p>
-          </div>
-          <div>
-            <div className="text-6xl font-black text-amber-600 mb-2">4.9★</div>
-            <p className="text-xl font-bold">Google Rating</p>
-          </div>
-          <div>
-            <div className="text-6xl font-black text-amber-600 mb-2">100%</div>
-            <p className="text-xl font-bold">Satisfaction</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Final Mega CTA */}
-      <section className="py-20 bg-gradient-to-r from-amber-600 to-amber-800 text-white text-center">
-        <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-5xl md:text-6xl font-black mb-8">
-            Ready to Start Your Dream Villa Project?
-          </h2>
-          <p className="text-2xl mb-12">
-            Free 3D Design • Transparent Quote • Response in 30 Minutes
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-8 justify-center max-w-3xl mx-auto">
-            <button
-              onClick={quickWhatsApp}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white text-3xl font-black py-8 px-12 rounded-3xl shadow-2xl flex items-center justify-center gap-6 transition-transform hover:scale-105"
-            >
-              <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382..." />
-              </svg>
-              WhatsApp Free Quote
-            </button>
-
-            <a
-              href="tel:+971585658002"
-              className="flex-1 bg-white/10 backdrop-blur-lg border-4 border-white hover:bg-white hover:text-black text-white text-3xl font-black py-8 px-12 rounded-3xl flex items-center justify-center gap-6 transition-all"
-            >
-              <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 5a2 2 0 012-2h3.28..." />
-              </svg>
-              Call Now
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Minimal Footer */}
-      <footer className="py-10 bg-black text-center text-gray-400 text-sm">
-        © {new Date().getFullYear()} Unicorn Renovations • Dubai's Premier Villa Renovation Company
-      </footer>
+      {/* ULTRA-SIMPLE ANALYTICS */}
+      <script dangerouslySetInnerHTML={{ __html: `
+        // Load analytics AFTER page is interactive
+        window.addEventListener('load', () => {
+          setTimeout(() => {
+            const script = document.createElement('script');
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=AW-612864132';
+            script.async = true;
+            document.head.appendChild(script);
+            
+            script.onload = () => {
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-612864132');
+            };
+          }, 1000);
+        });
+      `}} />
     </>
   );
 }
