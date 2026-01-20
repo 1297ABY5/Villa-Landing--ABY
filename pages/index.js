@@ -1,780 +1,482 @@
-// pages/index.js - ULTIMATE LEAD TSUNAMI MACHINE
-// Combines: Quiz Funnel + WhatsApp-First + Speed + Trust Stacking + Micro-Commitments
+// pages/index.js - QUALITY SCORE KILLER
+// Optimized for: Speed + Relevance + Mobile Experience
+// Target: <2s load, 90+ PageSpeed, 9+ Quality Score
+
 import Head from 'next/head';
-import Image from 'next/image';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import Script from 'next/script';
-import { Playfair_Display, Inter } from 'next/font/google';
 
-const playfair = Playfair_Display({
-  weight: ['700', '900'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-playfair',
-});
-
-const inter = Inter({
-  weight: ['400', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-});
-
-export default function LeadTsunami() {
+export default function QualityScoreKiller() {
   const router = useRouter();
-  const formRef = useRef(null);
   
-  // ===== MINIMAL STATE (Performance Optimized) =====
-  const [step, setStep] = useState(1);
-  const [scrolled, setScrolled] = useState(false);
-  const [showFloatingCTA, setShowFloatingCTA] = useState(false);
-  const [showExitPopup, setShowExitPopup] = useState(false);
-  const [showSocialProof, setShowSocialProof] = useState(false);
-  const [currentProof, setCurrentProof] = useState(0);
-  const [slotsLeft, setSlotsLeft] = useState(3);
-  const [loading, setLoading] = useState(false);
+  // Minimal state - only what's needed for conversion
+  const [formData, setFormData] = useState({ name: '', phone: '', service: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   
-  // Form data with lead ID for tracking
-  const [formData, setFormData] = useState({
-    propertyType: '',
-    service: '',
-    community: '',
-    name: '',
-    phone: '',
-    leadId: ''
-  });
-
-  // Dynamic content from URL params
-  const [dynamic, setDynamic] = useState({
+  // Dynamic content from URL params (for keyword relevance)
+  const [content, setContent] = useState({
     keyword: 'Villa Renovation',
     location: 'Dubai',
-    headline: 'Luxury Villa Renovation Dubai'
+    h1: 'Villa Renovation Dubai',
+    h2: 'Dubai\'s #1 Rated Villa Renovation Company'
   });
 
-  // Refs for performance (no re-renders)
-  const exitTriggeredRef = useRef(false);
-  const analyticsLoadedRef = useRef(false);
-
-  // ===== SOCIAL PROOF DATA =====
-  const socialProofs = [
-    { name: 'Ahmed K.', area: 'Palm Jumeirah', action: 'requested quote', time: '2 min' },
-    { name: 'Sarah M.', area: 'Emirates Hills', action: 'booked consultation', time: '5 min' },
-    { name: 'Rashid A.', area: 'Arabian Ranches', action: 'started project', time: '1 hr' },
-    { name: 'Lisa W.', area: 'Dubai Hills', action: 'requested quote', time: '8 min' },
-    { name: 'Omar H.', area: 'Jumeirah Golf', action: 'booked consultation', time: '12 min' },
-  ];
-
-  // ===== COMMUNITIES (For relevance) =====
-  const communities = [
-    'Palm Jumeirah', 'Emirates Hills', 'Arabian Ranches', 'Dubai Hills',
-    'Jumeirah Golf Estates', 'Al Barari', 'District One', 'Other'
-  ];
-
-  // ===== URL PARAMS + LEAD ID =====
+  // Parse URL params for dynamic keyword insertion
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const keyword = params.get('keyword') || params.get('utm_term') || 'Villa Renovation';
     const location = params.get('location') || params.get('loc') || 'Dubai';
-    const matchType = params.get('matchtype') || 'broad';
+    const matchtype = params.get('matchtype') || 'broad';
     
     const headlines = {
-      'exact': `#1 ${keyword} in ${location}`,
-      'phrase': `Award-Winning ${keyword} in ${location}`,
-      'broad': `Luxury ${keyword} in ${location}`
+      'exact': `#1 ${keyword} Company in ${location}`,
+      'phrase': `Professional ${keyword} in ${location}`,
+      'broad': `${keyword} ${location}`
     };
 
-    setDynamic({
+    setContent({
       keyword,
       location,
-      headline: headlines[matchType] || `Premium ${keyword} in ${location}`
+      h1: headlines[matchtype] || `${keyword} ${location}`,
+      h2: `${location}'s Most Trusted ${keyword} Experts`
     });
-
-    // Generate unique lead ID for attribution
-    setFormData(prev => ({
-      ...prev,
-      leadId: `UR_${Date.now()}_${keyword.replace(/\s+/g, '_').substring(0, 20)}`
-    }));
   }, []);
 
-  // ===== URGENCY TIMER (Realistic) =====
-  useEffect(() => {
-    const updateSlots = () => {
-      const hour = new Date().getHours();
-      if (hour >= 20) setSlotsLeft(1);
-      else if (hour >= 16) setSlotsLeft(2);
-      else if (hour >= 12) setSlotsLeft(3);
-      else setSlotsLeft(4);
-    };
-    updateSlots();
-    const interval = setInterval(updateSlots, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // ===== SCROLL + FLOATING CTA (Optimized) =====
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 50);
-          if (window.scrollY > window.innerHeight * 0.3) {
-            setShowFloatingCTA(true);
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Show floating CTA after 8s anyway
-    const timeout = setTimeout(() => setShowFloatingCTA(true), 8000);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(timeout);
-    };
-  }, []);
-
-  // ===== SOCIAL PROOF ROTATION =====
-  useEffect(() => {
-    const showProof = () => {
-      setShowSocialProof(true);
-      setTimeout(() => setShowSocialProof(false), 4000);
-    };
-    
-    const initialTimeout = setTimeout(showProof, 6000);
-    const interval = setInterval(() => {
-      setCurrentProof(prev => (prev + 1) % socialProofs.length);
-      showProof();
-    }, 18000);
-    
-    return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(interval);
-    };
-  }, []);
-
-  // ===== EXIT INTENT =====
-  useEffect(() => {
-    const handleMouseLeave = (e) => {
-      if (e.clientY <= 0 && !exitTriggeredRef.current && !submitted) {
-        setShowExitPopup(true);
-        exitTriggeredRef.current = true;
-      }
-    };
-    
-    if (typeof window !== 'undefined' && window.innerWidth > 768) {
-      document.addEventListener('mouseleave', handleMouseLeave);
-      return () => document.removeEventListener('mouseleave', handleMouseLeave);
-    }
-  }, [submitted]);
-
-  // ===== ANALYTICS (Lazy Load) =====
-  useEffect(() => {
-    if (analyticsLoadedRef.current) return;
-    
-    const loadAnalytics = () => {
-      analyticsLoadedRef.current = true;
-      const script = document.createElement('script');
-      script.src = 'https://www.googletagmanager.com/gtag/js?id=AW-612864132';
-      script.async = true;
-      document.head.appendChild(script);
-      
-      script.onload = () => {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        window.gtag = gtag;
-        gtag('js', new Date());
-        gtag('config', 'AW-612864132', { phone_conversion_number: '+971585658002' });
-      };
-    };
-    
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(loadAnalytics, { timeout: 3000 });
-    } else {
-      setTimeout(loadAnalytics, 2000);
-    }
-  }, []);
-
-  // ===== WHATSAPP URL GENERATOR =====
-  const getWhatsAppURL = useCallback((customMsg = null) => {
-    const msg = customMsg || `🏠 *NEW VILLA PROJECT INQUIRY*
-━━━━━━━━━━━━━━━━━━━━
-*Lead ID:* ${formData.leadId}
-*Property:* ${formData.propertyType || 'Not specified'}
-*Service:* ${formData.service || dynamic.keyword}
-*Community:* ${formData.community || 'Not specified'}
-*Name:* ${formData.name || 'Not provided'}
-*Phone:* ${formData.phone || 'Not provided'}
-━━━━━━━━━━━━━━━━━━━━
-*Source:* ${dynamic.keyword} Landing Page
-*Time:* ${new Date().toLocaleString()}
-
-I want FREE 3D design + quote!`;
-    
-    return `https://wa.me/971585658002?text=${encodeURIComponent(msg)}`;
-  }, [formData, dynamic]);
-
-  // ===== FORM SUBMISSION =====
+  // Lightweight form submission -> WhatsApp
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
-    setLoading(true);
+    setIsSubmitting(true);
     
-    // Track conversion
-    if (window.gtag) {
+    const message = `*New ${content.keyword} Inquiry*
+━━━━━━━━━━━━━━━━━━
+Name: ${formData.name}
+Phone: ${formData.phone}
+Service: ${formData.service || content.keyword}
+Location: ${content.location}
+━━━━━━━━━━━━━━━━━━
+Source: Google Ads
+Page: ${content.keyword}`;
+
+    // Track conversion (non-blocking)
+    if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'conversion', {
         send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC',
         value: 100000,
-        currency: 'AED',
-        transaction_id: formData.leadId
-      });
-      window.gtag('event', 'lead_form_submitted', {
-        event_category: 'conversion',
-        event_label: formData.service,
-        lead_id: formData.leadId
+        currency: 'AED'
       });
     }
-    
-    // Redirect to WhatsApp
-    window.location.href = getWhatsAppURL();
+
+    window.location.href = `https://wa.me/971585658002?text=${encodeURIComponent(message)}`;
     setSubmitted(true);
-    setLoading(false);
-  }, [formData, getWhatsAppURL]);
+  }, [formData, content]);
 
-  // ===== STEP HANDLERS =====
-  const selectPropertyType = (type) => {
-    setFormData(prev => ({ ...prev, propertyType: type }));
-    setStep(2);
-    // Track micro-commitment
-    if (window.gtag) {
-      window.gtag('event', 'lead_form_started', { step: 'property_type', value: type });
-    }
-  };
-
-  const selectService = (service) => {
-    setFormData(prev => ({ ...prev, service }));
-    setStep(3);
-  };
-
-  const selectCommunity = (community) => {
-    setFormData(prev => ({ ...prev, community }));
-    setStep(4);
-  };
-
-  const scrollToForm = () => {
-    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  // ===== QUICK WHATSAPP (Instant, no form) =====
+  // Quick WhatsApp - no form needed
   const quickWhatsApp = () => {
-    const msg = `Hi! I'm interested in ${dynamic.keyword} in ${dynamic.location}. Can I get a quick estimate?
-
-Lead ID: ${formData.leadId}`;
+    const msg = `Hi! I'm interested in ${content.keyword} in ${content.location}. Please send me info.`;
     window.open(`https://wa.me/971585658002?text=${encodeURIComponent(msg)}`, '_blank');
-    
-    if (window.gtag) {
-      window.gtag('event', 'click_to_whatsapp', { event_category: 'engagement', lead_id: formData.leadId });
-    }
   };
 
   return (
     <>
       <Head>
-        <title>{dynamic.headline} | Free 3D Design + Quote</title>
-        <meta name="description" content={`${dynamic.keyword} in ${dynamic.location}. 800+ projects • 4.9★ Google • Dubai Municipality Approved • Free 3D design. WhatsApp now!`} />
+        {/* SEO + Quality Score Optimization */}
+        <title>{content.h1} | Free Quote & 3D Design | Unicorn Renovations</title>
+        <meta name="description" content={`${content.keyword} specialists in ${content.location}. 800+ projects completed. Dubai Municipality approved. Free 3D design & quote. Call +971 58 565 8002`} />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://wa.me" />
+        <meta name="robots" content="index, follow" />
+        
+        {/* Preconnect for speed */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://wa.me" />
+        
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" />
+        
+        {/* Schema.org for Rich Results + Quality Score */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "HomeAndConstructionBusiness",
+          "name": "Unicorn Renovations",
+          "description": `${content.keyword} company in ${content.location}`,
+          "url": "https://unicornrenovations.com",
+          "telephone": "+971585658002",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Dubai",
+            "addressRegion": "Dubai",
+            "addressCountry": "AE"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "25.0657",
+            "longitude": "55.1713"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "287"
+          },
+          "priceRange": "AED 50,000 - AED 500,000"
+        })}} />
+        
+        {/* Critical CSS - Inlined for fastest FCP */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          *{margin:0;padding:0;box-sizing:border-box}
+          html{scroll-behavior:smooth}
+          body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;line-height:1.6}
+          .container{max-width:1200px;margin:0 auto;padding:0 16px}
+          .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 32px;border-radius:8px;font-weight:700;font-size:16px;cursor:pointer;transition:all 0.2s;border:none;text-decoration:none}
+          .btn-primary{background:#d97706;color:#fff}
+          .btn-primary:hover{background:#b45309;transform:translateY(-2px)}
+          .btn-green{background:#22c55e;color:#fff}
+          .btn-green:hover{background:#16a34a}
+          .btn-outline{background:transparent;border:2px solid #fff;color:#fff}
+          .btn-outline:hover{background:#fff;color:#1a1a1a}
+          input,select{width:100%;padding:16px;border:2px solid #e5e5e5;border-radius:8px;font-size:16px;transition:border-color 0.2s}
+          input:focus,select:focus{outline:none;border-color:#d97706}
+          .trust-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:8px 16px;border-radius:50px;font-size:14px;font-weight:600}
+          @media(max-width:768px){.btn{width:100%;padding:14px 24px}.hide-mobile{display:none}}
+          .pulse{animation:pulse 2s infinite}
+          @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+        `}} />
       </Head>
 
-      <div className={`min-h-screen bg-white ${inter.variable} ${playfair.variable}`}>
+      <div style={{ minHeight: '100vh' }}>
         
-        {/* ===== SOCIAL PROOF POPUP ===== */}
-        <div className={`fixed bottom-28 left-4 z-50 transition-all duration-500 ${showSocialProof ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
-          <div className="bg-white rounded-lg shadow-2xl border p-3 max-w-[280px]">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">✓</div>
-              <div>
-                <p className={`text-sm font-semibold text-gray-900 ${inter.className}`}>
-                  {socialProofs[currentProof]?.name} • {socialProofs[currentProof]?.area}
-                </p>
-                <p className={`text-xs text-gray-500 ${inter.className}`}>
-                  {socialProofs[currentProof]?.action} • {socialProofs[currentProof]?.time} ago
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* ===== URGENCY BAR - Keyword Rich ===== */}
+        <div style={{ background: 'linear-gradient(90deg, #dc2626, #b91c1c)', color: '#fff', padding: '10px 16px', textAlign: 'center', fontSize: '14px', fontWeight: '600' }}>
+          🔥 LIMITED: Free 3D Design (Worth AED 5,000) for {content.keyword} Projects This Month
         </div>
 
-        {/* ===== FLOATING CTA (WhatsApp + Call) ===== */}
-        {showFloatingCTA && (
-          <div className="fixed bottom-28 md:bottom-8 right-4 z-50 flex flex-col gap-3">
-            <button
-              onClick={quickWhatsApp}
-              className="w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform animate-pulse"
-              aria-label="WhatsApp"
-            >
-              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-            </button>
-            <a
-              href="tel:+971585658002"
-              className="w-14 h-14 bg-amber-600 hover:bg-amber-700 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
-              aria-label="Call"
-            >
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
+        {/* ===== HEADER - Fast, Simple ===== */}
+        <header style={{ background: '#fff', borderBottom: '1px solid #e5e5e5', padding: '12px 0', position: 'sticky', top: 0, zIndex: 50 }}>
+          <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: '900', color: '#1a1a1a' }}>
+              UNICORN<span style={{ color: '#d97706' }}>.</span>
+            </div>
+            <a href="tel:+971585658002" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1a1a1a', textDecoration: 'none', fontWeight: '700' }}>
+              <span style={{ fontSize: '20px' }}>📞</span>
+              <span className="hide-mobile">+971 58 565 8002</span>
             </a>
-          </div>
-        )}
-
-        {/* ===== URGENCY BAR (Sticky) ===== */}
-        <div className="bg-gradient-to-r from-red-700 to-red-600 text-white py-2.5 text-center sticky top-0 z-50">
-          <p className={`text-sm ${inter.className}`}>
-            <span className="animate-pulse">🔴</span> <strong>HIGH DEMAND:</strong> Only{' '}
-            <strong className="text-yellow-300">{slotsLeft}</strong> consultation slots left for{' '}
-            {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
-          </p>
-        </div>
-
-        {/* ===== HEADER (Minimal) ===== */}
-        <header className={`fixed top-10 w-full z-40 transition-all ${scrolled ? 'bg-white/95 backdrop-blur shadow-md py-2' : 'bg-transparent py-3'}`}>
-          <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-            <div className={`text-2xl font-black ${scrolled ? 'text-gray-900' : 'text-white'} ${playfair.className}`}>
-              UNICORN<span className="text-amber-500">.</span>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <a 
-                href="tel:+971585658002" 
-                className={`hidden md:flex items-center gap-2 font-bold ${scrolled ? 'text-gray-900' : 'text-white'} ${inter.className}`}
-              >
-                📞 +971 58 565 8002
-              </a>
-              <button 
-                onClick={scrollToForm}
-                className={`px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-sm ${inter.className}`}
-              >
-                Get Free Quote
-              </button>
-            </div>
           </div>
         </header>
 
-        {/* ===== HERO + QUIZ FORM ===== */}
-        <section className="relative min-h-screen flex items-center pt-20 pb-12">
-          {/* Hero Background Image */}
-          <div className="absolute inset-0 z-0">
-            {/* Using CSS background for reliable cross-browser display */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: 'url(/hero-image-optimized.webp)',
-              }}
-            />
-            {/* Dark overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
-          </div>
-
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-8 items-center">
-            
-            {/* LEFT: Value Proposition */}
-            <div className="text-white text-center lg:text-left">
-              {/* Trust Row */}
-              <div className="flex flex-wrap justify-center lg:justify-start gap-2 mb-6">
-                <span className={`px-3 py-1 bg-green-500/20 backdrop-blur border border-green-400/30 text-green-300 text-xs font-semibold rounded-full ${inter.className}`}>
-                  ✓ Dubai Municipality Approved
-                </span>
-                <span className={`px-3 py-1 bg-amber-500/20 backdrop-blur border border-amber-400/30 text-amber-300 text-xs font-semibold rounded-full ${inter.className}`}>
-                  ⭐ 4.9/5 (287 Reviews)
-                </span>
-              </div>
+        {/* ===== HERO - Keyword Optimized for Quality Score ===== */}
+        <section style={{ 
+          background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('/hero-image-optimized.webp')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          color: '#fff',
+          padding: '60px 0 80px'
+        }}>
+          <div className="container">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '40px', alignItems: 'center' }}>
               
-              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 ${playfair.className}`}>
-                {dynamic.headline}
-                <span className="block text-amber-400 mt-2">Free 3D Design Today</span>
-              </h1>
-              
-              <p className={`text-lg text-gray-200 mb-8 max-w-xl mx-auto lg:mx-0 ${inter.className}`}>
-                Join <strong>800+ homeowners</strong> who transformed their villas. Get transparent pricing and 3D concept before you commit.
-              </p>
+              {/* Left: Keyword-Rich Content */}
+              <div style={{ textAlign: 'center' }}>
+                
+                {/* Trust Badges - Above Fold */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginBottom: '24px' }}>
+                  <span className="trust-badge">✓ Dubai Municipality Approved</span>
+                  <span className="trust-badge">⭐ 4.9/5 (287 Reviews)</span>
+                  <span className="trust-badge">🏆 15+ Years Experience</span>
+                </div>
 
-              {/* Stats Row */}
-              <div className="flex flex-wrap justify-center lg:justify-start gap-6 mb-8">
-                {[
-                  { num: '15+', label: 'Years' },
-                  { num: '800+', label: 'Projects' },
-                  { num: '5yr', label: 'Warranty' },
-                ].map((stat, i) => (
-                  <div key={i} className="text-center">
-                    <p className={`text-2xl font-bold text-amber-400 ${playfair.className}`}>{stat.num}</p>
-                    <p className={`text-xs text-gray-400 ${inter.className}`}>{stat.label}</p>
+                {/* H1 - Primary Keyword */}
+                <h1 style={{ fontSize: 'clamp(32px, 6vw, 56px)', fontWeight: '900', lineHeight: '1.1', marginBottom: '16px' }}>
+                  {content.h1}
+                </h1>
+                
+                {/* H2 - Secondary Keyword */}
+                <h2 style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontWeight: '400', opacity: '0.9', marginBottom: '24px', maxWidth: '600px', margin: '0 auto 24px' }}>
+                  {content.h2} • Free 3D Design • Fixed Price Guarantee
+                </h2>
+
+                {/* Stats Row - Trust + Keywords */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '32px', flexWrap: 'wrap' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#fbbf24' }}>800+</div>
+                    <div style={{ fontSize: '14px', opacity: '0.8' }}>Villas Renovated</div>
                   </div>
-                ))}
-              </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#fbbf24' }}>15+</div>
+                    <div style={{ fontSize: '14px', opacity: '0.8' }}>Years in Dubai</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#fbbf24' }}>5yr</div>
+                    <div style={{ fontSize: '14px', opacity: '0.8' }}>Warranty</div>
+                  </div>
+                </div>
 
-              {/* Quick WhatsApp CTA (Desktop) */}
-              <div className="hidden lg:block">
-                <button
-                  onClick={quickWhatsApp}
-                  className={`inline-flex items-center gap-3 px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-bold rounded-xl shadow-2xl hover:scale-105 transition-all ${inter.className}`}
-                >
-                  <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                  </svg>
-                  WhatsApp Quick Quote
-                </button>
-                <p className={`text-xs text-gray-400 mt-3 ${inter.className}`}>
-                  💬 Instant response • No forms needed
+                {/* CTA Buttons */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
+                  <button onClick={quickWhatsApp} className="btn btn-green pulse" style={{ fontSize: '18px' }}>
+                    <svg style={{ width: '24px', height: '24px' }} fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                    WhatsApp Free Quote Now
+                  </button>
+                  <a href="tel:+971585658002" className="btn btn-outline">
+                    📞 Call +971 58 565 8002
+                  </a>
+                </div>
+
+                <p style={{ fontSize: '13px', opacity: '0.7', marginTop: '16px' }}>
+                  ✓ Free consultation • ✓ No obligation • ✓ Response in 30 min
                 </p>
               </div>
             </div>
-
-            {/* RIGHT: QUIZ FUNNEL FORM */}
-            <div ref={formRef} className="w-full max-w-md mx-auto lg:ml-auto">
-              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                {/* Progress Bar */}
-                <div className="h-2 bg-gray-100">
-                  <div 
-                    className="h-full bg-amber-500 transition-all duration-500" 
-                    style={{ width: `${(step / 4) * 100}%` }}
-                  />
-                </div>
-                
-                {/* Form Header */}
-                <div className="bg-gradient-to-r from-amber-600 to-amber-700 p-5 text-white">
-                  <h2 className={`text-xl font-bold ${playfair.className}`}>
-                    Calculate Your Renovation Cost
-                  </h2>
-                  <p className={`text-amber-100 text-sm ${inter.className}`}>
-                    Answer 4 quick questions → Get instant estimate
-                  </p>
-                </div>
-
-                <div className="p-5">
-                  {submitted ? (
-                    <div className="text-center py-8">
-                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <h3 className={`text-xl font-bold text-gray-900 mb-2 ${playfair.className}`}>Request Sent!</h3>
-                      <p className={`text-gray-600 ${inter.className}`}>We&apos;ll respond on WhatsApp within 30 minutes.</p>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSubmit}>
-                      
-                      {/* STEP 1: Property Type */}
-                      {step === 1 && (
-                        <div className="space-y-3">
-                          <p className={`font-semibold text-gray-900 mb-4 ${inter.className}`}>
-                            1. What type of property?
-                          </p>
-                          <div className="grid grid-cols-2 gap-3">
-                            {['Villa', 'Townhouse', 'Apartment', 'Penthouse'].map((type) => (
-                              <button
-                                key={type}
-                                type="button"
-                                onClick={() => selectPropertyType(type)}
-                                className={`p-4 border-2 rounded-xl text-left transition-all hover:border-amber-500 hover:bg-amber-50 ${
-                                  formData.propertyType === type ? 'border-amber-500 bg-amber-50' : 'border-gray-200'
-                                }`}
-                              >
-                                <span className="text-2xl block mb-1">
-                                  {type === 'Villa' ? '🏡' : type === 'Townhouse' ? '🏘️' : type === 'Apartment' ? '🏢' : '🌆'}
-                                </span>
-                                <span className={`font-semibold text-gray-900 ${inter.className}`}>{type}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* STEP 2: Service Type */}
-                      {step === 2 && (
-                        <div className="space-y-3">
-                          <p className={`font-semibold text-gray-900 mb-4 ${inter.className}`}>
-                            2. What do you need?
-                          </p>
-                          <div className="grid grid-cols-2 gap-3">
-                            {[
-                              { id: 'Full Renovation', icon: '🏠', label: 'Full Renovation' },
-                              { id: 'Kitchen & Bath', icon: '🍳', label: 'Kitchen & Bath' },
-                              { id: 'Pool & Landscape', icon: '🏊', label: 'Pool & Landscape' },
-                              { id: 'Extension', icon: '🏗️', label: 'Extension' },
-                            ].map((service) => (
-                              <button
-                                key={service.id}
-                                type="button"
-                                onClick={() => selectService(service.id)}
-                                className="p-4 border-2 border-gray-200 rounded-xl text-left hover:border-amber-500 hover:bg-amber-50 transition-all"
-                              >
-                                <span className="text-2xl block mb-1">{service.icon}</span>
-                                <span className={`font-semibold text-gray-900 text-sm ${inter.className}`}>{service.label}</span>
-                              </button>
-                            ))}
-                          </div>
-                          <button type="button" onClick={() => setStep(1)} className={`text-sm text-gray-500 hover:text-amber-600 ${inter.className}`}>
-                            ← Back
-                          </button>
-                        </div>
-                      )}
-
-                      {/* STEP 3: Community */}
-                      {step === 3 && (
-                        <div className="space-y-3">
-                          <p className={`font-semibold text-gray-900 mb-4 ${inter.className}`}>
-                            3. Which community?
-                          </p>
-                          <select
-                            value={formData.community}
-                            onChange={(e) => selectCommunity(e.target.value)}
-                            className={`w-full p-4 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-0 outline-none ${inter.className}`}
-                          >
-                            <option value="">Select your community</option>
-                            {communities.map((c) => (
-                              <option key={c} value={c}>{c}</option>
-                            ))}
-                          </select>
-                          <button type="button" onClick={() => setStep(2)} className={`text-sm text-gray-500 hover:text-amber-600 ${inter.className}`}>
-                            ← Back
-                          </button>
-                        </div>
-                      )}
-
-                      {/* STEP 4: Contact (Final Step) */}
-                      {step === 4 && (
-                        <div className="space-y-4">
-                          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                            <p className={`text-sm text-green-800 ${inter.className}`}>
-                              ✅ Perfect! Enter your details to receive your personalized estimate.
-                            </p>
-                          </div>
-                          
-                          <input
-                            type="text"
-                            placeholder="Your Name"
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                            className={`w-full p-4 border-2 border-gray-200 rounded-xl focus:border-amber-500 outline-none ${inter.className}`}
-                          />
-                          
-                          <input
-                            type="tel"
-                            placeholder="WhatsApp Number"
-                            required
-                            value={formData.phone}
-                            onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                            className={`w-full p-4 border-2 border-gray-200 rounded-xl focus:border-amber-500 outline-none ${inter.className}`}
-                          />
-                          
-                          <button
-                            type="submit"
-                            disabled={loading || !formData.name || !formData.phone}
-                            className={`w-full py-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white text-lg font-bold rounded-xl flex items-center justify-center gap-3 transition-all ${inter.className}`}
-                          >
-                            {loading ? 'Sending...' : (
-                              <>
-                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                                </svg>
-                                Get Estimate via WhatsApp
-                              </>
-                            )}
-                          </button>
-                          
-                          <button type="button" onClick={() => setStep(3)} className={`text-sm text-gray-500 hover:text-amber-600 ${inter.className}`}>
-                            ← Back
-                          </button>
-                        </div>
-                      )}
-
-                      {/* Trust Indicators */}
-                      <div className={`flex justify-center gap-4 mt-4 pt-4 border-t text-xs text-gray-400 ${inter.className}`}>
-                        <span>🔒 Secure</span>
-                        <span>📞 No spam</span>
-                        <span>⚡ Instant</span>
-                      </div>
-                    </form>
-                  )}
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
-        {/* ===== BRAND/TRUST BAR ===== */}
-        <section className="bg-gray-50 py-6 border-b">
-          <div className="max-w-6xl mx-auto px-4 flex flex-wrap justify-center items-center gap-8 text-gray-400">
-            <span className="font-bold">GROHE</span>
-            <span className="font-bold">JOTUN</span>
-            <span className="font-bold">RAK CERAMICS</span>
-            <span className="font-bold">SIEMENS</span>
-            <div className="flex items-center gap-2">
-              <span className="text-yellow-500">★★★★★</span>
-              <span className={`font-bold text-gray-600 ${inter.className}`}>4.9/5 Google</span>
-            </div>
-          </div>
-        </section>
-
-        {/* ===== VIDEO TESTIMONIALS ===== */}
-        <section className="py-12 bg-white">
-          <div className="max-w-5xl mx-auto px-4">
-            <div className="text-center mb-8">
-              <h2 className={`text-2xl md:text-3xl font-bold text-gray-900 mb-2 ${playfair.className}`}>
-                Real Results, Real Clients
-              </h2>
-              <p className={`text-gray-600 ${inter.className}`}>Watch what our clients say about their experience</p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-              {['/testimonial-1.mp4', '/testimonial-2.mp4', '/testimonial-3.mp4'].map((src, i) => (
-                <div key={i} className="bg-gray-900 rounded-xl overflow-hidden shadow-lg">
-                  <div className="aspect-[9/14]">
-                    <video className="w-full h-full object-cover" controls playsInline preload="metadata">
-                      <source src={src} type="video/mp4" />
-                    </video>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ===== WHY CHOOSE US ===== */}
-        <section className="py-12 bg-gray-900 text-white">
-          <div className="max-w-5xl mx-auto px-4">
-            <h2 className={`text-2xl md:text-3xl font-bold text-center mb-10 ${playfair.className}`}>
-              Why {dynamic.location} Homeowners Choose Us
+        {/* ===== SERVICES - Keyword Rich Section ===== */}
+        <section style={{ padding: '60px 0', background: '#fff' }}>
+          <div className="container">
+            <h2 style={{ fontSize: '28px', fontWeight: '800', textAlign: 'center', marginBottom: '40px' }}>
+              Our {content.keyword} Services in {content.location}
             </h2>
-            <div className="grid md:grid-cols-4 gap-6">
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
               {[
-                { icon: '🏆', title: 'Municipality Approved', desc: 'All permits handled' },
-                { icon: '💰', title: 'Fixed Pricing', desc: 'No hidden costs' },
-                { icon: '⏱️', title: 'On-Time Delivery', desc: 'Guaranteed timeline' },
-                { icon: '🛡️', title: '5-Year Warranty', desc: 'Complete peace of mind' },
-              ].map((item, i) => (
-                <div key={i} className="text-center">
-                  <span className="text-4xl mb-3 block">{item.icon}</span>
-                  <h3 className={`font-bold text-amber-400 mb-1 ${inter.className}`}>{item.title}</h3>
-                  <p className={`text-sm text-gray-400 ${inter.className}`}>{item.desc}</p>
+                { icon: '🏠', title: 'Complete Villa Renovation', desc: 'Full interior & exterior transformation', price: 'From AED 150,000' },
+                { icon: '🍳', title: 'Kitchen Renovation', desc: 'Modern kitchens with premium finishes', price: 'From AED 45,000' },
+                { icon: '🛁', title: 'Bathroom Renovation', desc: 'Luxury bathroom makeovers', price: 'From AED 25,000' },
+                { icon: '🏗️', title: 'Villa Extension', desc: 'Add rooms, floors & outdoor spaces', price: 'From AED 120,000' },
+                { icon: '🏊', title: 'Pool Construction', desc: 'Custom pools & landscaping', price: 'From AED 80,000' },
+                { icon: '🎨', title: 'Interior Design', desc: 'Complete design & furniture', price: 'From AED 60,000' },
+              ].map((service, i) => (
+                <div key={i} style={{ background: '#f9fafb', borderRadius: '12px', padding: '24px', textAlign: 'center', border: '2px solid transparent', cursor: 'pointer', transition: 'all 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.borderColor = '#d97706'}
+                  onMouseOut={(e) => e.currentTarget.style.borderColor = 'transparent'}
+                  onClick={quickWhatsApp}
+                >
+                  <div style={{ fontSize: '40px', marginBottom: '12px' }}>{service.icon}</div>
+                  <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>{service.title}</h3>
+                  <p style={{ fontSize: '14px', color: '#666', marginBottom: '12px' }}>{service.desc}</p>
+                  <p style={{ fontSize: '16px', fontWeight: '700', color: '#d97706' }}>{service.price}</p>
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ===== WHY CHOOSE US - Trust Signals ===== */}
+        <section style={{ padding: '60px 0', background: '#1a1a1a', color: '#fff' }}>
+          <div className="container">
+            <h2 style={{ fontSize: '28px', fontWeight: '800', textAlign: 'center', marginBottom: '40px' }}>
+              Why {content.location} Homeowners Choose Unicorn Renovations
+            </h2>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '32px', textAlign: 'center' }}>
+              {[
+                { icon: '✅', title: 'Municipality Approved', desc: 'All permits & approvals handled' },
+                { icon: '💰', title: 'Fixed Price Guarantee', desc: 'No hidden costs or surprises' },
+                { icon: '📅', title: 'On-Time Delivery', desc: 'Project timeline guaranteed' },
+                { icon: '🛡️', title: '5-Year Warranty', desc: 'Full workmanship warranty' },
+                { icon: '🎨', title: 'Free 3D Design', desc: 'Visualize before you commit' },
+                { icon: '⭐', title: '287 5-Star Reviews', desc: 'Rated 4.9/5 on Google' },
+              ].map((item, i) => (
+                <div key={i}>
+                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>{item.icon}</div>
+                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fbbf24', marginBottom: '8px' }}>{item.title}</h3>
+                  <p style={{ fontSize: '14px', opacity: '0.8' }}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ===== SIMPLE LEAD FORM ===== */}
+        <section id="quote" style={{ padding: '60px 0', background: '#fff' }}>
+          <div className="container" style={{ maxWidth: '500px' }}>
+            <div style={{ background: '#f9fafb', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+              <h2 style={{ fontSize: '24px', fontWeight: '800', textAlign: 'center', marginBottom: '8px' }}>
+                Get Your Free {content.keyword} Quote
+              </h2>
+              <p style={{ textAlign: 'center', color: '#666', marginBottom: '24px', fontSize: '14px' }}>
+                Fill in your details • We respond in 30 minutes
+              </p>
+              
+              {submitted ? (
+                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
+                  <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px' }}>Request Sent!</h3>
+                  <p style={{ color: '#666' }}>We'll contact you on WhatsApp shortly.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <input
+                    type="text"
+                    placeholder="Your Name *"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone / WhatsApp Number *"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  />
+                  <select
+                    value={formData.service}
+                    onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                    style={{ color: formData.service ? '#1a1a1a' : '#999' }}
+                  >
+                    <option value="">Select Service (Optional)</option>
+                    <option value="Villa Renovation">Complete Villa Renovation</option>
+                    <option value="Kitchen Renovation">Kitchen Renovation</option>
+                    <option value="Bathroom Renovation">Bathroom Renovation</option>
+                    <option value="Villa Extension">Villa Extension</option>
+                    <option value="Pool Construction">Pool Construction</option>
+                    <option value="Interior Design">Interior Design</option>
+                  </select>
+                  
+                  <button type="submit" className="btn btn-primary" disabled={isSubmitting} style={{ marginTop: '8px' }}>
+                    {isSubmitting ? 'Sending...' : 'Get Free Quote →'}
+                  </button>
+                  
+                  <p style={{ fontSize: '12px', color: '#999', textAlign: 'center' }}>
+                    🔒 Your information is secure and never shared
+                  </p>
+                </form>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* ===== AREAS WE SERVE - Local SEO ===== */}
+        <section style={{ padding: '40px 0', background: '#f9fafb' }}>
+          <div className="container">
+            <h3 style={{ fontSize: '20px', fontWeight: '700', textAlign: 'center', marginBottom: '20px' }}>
+              {content.keyword} Services Across Dubai
+            </h3>
+            <p style={{ textAlign: 'center', color: '#666', fontSize: '14px', maxWidth: '800px', margin: '0 auto' }}>
+              Palm Jumeirah • Emirates Hills • Arabian Ranches • Dubai Hills • Jumeirah Golf Estates • 
+              Al Barari • District One • The Lakes • The Springs • Meadows • Victory Heights • 
+              Jumeirah Islands • Mohammed Bin Rashid City • Downtown Dubai • Al Barsha
+            </p>
           </div>
         </section>
 
         {/* ===== FINAL CTA ===== */}
-        <section className="py-16 bg-gradient-to-r from-amber-600 to-amber-700 text-white">
-          <div className="max-w-3xl mx-auto px-4 text-center">
-            <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${playfair.className}`}>
-              Ready to Transform Your {formData.propertyType || 'Villa'}?
+        <section style={{ padding: '60px 0', background: 'linear-gradient(135deg, #d97706, #b45309)', color: '#fff', textAlign: 'center' }}>
+          <div className="container">
+            <h2 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '16px' }}>
+              Ready to Transform Your Villa?
             </h2>
-            <p className={`text-lg mb-8 text-amber-100 ${inter.className}`}>
-              Get your free 3D design + transparent quote in 30 minutes
+            <p style={{ fontSize: '18px', opacity: '0.9', marginBottom: '32px' }}>
+              Get your free {content.keyword} quote + 3D design today
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={quickWhatsApp}
-                className={`px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-bold rounded-xl flex items-center justify-center gap-3 ${inter.className}`}
-              >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
+              <button onClick={quickWhatsApp} className="btn" style={{ background: '#22c55e', color: '#fff', fontSize: '18px' }}>
+                <svg style={{ width: '24px', height: '24px' }} fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                 </svg>
-                WhatsApp Now →
+                WhatsApp Us Now
               </button>
-              <a
-                href="tel:+971585658002"
-                className={`px-8 py-4 border-2 border-white hover:bg-white hover:text-amber-600 text-lg font-bold rounded-xl transition-all ${inter.className}`}
-              >
+              <a href="tel:+971585658002" className="btn btn-outline" style={{ borderColor: '#fff', color: '#fff' }}>
                 📞 +971 58 565 8002
               </a>
             </div>
           </div>
         </section>
 
-        {/* ===== FOOTER (Minimal) ===== */}
-        <footer className="py-6 bg-black text-center">
-          <p className={`text-sm text-gray-500 ${inter.className}`}>
-            © {new Date().getFullYear()} Unicorn Renovations • Dubai&apos;s Premier {dynamic.keyword} Company
-          </p>
+        {/* ===== FOOTER - Minimal ===== */}
+        <footer style={{ padding: '40px 0', background: '#1a1a1a', color: '#fff' }}>
+          <div className="container" style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: '900', marginBottom: '16px' }}>
+              UNICORN<span style={{ color: '#d97706' }}>.</span>
+            </div>
+            <p style={{ fontSize: '14px', opacity: '0.7', marginBottom: '16px' }}>
+              Dubai's Premier {content.keyword} Company<br />
+              Dubai Municipality Approved • 15+ Years Experience • 800+ Projects
+            </p>
+            <p style={{ fontSize: '12px', opacity: '0.5' }}>
+              © {new Date().getFullYear()} Unicorn Renovations. All rights reserved.
+            </p>
+          </div>
         </footer>
 
-        {/* ===== EXIT POPUP ===== */}
-        {showExitPopup && (
-          <div className="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden relative">
-              <button 
-                onClick={() => setShowExitPopup(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl z-10"
-              >
-                ×
-              </button>
-              
-              <div className="bg-red-600 p-4 text-white text-center">
-                <p className={`text-lg font-bold ${playfair.className}`}>🎁 Wait! Special Offer</p>
-              </div>
-              
-              <div className="p-6">
-                <h3 className={`text-2xl font-bold text-gray-900 mb-3 text-center ${playfair.className}`}>
-                  Leaving Without Your Quote?
-                </h3>
-                <p className={`text-gray-600 mb-4 text-center ${inter.className}`}>
-                  Drop your WhatsApp and we&apos;ll send you <strong>2 similar projects with budgets</strong> that match your villa type.
-                </p>
-                
-                <input
-                  type="tel"
-                  placeholder="Your WhatsApp Number"
-                  className={`w-full p-4 border-2 border-gray-200 rounded-xl mb-4 focus:border-amber-500 outline-none ${inter.className}`}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                />
-                
-                <button
-                  onClick={() => {
-                    const msg = `Hi! I was browsing your ${dynamic.keyword} page. Can you send me 2 similar project examples with budgets?\n\nLead ID: ${formData.leadId}`;
-                    window.open(`https://wa.me/971585658002?text=${encodeURIComponent(msg)}`, '_blank');
-                    setShowExitPopup(false);
-                  }}
-                  className={`w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl ${inter.className}`}
-                >
-                  Send Me Sample Projects →
-                </button>
-                
-                <p className={`text-xs text-center text-gray-400 mt-3 ${inter.className}`}>
-                  No spam • Just helpful project examples
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* ===== FLOATING WHATSAPP ===== */}
+        <button
+          onClick={quickWhatsApp}
+          style={{
+            position: 'fixed',
+            bottom: '80px',
+            right: '20px',
+            width: '60px',
+            height: '60px',
+            background: '#22c55e',
+            borderRadius: '50%',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            zIndex: 50,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          className="pulse"
+          aria-label="WhatsApp"
+        >
+          <svg style={{ width: '32px', height: '32px', color: '#fff' }} fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+          </svg>
+        </button>
 
         {/* ===== MOBILE BOTTOM BAR ===== */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-40 shadow-2xl">
-          <div className="grid grid-cols-2 h-16">
-            <a href="tel:+971585658002" className="flex items-center justify-center gap-2 border-r bg-gray-50">
-              <span className="text-xl">📞</span>
-              <span className={`font-bold text-gray-900 ${inter.className}`}>Call</span>
-            </a>
-            <button onClick={quickWhatsApp} className="flex items-center justify-center gap-2 bg-green-500 text-white">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-              <span className={`font-bold ${inter.className}`}>WhatsApp</span>
-            </button>
-          </div>
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: '#fff',
+          borderTop: '1px solid #e5e5e5',
+          zIndex: 40,
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          height: '64px'
+        }} className="hide-desktop">
+          <a href="tel:+971585658002" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#1a1a1a', textDecoration: 'none', fontWeight: '700', borderRight: '1px solid #e5e5e5' }}>
+            📞 Call Now
+          </a>
+          <button onClick={quickWhatsApp} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#22c55e', color: '#fff', border: 'none', fontWeight: '700', cursor: 'pointer' }}>
+            💬 WhatsApp
+          </button>
         </div>
         
-        <div className="h-16 md:hidden"></div>
+        {/* Spacer for mobile bottom bar */}
+        <div style={{ height: '64px' }} className="hide-desktop"></div>
+
+        {/* ===== ANALYTICS - Load LAST, Non-Blocking ===== */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          // Defer analytics to not block rendering
+          window.addEventListener('load', function() {
+            setTimeout(function() {
+              var s = document.createElement('script');
+              s.src = 'https://www.googletagmanager.com/gtag/js?id=AW-612864132';
+              s.async = true;
+              document.head.appendChild(s);
+              s.onload = function() {
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                window.gtag = gtag;
+                gtag('js', new Date());
+                gtag('config', 'AW-612864132');
+              };
+            }, 1500);
+          });
+        `}} />
+        
+        {/* Hide desktop class for mobile bottom bar */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          @media(min-width:769px){.hide-desktop{display:none!important}}
+        `}} />
       </div>
     </>
   );
