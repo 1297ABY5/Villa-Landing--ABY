@@ -386,7 +386,7 @@ function useInView(options = {}) {
 }
 
 // ============================================
-// LAZY VIDEO COMPONENT (Local MP4 - No speed impact)
+// LAZY VIDEO COMPONENT (Responsive Mobile/Desktop)
 // ============================================
 function LazyVideo({ video, isVisible }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -397,132 +397,169 @@ function LazyVideo({ video, isVisible }) {
   };
 
   useEffect(() => {
-    // Auto-play when component switches to playing state
     if (isPlaying && videoRef.current) {
       videoRef.current.play();
     }
   }, [isPlaying]);
 
-  // Show video player after click
+  // Common container styles (responsive)
+  const containerStyle = {
+    position: 'relative',
+    width: '100%',
+    maxWidth: '320px',
+    margin: '0 auto',
+    borderRadius: '16px',
+    overflow: 'hidden',
+    background: '#0a0a0a',
+    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+  };
+
   if (isPlaying) {
     return (
-      <div style={{ 
-        position: 'relative', 
-        paddingBottom: '148%', // 464x688 aspect ratio (portrait)
-        height: 0, 
-        borderRadius: '12px', 
-        overflow: 'hidden',
-        background: '#000',
-        maxWidth: '340px',
-        margin: '0 auto'
-      }}>
-        <video
-          ref={videoRef}
-          src={video.videoSrc}
-          controls
-          playsInline
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            borderRadius: '12px'
-          }}
-        />
+      <div style={containerStyle}>
+        <div style={{ paddingBottom: '148%', position: 'relative' }}>
+          <video
+            ref={videoRef}
+            src={video.videoSrc}
+            controls
+            playsInline
+            poster={video.thumbnail}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        </div>
       </div>
     );
   }
 
-  // Show thumbnail with play button (fast, no video loaded)
   return (
     <div 
       onClick={handlePlay}
-      style={{ 
-        position: 'relative', 
-        paddingBottom: '148%', // Portrait aspect ratio
-        height: 0, 
-        borderRadius: '12px', 
-        overflow: 'hidden',
+      style={{
+        ...containerStyle,
         cursor: 'pointer',
-        background: '#1a1a1a',
-        maxWidth: '340px',
-        margin: '0 auto'
+        transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease',
       }}
+      className="video-card"
     >
-      {/* Thumbnail - lazy loaded */}
-      {isVisible && (
-        <Image
-          src={video.thumbnail}
-          alt={`${video.name} video testimonial`}
-          fill
-          sizes="340px"
-          style={{ objectFit: 'cover' }}
-          loading="lazy"
-          quality={70}
-        />
-      )}
-      
-      {/* Gradient Overlay */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.3) 100%)',
-      }} />
-
-      {/* Play Button */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
+      {/* Aspect ratio container */}
+      <div style={{ paddingBottom: '148%', position: 'relative' }}>
+        {/* Thumbnail */}
+        {isVisible && (
+          <Image
+            src={video.thumbnail}
+            alt={`${video.name} video testimonial`}
+            fill
+            sizes="(max-width: 768px) 280px, 320px"
+            style={{ objectFit: 'cover' }}
+            loading="lazy"
+            quality={75}
+          />
+        )}
+        
+        {/* Gradient Overlay */}
         <div style={{
-          width: '80px',
-          height: '80px',
-          background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)',
-          borderRadius: '50%',
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.85) 100%)',
+        }} />
+
+        {/* Play Button - Centered */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
-          transition: 'transform 0.3s ease',
-          paddingLeft: '6px'
         }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="#fff">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
+          <div 
+            className="play-btn"
+            style={{
+              width: '72px',
+              height: '72px',
+              background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 8px 32px rgba(201, 162, 39, 0.4)',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              paddingLeft: '4px',
+            }}
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
         </div>
-      </div>
 
-      {/* Duration Badge */}
-      <div style={{
-        position: 'absolute',
-        top: '16px',
-        right: '16px',
-        background: 'rgba(0,0,0,0.7)',
-        backdropFilter: 'blur(8px)',
-        color: '#fff',
-        padding: '6px 12px',
-        borderRadius: '20px',
-        fontSize: '13px',
-        fontWeight: '500'
-      }}>
-        {video.duration}
-      </div>
+        {/* Duration Badge */}
+        <div style={{
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          background: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(8px)',
+          color: '#fff',
+          padding: '6px 14px',
+          borderRadius: '24px',
+          fontSize: '13px',
+          fontWeight: '500',
+          letterSpacing: '0.5px',
+        }}>
+          ▶ {video.duration}
+        </div>
 
-      {/* Client Info Overlay */}
-      <div style={{
-        position: 'absolute',
-        bottom: '20px',
-        left: '20px',
-        right: '20px',
-        color: '#fff'
-      }}>
-        <p style={{ fontWeight: '600', fontSize: '18px', marginBottom: '4px' }}>{video.name}</p>
-        <p style={{ fontSize: '14px', opacity: 0.9 }}>{video.location}</p>
+        {/* Project Badge */}
+        <div style={{
+          position: 'absolute',
+          top: '16px',
+          left: '16px',
+          background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)',
+          color: '#fff',
+          padding: '6px 14px',
+          borderRadius: '24px',
+          fontSize: '11px',
+          fontWeight: '600',
+          letterSpacing: '1px',
+          textTransform: 'uppercase',
+        }}>
+          {video.project}
+        </div>
+
+        {/* Client Info */}
+        <div style={{
+          position: 'absolute',
+          bottom: '20px',
+          left: '20px',
+          right: '20px',
+          color: '#fff',
+        }}>
+          <p className="font-display" style={{ 
+            fontWeight: '600', 
+            fontSize: '20px', 
+            marginBottom: '4px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.5)'
+          }}>
+            {video.name}
+          </p>
+          <p style={{ 
+            fontSize: '14px', 
+            opacity: 0.9,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <span style={{ color: 'var(--gold-light)' }}>◆</span>
+            {video.location}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -852,10 +889,136 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
               font-size: 14px;
               width: 100%;
             }
+            /* Mobile: Horizontal scroll for videos */
+            .video-grid {
+              display: flex !important;
+              overflow-x: auto;
+              scroll-snap-type: x mandatory;
+              -webkit-overflow-scrolling: touch;
+              padding: 0 16px 20px;
+              margin: 0 -16px;
+              gap: 20px !important;
+            }
+            .video-grid > div {
+              flex: 0 0 280px;
+              scroll-snap-align: center;
+            }
+            .video-grid::-webkit-scrollbar { display: none; }
+            .video-grid { -ms-overflow-style: none; scrollbar-width: none; }
+            /* Mobile: Stack sections */
+            section { padding: 60px 0 !important; }
+            /* Mobile: Smaller headings */
+            .font-display { letter-spacing: -0.5px; }
+            /* Mobile: Services horizontal scroll */
+            .services-grid {
+              display: flex !important;
+              overflow-x: auto;
+              scroll-snap-type: x mandatory;
+              -webkit-overflow-scrolling: touch;
+              padding-bottom: 20px;
+              margin: 0 -16px;
+              padding-left: 16px;
+              padding-right: 16px;
+              gap: 16px !important;
+            }
+            .services-grid > div {
+              flex: 0 0 300px;
+              scroll-snap-align: start;
+            }
+            .services-grid::-webkit-scrollbar { display: none; }
+            /* Mobile: Process steps scroll */
+            .process-grid {
+              display: flex !important;
+              overflow-x: auto;
+              scroll-snap-type: x mandatory;
+              -webkit-overflow-scrolling: touch;
+              padding-bottom: 20px;
+              margin: 0 -16px;
+              padding-left: 16px;
+              padding-right: 16px;
+              gap: 12px !important;
+            }
+            .process-grid > div {
+              flex: 0 0 200px;
+              scroll-snap-align: start;
+            }
+            .process-grid::-webkit-scrollbar { display: none; }
+            /* Mobile: Testimonials scroll */
+            .testimonials-grid {
+              display: flex !important;
+              overflow-x: auto;
+              scroll-snap-type: x mandatory;
+              -webkit-overflow-scrolling: touch;
+              padding-bottom: 20px;
+              margin: 0 -16px;
+              padding-left: 16px;
+              padding-right: 16px;
+              gap: 16px !important;
+            }
+            .testimonials-grid > div {
+              flex: 0 0 320px;
+              scroll-snap-align: start;
+            }
+            .testimonials-grid::-webkit-scrollbar { display: none; }
+            /* Mobile: Form padding */
+            .form-section { padding: 24px !important; }
+            /* Mobile: Smaller stats */
+            .stats-num { font-size: 28px !important; }
+            /* Mobile: Hero stats centered */
+            .hero-stats {
+              justify-content: center !important;
+              gap: 24px !important;
+              text-align: center;
+            }
+            .hero-stats > div {
+              text-align: center !important;
+              min-width: 100px !important;
+            }
           }
           @media (min-width: 769px) {
             .hide-desktop { display: none !important; }
+            /* Desktop: 3 column grid for videos */
+            .video-grid {
+              grid-template-columns: repeat(3, 320px) !important;
+            }
+            /* Desktop: Services grid */
+            .services-grid {
+              grid-template-columns: repeat(3, 1fr) !important;
+            }
+            /* Desktop: Process grid */
+            .process-grid {
+              grid-template-columns: repeat(5, 1fr) !important;
+            }
+            /* Desktop: Testimonials grid */
+            .testimonials-grid {
+              grid-template-columns: repeat(3, 1fr) !important;
+            }
+            /* Hover effects for video cards */
+            .video-card:hover {
+              transform: translateY(-12px) !important;
+              box-shadow: 0 30px 80px rgba(0,0,0,0.5) !important;
+            }
+            .video-card:hover .play-btn {
+              transform: scale(1.1);
+              box-shadow: 0 12px 40px rgba(201, 162, 39, 0.5);
+            }
+            /* Desktop: Card hovers */
+            .luxury-card:hover {
+              transform: translateY(-8px);
+            }
           }
+          @media (min-width: 1200px) {
+            .video-grid {
+              gap: 48px !important;
+            }
+            .container { max-width: 1400px; }
+          }
+          /* Scroll hint animation for mobile */
+          @keyframes scrollHint {
+            0%, 100% { transform: translateX(0); opacity: 1; }
+            50% { transform: translateX(10px); opacity: 0.5; }
+          }
+          .scroll-hint { animation: scrollHint 1.5s ease-in-out infinite; }
         `}} />
       </Head>
 
@@ -984,21 +1147,25 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
                 Experience the art of transformation with complimentary 3D visualization and fixed pricing.
               </p>
 
-              {/* Stats Row */}
-              <div style={{ 
-                display: 'flex', 
-                gap: '48px', 
-                marginBottom: '48px', 
-                flexWrap: 'wrap' 
-              }}>
+              {/* Stats Row - Responsive */}
+              <div 
+                className="hero-stats"
+                style={{ 
+                  display: 'flex', 
+                  gap: '32px', 
+                  marginBottom: '48px', 
+                  flexWrap: 'wrap',
+                  justifyContent: 'flex-start'
+                }}
+              >
                 {[
                   { num: '800+', label: 'Villas Transformed' },
                   { num: '15+', label: 'Years of Mastery' },
                   { num: '5yr', label: 'Craftsmanship Warranty' },
                 ].map((s, i) => (
-                  <div key={i} style={{ textAlign: 'left' }}>
-                    <div style={{ fontSize: '36px', fontWeight: '700', color: 'var(--gold-light)', marginBottom: '4px' }}>{s.num}</div>
-                    <div style={{ fontSize: '13px', opacity: 0.7, letterSpacing: '1px', textTransform: 'uppercase' }}>{s.label}</div>
+                  <div key={i} style={{ textAlign: 'left', minWidth: '120px' }}>
+                    <div className="stats-num" style={{ fontSize: '36px', fontWeight: '700', color: 'var(--gold-light)', marginBottom: '4px' }}>{s.num}</div>
+                    <div style={{ fontSize: '12px', opacity: 0.7, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{s.label}</div>
                   </div>
                 ))}
               </div>
@@ -1092,11 +1259,29 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
               </p>
             </div>
 
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', 
-              gap: '32px' 
+            {/* Mobile scroll hint */}
+            <div className="hide-desktop" style={{ 
+              textAlign: 'center', 
+              marginBottom: '16px',
+              color: '#999',
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
             }}>
+              <span>Swipe to explore</span>
+              <span className="scroll-hint">→</span>
+            </div>
+
+            <div 
+              className="services-grid"
+              style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', 
+                gap: '32px' 
+              }}
+            >
               {services.map((s, i) => (
                 <div 
                   key={i} 
@@ -1156,11 +1341,14 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
               </p>
             </div>
 
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-              gap: '24px' 
-            }}>
+            <div 
+              className="process-grid"
+              style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                gap: '24px' 
+              }}
+            >
               {PROCESS_STEPS.map((step, i) => (
                 <div 
                   key={i} 
@@ -1278,11 +1466,14 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
               </p>
             </div>
 
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
-              gap: '32px' 
-            }}>
+            <div 
+              className="testimonials-grid"
+              style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
+                gap: '32px' 
+              }}
+            >
               {TESTIMONIALS.map((t, i) => (
                 <div 
                   key={i} 
@@ -1328,58 +1519,80 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
           </div>
         </section>
 
-        {/* VIDEO TESTIMONIALS - Lazy Loaded */}
+        {/* VIDEO TESTIMONIALS - Responsive Mobile/Desktop */}
         <section ref={videoRef} style={{ 
           padding: '100px 0', 
-          background: '#fff' 
+          background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)',
+          overflow: 'hidden'
         }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: '64px' }}>
               <p style={{ 
                 fontSize: '13px', 
-                color: 'var(--gold)', 
+                color: 'var(--gold-light)', 
                 letterSpacing: '3px', 
                 textTransform: 'uppercase', 
                 marginBottom: '16px',
                 fontWeight: '500'
               }}>
-                Watch Their Stories
+                Hear Their Stories
               </p>
               <h2 className="font-display" style={{ 
                 fontSize: 'clamp(32px, 5vw, 48px)', 
                 fontWeight: '500',
-                marginBottom: '16px'
+                marginBottom: '16px',
+                color: '#fff'
               }}>
                 Video Testimonials
               </h2>
-              <p style={{ fontSize: '18px', color: '#666' }}>
-                Hear directly from homeowners about their transformation journey
+              <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.7)', maxWidth: '500px', margin: '0 auto' }}>
+                Real stories from homeowners who transformed their villas with us
               </p>
             </div>
 
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', 
-              gap: '32px' 
+            {/* Mobile scroll hint */}
+            <div className="hide-desktop" style={{ 
+              textAlign: 'center', 
+              marginBottom: '16px',
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
             }}>
+              <span>Swipe to watch more</span>
+              <span className="scroll-hint">→</span>
+            </div>
+
+            {/* Responsive Grid - Horizontal scroll on mobile, grid on desktop */}
+            <div 
+              className="video-grid"
+              style={{ 
+                display: 'grid',
+                gap: '32px',
+                justifyContent: 'center',
+              }}
+            >
               {VIDEO_TESTIMONIALS.map((video, i) => (
                 <div 
                   key={video.id} 
                   className={`fade-up fade-up-delay-${i+1} ${videoInView ? 'visible' : ''}`}
                 >
                   <LazyVideo video={video} isVisible={videoInView} />
-                  <div style={{ padding: '16px 0' }}>
-                    <span style={{ 
-                      fontSize: '12px', 
-                      color: 'var(--gold-dark)', 
-                      letterSpacing: '0.5px',
-                      textTransform: 'uppercase'
-                    }}>
-                      {video.project}
-                    </span>
-                  </div>
                 </div>
               ))}
+            </div>
+
+            {/* Trust indicator */}
+            <div style={{ 
+              textAlign: 'center', 
+              marginTop: '48px',
+              color: 'rgba(255,255,255,0.6)',
+              fontSize: '14px'
+            }}>
+              <span style={{ color: 'var(--gold-light)' }}>★★★★★</span>
+              &nbsp;&nbsp;Join 800+ satisfied homeowners
             </div>
           </div>
         </section>
