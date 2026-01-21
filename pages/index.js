@@ -1,12 +1,3 @@
-Here is the complete, production-ready code. It combines the **Speed**, **Quality Score Logic**, and **High-Conversion Wizard** into a single file.
-
-**Instructions:**
-
-1. Copy this entire block.
-2. Paste it into `pages/index.js`.
-3. Ensure you have an image named `before-after.avif` (or change the path in the code) in your `public` folder.
-
-```jsx
 // pages/index.js
 // ULTIMATE LANDING PAGE: QS 10/10 + LEAD TSUNAMI + COST CALCULATOR WIZARD
 import Head from 'next/head';
@@ -571,5 +562,3 @@ export default function LeadTsunamiPage({ initialContent, initialServices }) {
     </>
   );
 }
-
-```
