@@ -1,111 +1,421 @@
-// pages/index.js - QUALITY SCORE KILLER
-// Optimized for: Speed + Relevance + Mobile Experience
-// Target: <2s load, 90+ PageSpeed, 9+ Quality Score
+// pages/index.js - ULTIMATE QUALITY SCORE OPTIMIZER
+// Based on actual Google Ads data - targeting QS 7+ for all keywords
+// Primary keywords: interior renovation company (39 clicks), villa renovation dubai (7 clicks)
+// Problem: Landing Page Experience "Below Average" → Need faster, more relevant page
 
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/router';
 
-export default function QualityScoreKiller() {
-  const router = useRouter();
-  
-  // Minimal state - only what's needed for conversion
+// ============================================
+// KEYWORD MAPPING - Based on actual Google Ads report
+// ============================================
+const KEYWORD_MAP = {
+  // HIGH VOLUME - Interior Renovation (39 clicks, QS 3 → target 7+)
+  'interior renovation company': { 
+    h1: 'Interior Renovation Company in Dubai', 
+    h2: "Dubai's #1 Interior Renovation Specialists",
+    service: 'Interior Renovation',
+    highlight: 'interior',
+    metaDesc: 'Top interior renovation company in Dubai. 800+ projects. Municipality approved. Free 3D design.'
+  },
+  'interior renovation': { 
+    h1: 'Interior Renovation Dubai', 
+    h2: 'Professional Interior Renovation Services',
+    service: 'Interior Renovation',
+    highlight: 'interior',
+    metaDesc: 'Expert interior renovation in Dubai. Complete makeovers. Fixed price guarantee.'
+  },
+
+  // HIGH VOLUME - Villa Renovation (7 clicks, QS 3 → target 7+)
+  'villa renovation dubai': { 
+    h1: 'Villa Renovation Dubai', 
+    h2: 'Expert Villa Renovation Contractors in Dubai',
+    service: 'Villa Renovation',
+    highlight: 'villa',
+    metaDesc: 'Villa renovation Dubai specialists. 800+ villas completed. Fixed price. 6-8 weeks.'
+  },
+  'villa renovation in dubai': { 
+    h1: 'Villa Renovation in Dubai', 
+    h2: 'Premium Villa Renovation Company',
+    service: 'Villa Renovation',
+    highlight: 'villa',
+    metaDesc: 'Villa renovation in Dubai. Municipality approved. 5-year warranty. Free consultation.'
+  },
+  'villa renovation': { 
+    h1: 'Villa Renovation Dubai', 
+    h2: "Dubai's Most Trusted Villa Renovation Company",
+    service: 'Villa Renovation',
+    highlight: 'villa',
+    metaDesc: 'Complete villa renovation services in Dubai. Fixed price. On-time delivery.'
+  },
+  'villa renovations': { 
+    h1: 'Villa Renovations Dubai', 
+    h2: 'Expert Villa Renovation Services',
+    service: 'Villa Renovation',
+    highlight: 'villa',
+    metaDesc: 'Villa renovations in Dubai by certified contractors. 800+ projects completed.'
+  },
+
+  // GOOD QS (7/10) - Villa Contractors - Keep what works!
+  'villa contractors in dubai': { 
+    h1: 'Villa Contractors in Dubai', 
+    h2: 'Licensed Villa Renovation Contractors',
+    service: 'Villa Contracting',
+    highlight: 'contractor',
+    metaDesc: 'Licensed villa contractors in Dubai. Municipality approved. Fixed price guarantee.'
+  },
+  'villa contractors': { 
+    h1: 'Villa Contractors Dubai', 
+    h2: 'Trusted Villa Renovation Contractors',
+    service: 'Villa Contracting',
+    highlight: 'contractor',
+    metaDesc: 'Professional villa contractors in Dubai. 12+ years experience. 800+ projects.'
+  },
+  'villa renovation contractors': { 
+    h1: 'Villa Renovation Contractors Dubai', 
+    h2: 'Expert Villa Renovation Contractors',
+    service: 'Villa Contracting',
+    highlight: 'contractor',
+    metaDesc: 'Villa renovation contractors in Dubai. Licensed. Insured. 5-year warranty.'
+  },
+
+  // Villa Extension (QS 3 → target 7+)
+  'villa extension': { 
+    h1: 'Villa Extension Dubai', 
+    h2: 'Expert Villa Extension Services',
+    service: 'Villa Extension',
+    highlight: 'extension',
+    metaDesc: 'Villa extension Dubai. Add rooms, floors, outdoor spaces. Municipality approved.'
+  },
+  'villa extension dubai': { 
+    h1: 'Villa Extension Dubai', 
+    h2: 'Professional Villa Extension Contractors',
+    service: 'Villa Extension',
+    highlight: 'extension',
+    metaDesc: 'Villa extension services in Dubai. Expert contractors. Fixed price.'
+  },
+
+  // Villa Painting (QS 3 → target 7+)
+  'villa painting dubai': { 
+    h1: 'Villa Painting Dubai', 
+    h2: 'Professional Villa Painting Services',
+    service: 'Villa Painting',
+    highlight: 'painting',
+    metaDesc: 'Villa painting Dubai. Interior & exterior. Premium finishes. Free quote.'
+  },
+  'villa painting': { 
+    h1: 'Villa Painting Dubai', 
+    h2: 'Expert Villa Painting Contractors',
+    service: 'Villa Painting',
+    highlight: 'painting',
+    metaDesc: 'Professional villa painting in Dubai. Quality paints. Experienced team.'
+  },
+
+  // Villa Fit Out
+  'villa fit out dubai': { 
+    h1: 'Villa Fit Out Dubai', 
+    h2: 'Complete Villa Fit Out Services',
+    service: 'Villa Fit Out',
+    highlight: 'fitout',
+    metaDesc: 'Villa fit out Dubai. Complete interior solutions. Fixed price. Free 3D design.'
+  },
+  'villa fitout dubai': { 
+    h1: 'Villa Fitout Dubai', 
+    h2: 'Professional Villa Fitout Services',
+    service: 'Villa Fit Out',
+    highlight: 'fitout',
+    metaDesc: 'Villa fitout Dubai specialists. Turnkey solutions. Municipality approved.'
+  },
+  'villa fit out': { 
+    h1: 'Villa Fit Out Dubai', 
+    h2: 'Expert Villa Fit Out Contractors',
+    service: 'Villa Fit Out',
+    highlight: 'fitout',
+    metaDesc: 'Villa fit out services in Dubai. Premium finishes. 5-year warranty.'
+  },
+
+  // Home Renovation
+  'home renovation companies dubai': { 
+    h1: 'Home Renovation Companies Dubai', 
+    h2: "Dubai's Top Home Renovation Company",
+    service: 'Home Renovation',
+    highlight: 'home',
+    metaDesc: 'Leading home renovation company in Dubai. 800+ homes transformed. Free quote.'
+  },
+  'home renovation': { 
+    h1: 'Home Renovation Dubai', 
+    h2: 'Professional Home Renovation Services',
+    service: 'Home Renovation',
+    highlight: 'home',
+    metaDesc: 'Home renovation Dubai. Complete makeovers. Fixed price guarantee.'
+  },
+  'home remodeling': { 
+    h1: 'Home Remodeling Dubai', 
+    h2: 'Expert Home Remodeling Contractors',
+    service: 'Home Remodeling',
+    highlight: 'home',
+    metaDesc: 'Home remodeling Dubai. Kitchen, bathroom, full home. Free consultation.'
+  },
+  'home remodelling': { 
+    h1: 'Home Remodelling Dubai', 
+    h2: 'Professional Home Remodelling Services',
+    service: 'Home Remodelling',
+    highlight: 'home',
+    metaDesc: 'Home remodelling Dubai specialists. Quality workmanship. 5-year warranty.'
+  },
+  'home remodeling contractors': { 
+    h1: 'Home Remodeling Contractors Dubai', 
+    h2: 'Licensed Home Remodeling Contractors',
+    service: 'Home Remodeling',
+    highlight: 'home',
+    metaDesc: 'Home remodeling contractors Dubai. Licensed. Insured. Fixed price.'
+  },
+
+  // Renovation Companies
+  'renovation companies': { 
+    h1: 'Renovation Companies Dubai', 
+    h2: "Dubai's Leading Renovation Company",
+    service: 'Renovation Services',
+    highlight: 'company',
+    metaDesc: 'Top renovation company in Dubai. Villa, home, interior. 800+ projects.'
+  },
+  'renovation company in dubai': { 
+    h1: 'Renovation Company in Dubai', 
+    h2: 'Trusted Renovation Services',
+    service: 'Renovation Services',
+    highlight: 'company',
+    metaDesc: 'Premier renovation company in Dubai. Municipality approved. Free quote.'
+  },
+  'villa renovation companies dubai': { 
+    h1: 'Villa Renovation Companies Dubai', 
+    h2: "Dubai's Best Villa Renovation Company",
+    service: 'Villa Renovation',
+    highlight: 'company',
+    metaDesc: 'Top villa renovation company in Dubai. 800+ villas. 5-year warranty.'
+  },
+
+  // Residential Remodeling
+  'residential remodeling': { 
+    h1: 'Residential Remodeling Dubai', 
+    h2: 'Expert Residential Remodeling Services',
+    service: 'Residential Remodeling',
+    highlight: 'home',
+    metaDesc: 'Residential remodeling Dubai. Complete home transformations. Fixed price.'
+  },
+
+  // Apartment Renovation
+  'apartment renovation': { 
+    h1: 'Apartment Renovation Dubai', 
+    h2: 'Professional Apartment Renovation Services',
+    service: 'Apartment Renovation',
+    highlight: 'apartment',
+    metaDesc: 'Apartment renovation Dubai. Studio to penthouse. Free 3D design.'
+  },
+
+  // Location-specific - DAMAC Hills (got 1 click with 100% CTR!)
+  'damac hills villa renovation': { 
+    h1: 'DAMAC Hills Villa Renovation', 
+    h2: 'Expert Villa Renovation in DAMAC Hills',
+    service: 'Villa Renovation',
+    highlight: 'location',
+    metaDesc: 'DAMAC Hills villa renovation specialists. Local experts. Free consultation.'
+  },
+  'damac hills 2 villa renovation': { 
+    h1: 'DAMAC Hills 2 Villa Renovation', 
+    h2: 'Villa Renovation in DAMAC Hills 2',
+    service: 'Villa Renovation',
+    highlight: 'location',
+    metaDesc: 'DAMAC Hills 2 villa renovation. Experienced local contractors. Fixed price.'
+  },
+
+  // Arabian Ranches
+  'arabian ranches villa renovation': { 
+    h1: 'Arabian Ranches Villa Renovation', 
+    h2: 'Expert Villa Renovation in Arabian Ranches',
+    service: 'Villa Renovation',
+    highlight: 'location',
+    metaDesc: 'Arabian Ranches villa renovation. Local specialists. 100+ projects in area.'
+  },
+
+  // Palm Jumeirah
+  'palm jumeirah villa renovation': { 
+    h1: 'Palm Jumeirah Villa Renovation', 
+    h2: 'Luxury Villa Renovation on Palm Jumeirah',
+    service: 'Villa Renovation',
+    highlight: 'location',
+    metaDesc: 'Palm Jumeirah villa renovation. Luxury specialists. Free 3D design.'
+  },
+
+  // Emirates Hills
+  'emirates hills villa renovation': { 
+    h1: 'Emirates Hills Villa Renovation', 
+    h2: 'Premium Villa Renovation in Emirates Hills',
+    service: 'Villa Renovation',
+    highlight: 'location',
+    metaDesc: 'Emirates Hills villa renovation. Luxury experts. Municipality approved.'
+  },
+
+  // Dubai Hills
+  'dubai hills villa renovation': { 
+    h1: 'Dubai Hills Villa Renovation', 
+    h2: 'Expert Villa Renovation in Dubai Hills',
+    service: 'Villa Renovation',
+    highlight: 'location',
+    metaDesc: 'Dubai Hills villa renovation specialists. Local expertise. Free quote.'
+  },
+
+  // Default fallback
+  'default': { 
+    h1: 'Villa Renovation Dubai', 
+    h2: "Dubai's #1 Villa Renovation Company",
+    service: 'Villa Renovation',
+    highlight: 'villa',
+    metaDesc: 'Premier villa renovation company in Dubai. 800+ projects. Free 3D design.'
+  }
+};
+
+// ============================================
+// SERVICES - Ordered by keyword relevance
+// ============================================
+const ALL_SERVICES = [
+  { id: 'villa-renovation', title: 'Villa Renovation', desc: 'Complete villa transformation', price: 'From AED 150,000', image: '/villa-renovation.webp', icon: '🏠', tags: ['villa', 'home', 'company', 'contractor'] },
+  { id: 'interior-renovation', title: 'Interior Renovation', desc: 'Full interior makeover', price: 'From AED 60,000', image: '/Interior-Design.webp', icon: '🎨', tags: ['interior', 'fitout', 'home', 'apartment'] },
+  { id: 'villa-extension', title: 'Villa Extension', desc: 'Add rooms & floors', price: 'From AED 120,000', image: '/villa-extension.webp', icon: '🏗️', tags: ['extension', 'villa', 'contractor'] },
+  { id: 'villa-painting', title: 'Villa Painting', desc: 'Interior & exterior painting', price: 'From AED 15,000', image: '/villa-painting.webp', icon: '🎨', tags: ['painting', 'villa', 'home'] },
+  { id: 'villa-fitout', title: 'Villa Fit Out', desc: 'Complete fit out solutions', price: 'From AED 80,000', image: '/office-fitout.webp', icon: '✨', tags: ['fitout', 'interior', 'villa'] },
+  { id: 'kitchen', title: 'Kitchen Renovation', desc: 'Modern kitchen makeover', price: 'From AED 45,000', image: '/v16.webp', icon: '🍳', tags: ['interior', 'home', 'villa', 'apartment'] },
+  { id: 'bathroom', title: 'Bathroom Renovation', desc: 'Luxury bathroom upgrade', price: 'From AED 25,000', image: '/v12.webp', icon: '🛁', tags: ['interior', 'home', 'villa', 'apartment'] },
+  { id: 'swimming-pool', title: 'Pool Construction', desc: 'Custom pools & landscaping', price: 'From AED 80,000', image: '/swimming-pool.webp', icon: '🏊', tags: ['villa', 'extension', 'contractor'] },
+];
+
+// Get services sorted by relevance to keyword
+const getRelevantServices = (highlight) => {
+  return [...ALL_SERVICES].sort((a, b) => {
+    const aMatch = a.tags.includes(highlight) ? 0 : 1;
+    const bMatch = b.tags.includes(highlight) ? 0 : 1;
+    return aMatch - bMatch;
+  }).slice(0, 6);
+};
+
+// ============================================
+// AREAS SERVED - For local SEO signals
+// ============================================
+const AREAS_SERVED = [
+  'Dubai Hills Estate', 'Emirates Hills', 'Palm Jumeirah', 'Arabian Ranches',
+  'DAMAC Hills', 'Jumeirah Golf Estates', 'Al Barari', 'The Lakes', 
+  'The Meadows', 'The Springs', 'Jumeirah Islands', 'Victory Heights',
+  'Motor City', 'JVC', 'Al Barsha', 'Jumeirah', 'District One', 'MBR City'
+];
+
+// ============================================
+// MAIN COMPONENT
+// ============================================
+export default function QualityScoreOptimizer() {
   const [formData, setFormData] = useState({ name: '', phone: '', service: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   
-  // Dynamic content from URL params (for keyword relevance)
   const [content, setContent] = useState({
     keyword: 'Villa Renovation',
     location: 'Dubai',
     h1: 'Villa Renovation Dubai',
-    h2: 'Dubai\'s #1 Rated Villa Renovation Company'
+    h2: "Dubai's #1 Villa Renovation Company",
+    service: 'Villa Renovation',
+    highlight: 'villa',
+    metaDesc: 'Premier villa renovation company in Dubai. 800+ projects. Free 3D design.'
   });
 
-  // Services Data with Images
-  const services = [
-    { 
-      image: "/villa-renovation.webp",
-      icon: '🏠', 
-      title: 'Complete Villa Renovation', 
-      desc: 'Full interior & exterior transformation', 
-      price: 'From AED 150,000' 
-    },
-    { 
-      image: "/villa-extension.webp",
-      icon: '🏗️', 
-      title: 'Villa Extension', 
-      desc: 'Add rooms, floors & outdoor spaces', 
-      price: 'From AED 120,000' 
-    },
-    { 
-      image: "/Interior-Design.webp",
-      icon: '🎨', 
-      title: 'Interior Design', 
-      desc: 'Complete design & furniture', 
-      price: 'From AED 60,000' 
-    },
-    { 
-      image: "/swimming-pool.webp",
-      icon: '🏊', 
-      title: 'Pool Construction', 
-      desc: 'Custom pools & landscaping', 
-      price: 'From AED 80,000' 
-    },
-    { 
-      image: "/v16.webp",
-      icon: '🍳', 
-      title: 'Kitchen Renovation', 
-      desc: 'Modern kitchens with premium finishes', 
-      price: 'From AED 45,000' 
-    },
-    { 
-      image: "/v12.webp",
-      icon: '🛁', 
-      title: 'Bathroom Renovation', 
-      desc: 'Luxury bathroom makeovers', 
-      price: 'From AED 25,000' 
-    },
-  ];
+  const [services, setServices] = useState(getRelevantServices('villa'));
 
   // Parse URL params for dynamic keyword insertion
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const keyword = params.get('keyword') || params.get('utm_term') || 'Villa Renovation';
-    const location = params.get('location') || params.get('loc') || 'Dubai';
-    const matchtype = params.get('matchtype') || 'broad';
     
-    const headlines = {
-      'exact': `#1 ${keyword} Company in ${location}`,
-      'phrase': `Professional ${keyword} in ${location}`,
-      'broad': `${keyword} ${location}`
-    };
+    // Support multiple param names
+    let keyword = params.get('kw') || 
+                  params.get('keyword') || 
+                  params.get('utm_term') || 
+                  params.get('q') || '';
+    
+    const location = params.get('loc') || 
+                     params.get('location') || 'Dubai';
+    
+    // Normalize keyword
+    keyword = keyword.toLowerCase()
+      .replace(/[+_-]/g, ' ')
+      .replace(/[[\]"'{}]/g, '')
+      .trim();
+    
+    // Find best matching config
+    let config = KEYWORD_MAP['default'];
+    let bestMatchScore = 0;
+    
+    for (const [key, value] of Object.entries(KEYWORD_MAP)) {
+      if (key === 'default') continue;
+      
+      // Calculate match score
+      let score = 0;
+      if (keyword === key) score = 100; // Exact match
+      else if (keyword.includes(key)) score = key.length; // Keyword contains key
+      else if (key.includes(keyword) && keyword.length > 3) score = keyword.length; // Key contains keyword
+      
+      if (score > bestMatchScore) {
+        config = value;
+        bestMatchScore = score;
+      }
+    }
+    
+    // Dynamic config for unmatched keywords
+    if (bestMatchScore === 0 && keyword.length > 3) {
+      const words = keyword.split(' ');
+      const capitalizedKeyword = words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      
+      config = {
+        h1: `${capitalizedKeyword} Dubai`,
+        h2: `Professional ${capitalizedKeyword} Services in Dubai`,
+        service: capitalizedKeyword,
+        highlight: keyword.includes('interior') ? 'interior' : 
+                   keyword.includes('extension') ? 'extension' :
+                   keyword.includes('paint') ? 'painting' :
+                   keyword.includes('fit') ? 'fitout' :
+                   keyword.includes('contract') ? 'contractor' :
+                   keyword.includes('home') ? 'home' :
+                   keyword.includes('apartment') ? 'apartment' : 'villa',
+        metaDesc: `${capitalizedKeyword} in Dubai. 800+ projects. Free quote.`
+      };
+    }
 
     setContent({
-      keyword,
+      keyword: keyword || 'Villa Renovation',
       location,
-      h1: headlines[matchtype] || `${keyword} ${location}`,
-      h2: `${location}'s Most Trusted ${keyword} Experts`
+      h1: config.h1,
+      h2: config.h2,
+      service: config.service,
+      highlight: config.highlight,
+      metaDesc: config.metaDesc
     });
+    
+    setServices(getRelevantServices(config.highlight));
   }, []);
 
-  // Lightweight form submission -> WhatsApp
+  // Form submission
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    const message = `*New ${content.keyword} Inquiry*
+    const message = `*New ${content.service} Inquiry*
 ━━━━━━━━━━━━━━━━━━
-Name: ${formData.name}
-Phone: ${formData.phone}
-Service: ${formData.service || content.keyword}
-Location: ${content.location}
+👤 Name: ${formData.name}
+📱 Phone: ${formData.phone}
+🏠 Service: ${formData.service || content.service}
+📍 Location: ${content.location}
 ━━━━━━━━━━━━━━━━━━
-Source: Google Ads
-Page: ${content.keyword}`;
+🔍 Keyword: ${content.keyword}
+📊 Source: Google Ads
+🎁 Offer: FREE 3D Design`;
 
-    // Track conversion (non-blocking)
+    // Track conversion
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'conversion', {
         send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC',
@@ -118,210 +428,172 @@ Page: ${content.keyword}`;
     setSubmitted(true);
   }, [formData, content]);
 
-  // Quick WhatsApp - no form needed
+  // Quick WhatsApp
   const quickWhatsApp = () => {
-    const msg = `Hi! I'm interested in ${content.keyword} in ${content.location}. Please send me info.`;
+    const msg = `Hi! I'm interested in ${content.service} services in ${content.location}. Please send me a free quote.`;
+    
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'conversion', {
+        send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC',
+        value: 100000,
+        currency: 'AED'
+      });
+    }
+    
     window.open(`https://wa.me/971585658002?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   return (
     <>
       <Head>
-        {/* SEO + Quality Score Optimization */}
-        <title>{content.h1} | Free Quote & 3D Design | Unicorn Renovations</title>
-        <meta name="description" content={`${content.keyword} specialists in ${content.location}. 800+ projects completed. Dubai Municipality approved. Free 3D design & quote. Call +971 58 565 8002`} />
+        {/* Dynamic title with keyword */}
+        <title>{content.h1} | Free 3D Design & Quote | Unicorn Renovations</title>
+        <meta name="description" content={content.metaDesc} />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <meta name="robots" content="index, follow" />
         
-        {/* Preconnect for speed */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Speed optimizations */}
+        <link rel="preconnect" href="https://wa.me" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://wa.me" />
         
-        {/* Favicon - Multiple formats for all devices */}
+        {/* Favicons */}
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         
-        {/* Schema.org for Rich Results + Quality Score */}
+        {/* Schema.org - Dynamic */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "HomeAndConstructionBusiness",
           "name": "Unicorn Renovations",
-          "description": `${content.keyword} company in ${content.location}`,
-          "url": "https://unicornrenovations.com",
+          "description": content.metaDesc,
+          "url": "https://dubailuxrenovate.com",
           "telephone": "+971585658002",
-          "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Dubai",
-            "addressRegion": "Dubai",
-            "addressCountry": "AE"
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": "25.0657",
-            "longitude": "55.1713"
-          },
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.9",
-            "reviewCount": "287"
-          },
-          "priceRange": "AED 50,000 - AED 500,000"
+          "address": { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" },
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "287" },
+          "priceRange": "AED 25,000 - AED 500,000",
+          "areaServed": AREAS_SERVED
         })}} />
         
-        {/* Critical CSS - Inlined for fastest FCP */}
+        {/* Critical CSS - Minimal for fast FCP */}
         <style dangerouslySetInnerHTML={{ __html: `
           *{margin:0;padding:0;box-sizing:border-box}
           html{scroll-behavior:smooth}
-          body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;line-height:1.6}
+          body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;line-height:1.5;background:#fff}
           .container{max-width:1200px;margin:0 auto;padding:0 16px}
-          .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 32px;border-radius:8px;font-weight:700;font-size:16px;cursor:pointer;transition:all 0.2s;border:none;text-decoration:none}
-          .btn-primary{background:#d97706;color:#fff}
-          .btn-primary:hover{background:#b45309;transform:translateY(-2px)}
+          .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:8px;font-weight:700;font-size:16px;cursor:pointer;transition:transform 0.2s;border:none;text-decoration:none}
+          .btn:hover{transform:translateY(-2px)}
           .btn-green{background:#22c55e;color:#fff}
-          .btn-green:hover{background:#16a34a}
-          .btn-outline{background:transparent;border:2px solid #fff;color:#fff}
-          .btn-outline:hover{background:#fff;color:#1a1a1a}
-          input,select{width:100%;padding:16px;border:2px solid #e5e5e5;border-radius:8px;font-size:16px;transition:border-color 0.2s}
+          .btn-orange{background:#d97706;color:#fff}
+          .btn-outline{background:transparent;border:2px solid currentColor}
+          input,select{width:100%;padding:14px;border:2px solid #e5e5e5;border-radius:8px;font-size:16px}
           input:focus,select:focus{outline:none;border-color:#d97706}
-          .trust-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:8px 16px;border-radius:50px;font-size:14px;font-weight:600}
-          @media(max-width:768px){.btn{width:100%;padding:14px 24px}.hide-mobile{display:none}}
+          .card{background:#fff;border-radius:12px;border:1px solid #e5e5e5;overflow:hidden;transition:all 0.3s}
+          .card:hover{border-color:#d97706;box-shadow:0 8px 24px rgba(0,0,0,0.1)}
+          @media(max-width:768px){.btn{width:100%}.hide-mobile{display:none}.grid-2{grid-template-columns:1fr!important}}
           .pulse{animation:pulse 2s infinite}
-          @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-          .service-card{background:#fff;border-radius:12px;overflow:hidden;border:2px solid #e5e5e5;cursor:pointer;transition:all 0.3s}
-          .service-card:hover{border-color:#d97706;transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,0.1)}
+          @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
         `}} />
       </Head>
 
       <div style={{ minHeight: '100vh' }}>
         
-        {/* ===== URGENCY BAR - Keyword Rich ===== */}
-        <div style={{ background: 'linear-gradient(90deg, #dc2626, #b91c1c)', color: '#fff', padding: '10px 16px', textAlign: 'center', fontSize: '14px', fontWeight: '600' }}>
-          🔥 LIMITED: Free 3D Design (Worth AED 5,000) for {content.keyword} Projects This Month
+        {/* URGENCY BAR */}
+        <div style={{ background: '#dc2626', color: '#fff', padding: '10px 16px', textAlign: 'center', fontSize: '14px', fontWeight: '600' }}>
+          🔥 LIMITED: Free 3D Design Worth AED 5,000 for {content.service} Projects
         </div>
 
-        {/* ===== HEADER - Fast, Simple ===== */}
+        {/* HEADER */}
         <header style={{ background: '#fff', borderBottom: '1px solid #e5e5e5', padding: '12px 0', position: 'sticky', top: 0, zIndex: 50 }}>
           <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: '900', color: '#1a1a1a' }}>
+            <a href="https://unicornrenovations.com" style={{ fontSize: '22px', fontWeight: '900', color: '#1a1a1a', textDecoration: 'none' }}>
               UNICORN<span style={{ color: '#d97706' }}>.</span>
-            </div>
-            <a href="tel:+971585658002" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1a1a1a', textDecoration: 'none', fontWeight: '700' }}>
-              <span style={{ fontSize: '20px' }}>📞</span>
-              <span className="hide-mobile">+971 58 565 8002</span>
+            </a>
+            <a href="tel:+971585658002" className="btn btn-orange" style={{ padding: '10px 16px', fontSize: '14px' }}>
+              📞 <span className="hide-mobile">Call Now</span>
             </a>
           </div>
         </header>
 
-        {/* ===== HERO - Keyword Optimized for Quality Score ===== */}
+        {/* HERO - Keyword Optimized */}
         <section style={{ 
-          background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('/hero-image-optimized.webp')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
           color: '#fff',
-          padding: '60px 0 80px'
+          padding: '48px 0 56px'
         }}>
-          <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '40px', alignItems: 'center' }}>
-              
-              {/* Left: Keyword-Rich Content */}
-              <div style={{ textAlign: 'center' }}>
-                
-                {/* Trust Badges - Above Fold */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginBottom: '24px' }}>
-                  <span className="trust-badge">✓ Dubai Municipality Approved</span>
-                  <span className="trust-badge">⭐ 4.9/5 (287 Reviews)</span>
-                  <span className="trust-badge">🏆 15+ Years Experience</span>
-                </div>
-
-                {/* H1 - Primary Keyword */}
-                <h1 style={{ fontSize: 'clamp(32px, 6vw, 56px)', fontWeight: '900', lineHeight: '1.1', marginBottom: '16px' }}>
-                  {content.h1}
-                </h1>
-                
-                {/* H2 - Secondary Keyword */}
-                <h2 style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontWeight: '400', opacity: '0.9', marginBottom: '24px', maxWidth: '600px', margin: '0 auto 24px' }}>
-                  {content.h2} • Free 3D Design • Fixed Price Guarantee
-                </h2>
-
-                {/* Stats Row - Trust + Keywords */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '32px', flexWrap: 'wrap' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#fbbf24' }}>800+</div>
-                    <div style={{ fontSize: '14px', opacity: '0.8' }}>Villas Renovated</div>
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#fbbf24' }}>15+</div>
-                    <div style={{ fontSize: '14px', opacity: '0.8' }}>Years in Dubai</div>
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#fbbf24' }}>5yr</div>
-                    <div style={{ fontSize: '14px', opacity: '0.8' }}>Warranty</div>
-                  </div>
-                </div>
-
-                {/* CTA Buttons */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
-                  <button onClick={quickWhatsApp} className="btn btn-green pulse" style={{ fontSize: '18px' }}>
-                    <svg style={{ width: '24px', height: '24px' }} fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                    </svg>
-                    WhatsApp Free Quote Now
-                  </button>
-                  <a href="tel:+971585658002" className="btn btn-outline">
-                    📞 Call +971 58 565 8002
-                  </a>
-                </div>
-
-                <p style={{ fontSize: '13px', opacity: '0.7', marginTop: '16px' }}>
-                  ✓ Free consultation • ✓ No obligation • ✓ Response in 30 min
-                </p>
-              </div>
+          <div className="container" style={{ textAlign: 'center' }}>
+            
+            {/* Trust badges */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginBottom: '20px' }}>
+              <span style={{ background: 'rgba(255,255,255,0.1)', padding: '6px 14px', borderRadius: '20px', fontSize: '13px' }}>✓ Municipality Approved</span>
+              <span style={{ background: 'rgba(255,255,255,0.1)', padding: '6px 14px', borderRadius: '20px', fontSize: '13px' }}>⭐ 4.9/5 Rating</span>
+              <span style={{ background: 'rgba(255,255,255,0.1)', padding: '6px 14px', borderRadius: '20px', fontSize: '13px' }}>🏆 12+ Years</span>
             </div>
+
+            {/* H1 - DYNAMIC KEYWORD */}
+            <h1 style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: '800', lineHeight: 1.15, marginBottom: '12px' }}>
+              {content.h1}
+            </h1>
+            
+            {/* H2 */}
+            <h2 style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: '400', opacity: 0.9, marginBottom: '20px', maxWidth: '600px', margin: '0 auto 20px' }}>
+              {content.h2} • Fixed Price • 6-8 Weeks
+            </h2>
+
+            {/* Stats */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '28px', flexWrap: 'wrap' }}>
+              {[
+                { num: '800+', label: 'Projects Done' },
+                { num: '12+', label: 'Years Experience' },
+                { num: '5yr', label: 'Warranty' }
+              ].map((s, i) => (
+                <div key={i} style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '28px', fontWeight: '800', color: '#fbbf24' }}>{s.num}</div>
+                  <div style={{ fontSize: '12px', opacity: 0.8 }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '360px', margin: '0 auto' }}>
+              <button onClick={quickWhatsApp} className="btn btn-green pulse" style={{ fontSize: '17px' }}>
+                💬 Get Free Quote on WhatsApp
+              </button>
+              <a href="tel:+971585658002" className="btn btn-outline" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)' }}>
+                📞 Call +971 58 565 8002
+              </a>
+            </div>
+
+            <p style={{ fontSize: '12px', opacity: 0.6, marginTop: '12px' }}>
+              ✓ Free Consultation • ✓ No Obligation • ✓ Response in 30 min
+            </p>
           </div>
         </section>
 
-        {/* ===== SERVICES - With Images ===== */}
-        <section style={{ padding: '60px 0', background: '#fff' }}>
+        {/* SERVICES - Dynamic */}
+        <section style={{ padding: '48px 0', background: '#fff' }}>
           <div className="container">
-            <h2 style={{ fontSize: '28px', fontWeight: '800', textAlign: 'center', marginBottom: '40px' }}>
-              Our {content.keyword} Services in {content.location}
+            <h2 style={{ fontSize: '24px', fontWeight: '700', textAlign: 'center', marginBottom: '32px' }}>
+              Our {content.service} Services in {content.location}
             </h2>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-              {services.map((service, i) => (
-                <div 
-                  key={i} 
-                  className="service-card"
-                  onClick={quickWhatsApp}
-                >
-                  {/* Image Section */}
-                  <div style={{ position: 'relative', height: '180px', width: '100%', overflow: 'hidden', background: '#f3f4f6' }}>
-                    {service.image ? (
-                      <Image
-                        src={service.image}
-                        alt={service.title}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
-                        loading="lazy"
-                        quality={60}
-                        style={{ objectFit: 'cover', transition: 'transform 0.5s' }}
-                      />
-                    ) : (
-                      <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #fef3c7, #fde68a)' }}>
-                        <span style={{ fontSize: '48px' }}>{service.icon}</span>
-                      </div>
-                    )}
+            <div className="grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+              {services.map((s, i) => (
+                <div key={i} className="card" onClick={quickWhatsApp} style={{ cursor: 'pointer' }}>
+                  <div style={{ position: 'relative', height: '160px', background: '#f3f4f6' }}>
+                    <Image
+                      src={s.image}
+                      alt={`${s.title} in ${content.location}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 400px"
+                      style={{ objectFit: 'cover' }}
+                      loading={i < 2 ? 'eager' : 'lazy'}
+                      quality={60}
+                    />
                   </div>
-                  
-                  {/* Content Section */}
-                  <div style={{ padding: '20px', textAlign: 'center' }}>
-                    <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>{service.title}</h3>
-                    <p style={{ fontSize: '14px', color: '#666', marginBottom: '12px' }}>{service.desc}</p>
-                    <p style={{ fontSize: '16px', fontWeight: '700', color: '#d97706' }}>{service.price}</p>
+                  <div style={{ padding: '16px', textAlign: 'center' }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>{s.title}</h3>
+                    <p style={{ fontSize: '13px', color: '#666', marginBottom: '8px' }}>{s.desc}</p>
+                    <p style={{ fontSize: '15px', fontWeight: '700', color: '#d97706' }}>{s.price}</p>
                   </div>
                 </div>
               ))}
@@ -329,51 +601,51 @@ Page: ${content.keyword}`;
           </div>
         </section>
 
-        {/* ===== WHY CHOOSE US - Trust Signals ===== */}
-        <section style={{ padding: '60px 0', background: '#1a1a1a', color: '#fff' }}>
+        {/* WHY CHOOSE US */}
+        <section style={{ padding: '48px 0', background: '#1a1a1a', color: '#fff' }}>
           <div className="container">
-            <h2 style={{ fontSize: '28px', fontWeight: '800', textAlign: 'center', marginBottom: '40px' }}>
-              Why {content.location} Homeowners Choose Unicorn Renovations
+            <h2 style={{ fontSize: '24px', fontWeight: '700', textAlign: 'center', marginBottom: '32px' }}>
+              Why Choose Unicorn for {content.service}?
             </h2>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '32px', textAlign: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '24px', textAlign: 'center' }}>
               {[
-                { icon: '✅', title: 'Municipality Approved', desc: 'All permits & approvals handled' },
-                { icon: '💰', title: 'Fixed Price Guarantee', desc: 'No hidden costs or surprises' },
-                { icon: '📅', title: 'On-Time Delivery', desc: 'Project timeline guaranteed' },
-                { icon: '🛡️', title: '5-Year Warranty', desc: 'Full workmanship warranty' },
-                { icon: '🎨', title: 'Free 3D Design', desc: 'Visualize before you commit' },
-                { icon: '⭐', title: '287 5-Star Reviews', desc: 'Rated 4.9/5 on Google' },
+                { icon: '✅', title: 'Municipality Approved', desc: 'All permits handled' },
+                { icon: '💰', title: 'Fixed Price', desc: 'No hidden costs' },
+                { icon: '📅', title: 'On-Time Delivery', desc: '6-8 weeks guaranteed' },
+                { icon: '🛡️', title: '5-Year Warranty', desc: 'Full coverage' },
+                { icon: '🎨', title: 'Free 3D Design', desc: 'Visualize first' },
+                { icon: '⭐', title: '4.9/5 Rating', desc: '287 reviews' },
               ].map((item, i) => (
                 <div key={i}>
-                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>{item.icon}</div>
-                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fbbf24', marginBottom: '8px' }}>{item.title}</h3>
-                  <p style={{ fontSize: '14px', opacity: '0.8' }}>{item.desc}</p>
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>{item.icon}</div>
+                  <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#fbbf24', marginBottom: '4px' }}>{item.title}</h3>
+                  <p style={{ fontSize: '12px', opacity: 0.7 }}>{item.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ===== SIMPLE LEAD FORM ===== */}
-        <section id="quote" style={{ padding: '60px 0', background: '#fff' }}>
-          <div className="container" style={{ maxWidth: '500px' }}>
-            <div style={{ background: '#f9fafb', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', textAlign: 'center', marginBottom: '8px' }}>
-                Get Your Free {content.keyword} Quote
+        {/* LEAD FORM */}
+        <section id="quote" style={{ padding: '48px 0', background: '#f9fafb' }}>
+          <div className="container" style={{ maxWidth: '440px' }}>
+            <div style={{ background: '#fff', borderRadius: '16px', padding: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+              <h2 style={{ fontSize: '22px', fontWeight: '700', textAlign: 'center', marginBottom: '6px' }}>
+                Get Your Free {content.service} Quote
               </h2>
-              <p style={{ textAlign: 'center', color: '#666', marginBottom: '24px', fontSize: '14px' }}>
-                Fill in your details • We respond in 30 minutes
+              <p style={{ textAlign: 'center', color: '#666', marginBottom: '20px', fontSize: '14px' }}>
+                Response in 30 minutes • No obligation
               </p>
               
               {submitted ? (
-                <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
-                  <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px' }}>Request Sent!</h3>
-                  <p style={{ color: '#666' }}>We'll contact you on WhatsApp shortly.</p>
+                <div style={{ textAlign: 'center', padding: '32px 0' }}>
+                  <div style={{ fontSize: '40px', marginBottom: '12px' }}>✅</div>
+                  <h3 style={{ fontSize: '18px', fontWeight: '700' }}>Request Sent!</h3>
+                  <p style={{ color: '#666', fontSize: '14px' }}>We'll contact you shortly.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <input
                     type="text"
                     placeholder="Your Name *"
@@ -383,7 +655,7 @@ Page: ${content.keyword}`;
                   />
                   <input
                     type="tel"
-                    placeholder="Phone / WhatsApp Number *"
+                    placeholder="WhatsApp Number *"
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -393,21 +665,23 @@ Page: ${content.keyword}`;
                     onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                     style={{ color: formData.service ? '#1a1a1a' : '#999' }}
                   >
-                    <option value="">Select Service (Optional)</option>
-                    <option value="Villa Renovation">Complete Villa Renovation</option>
+                    <option value="">Select Service</option>
+                    <option value="Villa Renovation">Villa Renovation</option>
+                    <option value="Interior Renovation">Interior Renovation</option>
+                    <option value="Villa Extension">Villa Extension</option>
+                    <option value="Villa Fit Out">Villa Fit Out</option>
+                    <option value="Villa Painting">Villa Painting</option>
                     <option value="Kitchen Renovation">Kitchen Renovation</option>
                     <option value="Bathroom Renovation">Bathroom Renovation</option>
-                    <option value="Villa Extension">Villa Extension</option>
-                    <option value="Pool Construction">Pool Construction</option>
-                    <option value="Interior Design">Interior Design</option>
+                    <option value="Home Remodeling">Home Remodeling</option>
                   </select>
                   
-                  <button type="submit" className="btn btn-primary" disabled={isSubmitting} style={{ marginTop: '8px' }}>
+                  <button type="submit" className="btn btn-orange" disabled={isSubmitting} style={{ marginTop: '4px' }}>
                     {isSubmitting ? 'Sending...' : 'Get Free Quote →'}
                   </button>
                   
-                  <p style={{ fontSize: '12px', color: '#999', textAlign: 'center' }}>
-                    🔒 Your information is secure and never shared
+                  <p style={{ fontSize: '11px', color: '#999', textAlign: 'center' }}>
+                    🔒 Your information is secure
                   </p>
                 </form>
               )}
@@ -415,73 +689,82 @@ Page: ${content.keyword}`;
           </div>
         </section>
 
-        {/* ===== AREAS WE SERVE - Local SEO ===== */}
-        <section style={{ padding: '40px 0', background: '#f9fafb' }}>
+        {/* AREAS SERVED - Important for Local SEO */}
+        <section style={{ padding: '32px 0', background: '#fff' }}>
           <div className="container">
-            <h3 style={{ fontSize: '20px', fontWeight: '700', textAlign: 'center', marginBottom: '20px' }}>
-              {content.keyword} Services Across Dubai
+            <h3 style={{ fontSize: '18px', fontWeight: '700', textAlign: 'center', marginBottom: '16px' }}>
+              {content.service} Services Across Dubai
             </h3>
-            <p style={{ textAlign: 'center', color: '#666', fontSize: '14px', maxWidth: '800px', margin: '0 auto' }}>
-              Palm Jumeirah • Emirates Hills • Arabian Ranches • Dubai Hills • Jumeirah Golf Estates • 
-              Al Barari • District One • The Lakes • The Springs • Meadows • Victory Heights • 
-              Jumeirah Islands • Mohammed Bin Rashid City • Downtown Dubai • Al Barsha
+            <p style={{ textAlign: 'center', color: '#666', fontSize: '13px', maxWidth: '800px', margin: '0 auto', lineHeight: 1.8 }}>
+              {AREAS_SERVED.join(' • ')}
             </p>
           </div>
         </section>
 
-        {/* ===== FINAL CTA ===== */}
-        <section style={{ padding: '60px 0', background: 'linear-gradient(135deg, #d97706, #b45309)', color: '#fff', textAlign: 'center' }}>
+        {/* FINAL CTA */}
+        <section style={{ padding: '48px 0', background: 'linear-gradient(135deg, #d97706, #b45309)', color: '#fff', textAlign: 'center' }}>
           <div className="container">
-            <h2 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '16px' }}>
-              Ready to Transform Your Villa?
+            <h2 style={{ fontSize: '26px', fontWeight: '700', marginBottom: '12px' }}>
+              Ready to Start Your {content.service} Project?
             </h2>
-            <p style={{ fontSize: '18px', opacity: '0.9', marginBottom: '32px' }}>
-              Get your free {content.keyword} quote + 3D design today
+            <p style={{ fontSize: '16px', opacity: 0.9, marginBottom: '24px' }}>
+              Free consultation + 3D design + fixed price quote
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
-              <button onClick={quickWhatsApp} className="btn" style={{ background: '#22c55e', color: '#fff', fontSize: '18px' }}>
-                <svg style={{ width: '24px', height: '24px' }} fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                </svg>
-                WhatsApp Us Now
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '360px', margin: '0 auto' }}>
+              <button onClick={quickWhatsApp} className="btn" style={{ background: '#22c55e', color: '#fff' }}>
+                💬 WhatsApp Us Now
               </button>
-              <a href="tel:+971585658002" className="btn btn-outline" style={{ borderColor: '#fff', color: '#fff' }}>
+              <a href="tel:+971585658002" className="btn btn-outline" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.5)' }}>
                 📞 +971 58 565 8002
               </a>
             </div>
           </div>
         </section>
 
-        {/* ===== FOOTER - Minimal ===== */}
-        <footer style={{ padding: '40px 0', background: '#1a1a1a', color: '#fff' }}>
+        {/* FOOTER */}
+        <footer style={{ padding: '32px 0', background: '#1a1a1a', color: '#fff' }}>
           <div className="container" style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: '900', marginBottom: '16px' }}>
+            <a href="https://unicornrenovations.com" style={{ fontSize: '20px', fontWeight: '900', color: '#fff', textDecoration: 'none' }}>
               UNICORN<span style={{ color: '#d97706' }}>.</span>
-            </div>
-            <p style={{ fontSize: '14px', opacity: '0.7', marginBottom: '16px' }}>
-              Dubai's Premier {content.keyword} Company<br />
-              Dubai Municipality Approved • 15+ Years Experience • 800+ Projects
+            </a>
+            <p style={{ fontSize: '13px', opacity: 0.6, marginTop: '8px' }}>
+              Dubai's Premier {content.service} Company • 12+ Years • 800+ Projects
             </p>
-            <p style={{ fontSize: '12px', opacity: '0.5' }}>
-              © {new Date().getFullYear()} Unicorn Renovations. All rights reserved.
+            
+            {/* Service links for SEO */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginTop: '16px' }}>
+              {[
+                { label: 'Villa Renovation', url: 'https://unicornrenovations.com/villa-renovation/' },
+                { label: 'Interior Design', url: 'https://unicornrenovations.com/interior-design/' },
+                { label: 'Villa Extension', url: 'https://unicornrenovations.com/villa-extension/' },
+                { label: 'About', url: 'https://unicornrenovations.com/about-us/' },
+              ].map((link, i) => (
+                <a key={i} href={link.url} target="_blank" rel="noopener" style={{ color: '#999', fontSize: '12px', textDecoration: 'none' }}>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+            
+            <p style={{ fontSize: '11px', opacity: 0.4, marginTop: '16px' }}>
+              © {new Date().getFullYear()} Unicorn Renovations
             </p>
           </div>
         </footer>
 
-        {/* ===== FLOATING WHATSAPP ===== */}
+        {/* FLOATING WHATSAPP */}
         <button
           onClick={quickWhatsApp}
           style={{
             position: 'fixed',
-            bottom: '80px',
-            right: '20px',
-            width: '60px',
-            height: '60px',
+            bottom: '76px',
+            right: '16px',
+            width: '56px',
+            height: '56px',
             background: '#22c55e',
             borderRadius: '50%',
             border: 'none',
             cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
             zIndex: 50,
             display: 'flex',
             alignItems: 'center',
@@ -490,12 +773,12 @@ Page: ${content.keyword}`;
           className="pulse"
           aria-label="WhatsApp"
         >
-          <svg style={{ width: '32px', height: '32px', color: '#fff' }} fill="currentColor" viewBox="0 0 24 24">
+          <svg style={{ width: '28px', height: '28px' }} fill="#fff" viewBox="0 0 24 24">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
           </svg>
         </button>
 
-        {/* ===== MOBILE BOTTOM BAR ===== */}
+        {/* MOBILE BOTTOM BAR */}
         <div style={{
           position: 'fixed',
           bottom: 0,
@@ -506,22 +789,20 @@ Page: ${content.keyword}`;
           zIndex: 40,
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          height: '64px'
+          height: '60px'
         }} className="hide-desktop">
-          <a href="tel:+971585658002" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#1a1a1a', textDecoration: 'none', fontWeight: '700', borderRight: '1px solid #e5e5e5' }}>
-            📞 Call Now
+          <a href="tel:+971585658002" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: '#1a1a1a', textDecoration: 'none', fontWeight: '700', borderRight: '1px solid #e5e5e5' }}>
+            📞 Call
           </a>
-          <button onClick={quickWhatsApp} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#22c55e', color: '#fff', border: 'none', fontWeight: '700', cursor: 'pointer' }}>
+          <button onClick={quickWhatsApp} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: '#22c55e', color: '#fff', border: 'none', fontWeight: '700', cursor: 'pointer' }}>
             💬 WhatsApp
           </button>
         </div>
         
-        {/* Spacer for mobile bottom bar */}
-        <div style={{ height: '64px' }} className="hide-desktop"></div>
+        <div style={{ height: '60px' }} className="hide-desktop"></div>
 
-        {/* ===== ANALYTICS - Load LAST, Non-Blocking ===== */}
+        {/* DEFERRED ANALYTICS */}
         <script dangerouslySetInnerHTML={{ __html: `
-          // Defer analytics to not block rendering
           window.addEventListener('load', function() {
             setTimeout(function() {
               var s = document.createElement('script');
@@ -539,10 +820,7 @@ Page: ${content.keyword}`;
           });
         `}} />
         
-        {/* Hide desktop class for mobile bottom bar */}
-        <style dangerouslySetInnerHTML={{ __html: `
-          @media(min-width:769px){.hide-desktop{display:none!important}}
-        `}} />
+        <style dangerouslySetInnerHTML={{ __html: `@media(min-width:769px){.hide-desktop{display:none!important}}` }} />
       </div>
     </>
   );
