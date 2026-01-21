@@ -87,26 +87,26 @@ const KEYWORD_MAP = {
     highlight: 'extension',
     metaDesc: 'Bespoke villa extension services in Dubai. Expert architects. Fixed pricing.',
   },
-  'villa fit out dubai': {
-    h1: 'Villa Fit Out Dubai',
-    h2: 'Complete Turnkey Excellence',
-    service: 'Villa Fit Out',
+  'office fit out dubai': {
+    h1: 'Office Fit Out Dubai',
+    h2: 'Professional Workspaces, Exceptional Results',
+    service: 'Office Fit Out',
     highlight: 'fitout',
-    metaDesc: 'Luxury villa fit out Dubai. Complete interior solutions. Complimentary 3D design.',
+    metaDesc: 'Premium office fit out Dubai. Complete commercial solutions. Complimentary 3D design.',
   },
-  'villa fitout dubai': {
-    h1: 'Villa Fitout Dubai',
-    h2: 'From Shell to Sanctuary',
-    service: 'Villa Fit Out',
+  'office fitout dubai': {
+    h1: 'Office Fitout Dubai',
+    h2: 'Transforming Commercial Spaces',
+    service: 'Office Fit Out',
     highlight: 'fitout',
-    metaDesc: 'Premium villa fitout Dubai. Turnkey solutions. Municipality approved.',
+    metaDesc: 'Expert office fitout Dubai. Turnkey solutions. Municipality approved.',
   },
-  'villa fit out': {
-    h1: 'Villa Fit Out Dubai',
-    h2: 'Turnkey Luxury Living',
-    service: 'Villa Fit Out',
+  'office fit out': {
+    h1: 'Office Fit Out Dubai',
+    h2: 'Where Productivity Meets Design',
+    service: 'Office Fit Out',
     highlight: 'fitout',
-    metaDesc: 'Bespoke villa fit out services in Dubai. Premium finishes. 5-year warranty.',
+    metaDesc: 'Bespoke office fit out services in Dubai. Premium finishes. On-time delivery.',
   },
   'home renovation companies dubai': {
     h1: 'Home Renovation Company Dubai',
@@ -201,7 +201,7 @@ const ALL_SERVICES = [
   { id: 'villa-renovation', title: 'Villa Renovation', desc: 'Complete villa transformation with bespoke finishes', price: 'From AED 150,000', image: '/villa-renovation.webp', tags: ['villa', 'home', 'company', 'contractor', 'location'] },
   { id: 'interior-renovation', title: 'Interior Renovation', desc: 'Reimagine your living spaces with artistry', price: 'From AED 60,000', image: '/Interior-Design.webp', tags: ['interior', 'fitout', 'home', 'apartment'] },
   { id: 'villa-extension', title: 'Villa Extension', desc: 'Seamlessly expand your living legacy', price: 'From AED 120,000', image: '/villa-extension.webp', tags: ['extension', 'villa', 'contractor'] },
-  { id: 'villa-fitout', title: 'Villa Fit Out', desc: 'Turnkey excellence from shell to sanctuary', price: 'From AED 80,000', image: '/office-fitout.webp', tags: ['fitout', 'interior', 'villa'] },
+  { id: 'office-fitout', title: 'Office Fit Out', desc: 'Professional workspaces crafted for success', price: 'From AED 80,000', image: '/office-fitout.webp', tags: ['fitout', 'office', 'commercial'] },
   { id: 'kitchen', title: 'Kitchen Renovation', desc: 'Culinary spaces crafted for modern living', price: 'From AED 45,000', image: '/v16.webp', tags: ['interior', 'home', 'villa', 'apartment'] },
   { id: 'bathroom', title: 'Bathroom Renovation', desc: 'Spa-inspired sanctuaries of tranquility', price: 'From AED 25,000', image: '/v12.webp', tags: ['interior', 'home', 'villa', 'apartment'] },
 ];
@@ -254,6 +254,39 @@ const TESTIMONIALS = [
     rating: 5,
     project: 'Villa Extension',
     avatar: '/avatar-3.webp'
+  },
+];
+
+// ============================================
+// VIDEO TESTIMONIALS (Local MP4 - Lazy-loaded)
+// ============================================
+const VIDEO_TESTIMONIALS = [
+  {
+    id: 'video-1',
+    name: 'Fatima Al-Rashid',
+    location: 'Emirates Hills',
+    project: 'Villa Renovation',
+    thumbnail: '/video-thumb-1.jpg',
+    videoSrc: '/testimonial-1.mp4',
+    duration: '0:06'
+  },
+  {
+    id: 'video-2',
+    name: 'Michelle Chen',
+    location: 'Arabian Ranches',
+    project: 'Interior Renovation',
+    thumbnail: '/video-thumb-2.jpg',
+    videoSrc: '/testimonial-2.mp4',
+    duration: '0:06'
+  },
+  {
+    id: 'video-3',
+    name: 'Marco Valentino',
+    location: 'Palm Jumeirah',
+    project: 'Full Transformation',
+    thumbnail: '/video-thumb-3.jpg',
+    videoSrc: '/testimonial-3.mp4',
+    duration: '0:06'
   },
 ];
 
@@ -353,6 +386,149 @@ function useInView(options = {}) {
 }
 
 // ============================================
+// LAZY VIDEO COMPONENT (Local MP4 - No speed impact)
+// ============================================
+function LazyVideo({ video, isVisible }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef(null);
+
+  const handlePlay = () => {
+    setIsPlaying(true);
+  };
+
+  useEffect(() => {
+    // Auto-play when component switches to playing state
+    if (isPlaying && videoRef.current) {
+      videoRef.current.play();
+    }
+  }, [isPlaying]);
+
+  // Show video player after click
+  if (isPlaying) {
+    return (
+      <div style={{ 
+        position: 'relative', 
+        paddingBottom: '148%', // 464x688 aspect ratio (portrait)
+        height: 0, 
+        borderRadius: '12px', 
+        overflow: 'hidden',
+        background: '#000',
+        maxWidth: '340px',
+        margin: '0 auto'
+      }}>
+        <video
+          ref={videoRef}
+          src={video.videoSrc}
+          controls
+          playsInline
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            borderRadius: '12px'
+          }}
+        />
+      </div>
+    );
+  }
+
+  // Show thumbnail with play button (fast, no video loaded)
+  return (
+    <div 
+      onClick={handlePlay}
+      style={{ 
+        position: 'relative', 
+        paddingBottom: '148%', // Portrait aspect ratio
+        height: 0, 
+        borderRadius: '12px', 
+        overflow: 'hidden',
+        cursor: 'pointer',
+        background: '#1a1a1a',
+        maxWidth: '340px',
+        margin: '0 auto'
+      }}
+    >
+      {/* Thumbnail - lazy loaded */}
+      {isVisible && (
+        <Image
+          src={video.thumbnail}
+          alt={`${video.name} video testimonial`}
+          fill
+          sizes="340px"
+          style={{ objectFit: 'cover' }}
+          loading="lazy"
+          quality={70}
+        />
+      )}
+      
+      {/* Gradient Overlay */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.3) 100%)',
+      }} />
+
+      {/* Play Button */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <div style={{
+          width: '80px',
+          height: '80px',
+          background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
+          transition: 'transform 0.3s ease',
+          paddingLeft: '6px'
+        }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#fff">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+      </div>
+
+      {/* Duration Badge */}
+      <div style={{
+        position: 'absolute',
+        top: '16px',
+        right: '16px',
+        background: 'rgba(0,0,0,0.7)',
+        backdropFilter: 'blur(8px)',
+        color: '#fff',
+        padding: '6px 12px',
+        borderRadius: '20px',
+        fontSize: '13px',
+        fontWeight: '500'
+      }}>
+        {video.duration}
+      </div>
+
+      {/* Client Info Overlay */}
+      <div style={{
+        position: 'absolute',
+        bottom: '20px',
+        left: '20px',
+        right: '20px',
+        color: '#fff'
+      }}>
+        <p style={{ fontWeight: '600', fontSize: '18px', marginBottom: '4px' }}>{video.name}</p>
+        <p style={{ fontSize: '14px', opacity: 0.9 }}>{video.location}</p>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
 // MAIN COMPONENT
 // ============================================
 export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
@@ -367,6 +543,7 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
   const [servicesRef, servicesInView] = useInView();
   const [processRef, processInView] = useInView();
   const [testimonialsRef, testimonialsInView] = useInView();
+  const [videoRef, videoInView] = useInView();
   const [faqRef, faqInView] = useInView();
 
   const content = initialContent;
@@ -413,6 +590,22 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
       "author": { "@type": "Person", "name": t.name },
       "reviewRating": { "@type": "Rating", "ratingValue": t.rating },
       "reviewBody": t.text
+    }))
+  }), []);
+
+  // Video testimonials schema for rich results
+  const videoSchema = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": VIDEO_TESTIMONIALS.map((v, i) => ({
+      "@type": "VideoObject",
+      "position": i + 1,
+      "name": `${v.name} - ${v.project} Testimonial`,
+      "description": `Video testimonial from ${v.name} in ${v.location} about their ${v.project} experience with Unicorn Renovations Dubai.`,
+      "thumbnailUrl": `https://dubailuxrenovate.com${v.thumbnail}`,
+      "uploadDate": "2024-01-15",
+      "contentUrl": `https://dubailuxrenovate.com${v.videoSrc}`,
+      "duration": "PT6S"
     }))
   }), []);
 
@@ -479,6 +672,9 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
         
         {/* Breadcrumb Schema */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+        
+        {/* Video Testimonials Schema */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }} />
 
         {/* Critical CSS + Luxury Fonts */}
         <style dangerouslySetInnerHTML={{ __html: `
@@ -1132,6 +1328,62 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
           </div>
         </section>
 
+        {/* VIDEO TESTIMONIALS - Lazy Loaded */}
+        <section ref={videoRef} style={{ 
+          padding: '100px 0', 
+          background: '#fff' 
+        }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+              <p style={{ 
+                fontSize: '13px', 
+                color: 'var(--gold)', 
+                letterSpacing: '3px', 
+                textTransform: 'uppercase', 
+                marginBottom: '16px',
+                fontWeight: '500'
+              }}>
+                Watch Their Stories
+              </p>
+              <h2 className="font-display" style={{ 
+                fontSize: 'clamp(32px, 5vw, 48px)', 
+                fontWeight: '500',
+                marginBottom: '16px'
+              }}>
+                Video Testimonials
+              </h2>
+              <p style={{ fontSize: '18px', color: '#666' }}>
+                Hear directly from homeowners about their transformation journey
+              </p>
+            </div>
+
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', 
+              gap: '32px' 
+            }}>
+              {VIDEO_TESTIMONIALS.map((video, i) => (
+                <div 
+                  key={video.id} 
+                  className={`fade-up fade-up-delay-${i+1} ${videoInView ? 'visible' : ''}`}
+                >
+                  <LazyVideo video={video} isVisible={videoInView} />
+                  <div style={{ padding: '16px 0' }}>
+                    <span style={{ 
+                      fontSize: '12px', 
+                      color: 'var(--gold-dark)', 
+                      letterSpacing: '0.5px',
+                      textTransform: 'uppercase'
+                    }}>
+                      {video.project}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* FAQ - Elegant Accordion */}
         <section ref={faqRef} style={{ padding: '100px 0', background: '#fff' }}>
           <div className="container" style={{ maxWidth: '800px' }}>
@@ -1234,7 +1486,7 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
                     <option value="Villa Renovation">Villa Renovation</option>
                     <option value="Interior Renovation">Interior Renovation</option>
                     <option value="Villa Extension">Villa Extension</option>
-                    <option value="Villa Fit Out">Villa Fit Out</option>
+                    <option value="Office Fit Out">Office Fit Out</option>
                     <option value="Kitchen Renovation">Kitchen Renovation</option>
                     <option value="Bathroom Renovation">Bathroom Renovation</option>
                   </select>
