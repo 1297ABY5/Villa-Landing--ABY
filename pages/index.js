@@ -889,77 +889,29 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
               font-size: 14px;
               width: 100%;
             }
-            /* Mobile: Horizontal scroll for videos */
-            .video-grid {
-              display: flex !important;
-              overflow-x: auto;
-              scroll-snap-type: x mandatory;
-              -webkit-overflow-scrolling: touch;
-              padding: 0 16px 20px;
-              margin: 0 -16px;
+            /* Mobile: Stack everything vertically */
+            section { padding: 60px 0 !important; }
+            .font-display { letter-spacing: -0.5px; }
+            /* Mobile: Services stacked */
+            .services-grid {
+              grid-template-columns: 1fr !important;
               gap: 20px !important;
             }
-            .video-grid > div {
-              flex: 0 0 280px;
-              scroll-snap-align: center;
-            }
-            .video-grid::-webkit-scrollbar { display: none; }
-            .video-grid { -ms-overflow-style: none; scrollbar-width: none; }
-            /* Mobile: Stack sections */
-            section { padding: 60px 0 !important; }
-            /* Mobile: Smaller headings */
-            .font-display { letter-spacing: -0.5px; }
-            /* Mobile: Services horizontal scroll */
-            .services-grid {
-              display: flex !important;
-              overflow-x: auto;
-              scroll-snap-type: x mandatory;
-              -webkit-overflow-scrolling: touch;
-              padding-bottom: 20px;
-              margin: 0 -16px;
-              padding-left: 16px;
-              padding-right: 16px;
-              gap: 16px !important;
-            }
-            .services-grid > div {
-              flex: 0 0 300px;
-              scroll-snap-align: start;
-            }
-            .services-grid::-webkit-scrollbar { display: none; }
-            /* Mobile: Process steps scroll */
+            /* Mobile: Process 2 columns */
             .process-grid {
-              display: flex !important;
-              overflow-x: auto;
-              scroll-snap-type: x mandatory;
-              -webkit-overflow-scrolling: touch;
-              padding-bottom: 20px;
-              margin: 0 -16px;
-              padding-left: 16px;
-              padding-right: 16px;
-              gap: 12px !important;
-            }
-            .process-grid > div {
-              flex: 0 0 200px;
-              scroll-snap-align: start;
-            }
-            .process-grid::-webkit-scrollbar { display: none; }
-            /* Mobile: Testimonials scroll */
-            .testimonials-grid {
-              display: flex !important;
-              overflow-x: auto;
-              scroll-snap-type: x mandatory;
-              -webkit-overflow-scrolling: touch;
-              padding-bottom: 20px;
-              margin: 0 -16px;
-              padding-left: 16px;
-              padding-right: 16px;
+              grid-template-columns: repeat(2, 1fr) !important;
               gap: 16px !important;
             }
-            .testimonials-grid > div {
-              flex: 0 0 320px;
-              scroll-snap-align: start;
+            /* Mobile: Testimonials stacked */
+            .testimonials-grid {
+              grid-template-columns: 1fr !important;
+              gap: 20px !important;
             }
-            .testimonials-grid::-webkit-scrollbar { display: none; }
+            /* Mobile: Videos stacked */
+            .video-grid {
+              grid-template-columns: 1fr !important;
+              gap: 24px !important;
+            }
             /* Mobile: Form padding */
             .form-section { padding: 24px !important; }
             /* Mobile: Smaller stats */
@@ -1013,12 +965,6 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
             }
             .container { max-width: 1400px; }
           }
-          /* Scroll hint animation for mobile */
-          @keyframes scrollHint {
-            0%, 100% { transform: translateX(0); opacity: 1; }
-            50% { transform: translateX(10px); opacity: 0.5; }
-          }
-          .scroll-hint { animation: scrollHint 1.5s ease-in-out infinite; }
         `}} />
       </Head>
 
@@ -1257,21 +1203,6 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
               <p style={{ fontSize: '18px', color: '#666', maxWidth: '600px', margin: '0 auto' }}>
                 Comprehensive solutions with fixed pricing and guaranteed timelines
               </p>
-            </div>
-
-            {/* Mobile scroll hint */}
-            <div className="hide-desktop" style={{ 
-              textAlign: 'center', 
-              marginBottom: '16px',
-              color: '#999',
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px'
-            }}>
-              <span>Swipe to explore</span>
-              <span className="scroll-hint">→</span>
             </div>
 
             <div 
@@ -1548,21 +1479,6 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
               <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.7)', maxWidth: '500px', margin: '0 auto' }}>
                 Real stories from homeowners who transformed their villas with us
               </p>
-            </div>
-
-            {/* Mobile scroll hint */}
-            <div className="hide-desktop" style={{ 
-              textAlign: 'center', 
-              marginBottom: '16px',
-              color: 'rgba(255,255,255,0.5)',
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px'
-            }}>
-              <span>Swipe to watch more</span>
-              <span className="scroll-hint">→</span>
             </div>
 
             {/* Responsive Grid - Horizontal scroll on mobile, grid on desktop */}
