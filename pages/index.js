@@ -54,14 +54,14 @@ export default function QualityScoreKiller() {
       price: 'From AED 80,000' 
     },
     { 
-      image: "/office-fitout.webp",
+      image: "/v16.webp",
       icon: '🍳', 
       title: 'Kitchen Renovation', 
       desc: 'Modern kitchens with premium finishes', 
       price: 'From AED 45,000' 
     },
     { 
-      image: "/smart-home.webp",
+      image: "/v12.webp",
       icon: '🛁', 
       title: 'Bathroom Renovation', 
       desc: 'Luxury bathroom makeovers', 
