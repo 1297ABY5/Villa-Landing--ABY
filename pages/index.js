@@ -3,6 +3,7 @@
 // Target: <2s load, 90+ PageSpeed, 9+ Quality Score
 
 import Head from 'next/head';
+import Image from 'next/image';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
@@ -21,6 +22,52 @@ export default function QualityScoreKiller() {
     h1: 'Villa Renovation Dubai',
     h2: 'Dubai\'s #1 Rated Villa Renovation Company'
   });
+
+  // Services Data with Images
+  const services = [
+    { 
+      image: "/villa-renovation.webp",
+      icon: '🏠', 
+      title: 'Complete Villa Renovation', 
+      desc: 'Full interior & exterior transformation', 
+      price: 'From AED 150,000' 
+    },
+    { 
+      image: "/villa-extension.webp",
+      icon: '🏗️', 
+      title: 'Villa Extension', 
+      desc: 'Add rooms, floors & outdoor spaces', 
+      price: 'From AED 120,000' 
+    },
+    { 
+      image: "/Interior-Design.webp",
+      icon: '🎨', 
+      title: 'Interior Design', 
+      desc: 'Complete design & furniture', 
+      price: 'From AED 60,000' 
+    },
+    { 
+      image: "/swimming-pool.webp",
+      icon: '🏊', 
+      title: 'Pool Construction', 
+      desc: 'Custom pools & landscaping', 
+      price: 'From AED 80,000' 
+    },
+    { 
+      image: "/office-fitout.webp",
+      icon: '🍳', 
+      title: 'Kitchen Renovation', 
+      desc: 'Modern kitchens with premium finishes', 
+      price: 'From AED 45,000' 
+    },
+    { 
+      image: "/smart-home.webp",
+      icon: '🛁', 
+      title: 'Bathroom Renovation', 
+      desc: 'Luxury bathroom makeovers', 
+      price: 'From AED 25,000' 
+    },
+  ];
 
   // Parse URL params for dynamic keyword insertion
   useEffect(() => {
@@ -92,8 +139,11 @@ Page: ${content.keyword}`;
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://wa.me" />
         
-        {/* Favicon */}
+        {/* Favicon - Multiple formats for all devices */}
         <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         
         {/* Schema.org for Rich Results + Quality Score */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -141,6 +191,8 @@ Page: ${content.keyword}`;
           @media(max-width:768px){.btn{width:100%;padding:14px 24px}.hide-mobile{display:none}}
           .pulse{animation:pulse 2s infinite}
           @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+          .service-card{background:#fff;border-radius:12px;overflow:hidden;border:2px solid #e5e5e5;cursor:pointer;transition:all 0.3s}
+          .service-card:hover{border-color:#d97706;transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,0.1)}
         `}} />
       </Head>
 
@@ -232,31 +284,45 @@ Page: ${content.keyword}`;
           </div>
         </section>
 
-        {/* ===== SERVICES - Keyword Rich Section ===== */}
+        {/* ===== SERVICES - With Images ===== */}
         <section style={{ padding: '60px 0', background: '#fff' }}>
           <div className="container">
             <h2 style={{ fontSize: '28px', fontWeight: '800', textAlign: 'center', marginBottom: '40px' }}>
               Our {content.keyword} Services in {content.location}
             </h2>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
-              {[
-                { icon: '🏠', title: 'Complete Villa Renovation', desc: 'Full interior & exterior transformation', price: 'From AED 150,000' },
-                { icon: '🍳', title: 'Kitchen Renovation', desc: 'Modern kitchens with premium finishes', price: 'From AED 45,000' },
-                { icon: '🛁', title: 'Bathroom Renovation', desc: 'Luxury bathroom makeovers', price: 'From AED 25,000' },
-                { icon: '🏗️', title: 'Villa Extension', desc: 'Add rooms, floors & outdoor spaces', price: 'From AED 120,000' },
-                { icon: '🏊', title: 'Pool Construction', desc: 'Custom pools & landscaping', price: 'From AED 80,000' },
-                { icon: '🎨', title: 'Interior Design', desc: 'Complete design & furniture', price: 'From AED 60,000' },
-              ].map((service, i) => (
-                <div key={i} style={{ background: '#f9fafb', borderRadius: '12px', padding: '24px', textAlign: 'center', border: '2px solid transparent', cursor: 'pointer', transition: 'all 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.borderColor = '#d97706'}
-                  onMouseOut={(e) => e.currentTarget.style.borderColor = 'transparent'}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+              {services.map((service, i) => (
+                <div 
+                  key={i} 
+                  className="service-card"
                   onClick={quickWhatsApp}
                 >
-                  <div style={{ fontSize: '40px', marginBottom: '12px' }}>{service.icon}</div>
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>{service.title}</h3>
-                  <p style={{ fontSize: '14px', color: '#666', marginBottom: '12px' }}>{service.desc}</p>
-                  <p style={{ fontSize: '16px', fontWeight: '700', color: '#d97706' }}>{service.price}</p>
+                  {/* Image Section */}
+                  <div style={{ position: 'relative', height: '180px', width: '100%', overflow: 'hidden', background: '#f3f4f6' }}>
+                    {service.image ? (
+                      <Image
+                        src={service.image}
+                        alt={service.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+                        loading="lazy"
+                        quality={60}
+                        style={{ objectFit: 'cover', transition: 'transform 0.5s' }}
+                      />
+                    ) : (
+                      <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #fef3c7, #fde68a)' }}>
+                        <span style={{ fontSize: '48px' }}>{service.icon}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Content Section */}
+                  <div style={{ padding: '20px', textAlign: 'center' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>{service.title}</h3>
+                    <p style={{ fontSize: '14px', color: '#666', marginBottom: '12px' }}>{service.desc}</p>
+                    <p style={{ fontSize: '16px', fontWeight: '700', color: '#d97706' }}>{service.price}</p>
+                  </div>
                 </div>
               ))}
             </div>
