@@ -1,10 +1,101 @@
-// pages/index.js - QS 9-10 + LUXURY FEEL HYBRID
-// All Quality Score elements retained + Premium aesthetic
-// Target: QS 9-10 with cinematic luxury conversion experience
+// pages/index.js - WHATSAPP EVERYWHERE EDITION
+// Every single click leads to WhatsApp with smart context
+// Optimized for Dubai market where WhatsApp is KING
 
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+
+// ============================================
+// WHATSAPP CONFIGURATION - THE HEART OF EVERYTHING
+// ============================================
+const WHATSAPP_NUMBER = '971585658002';
+
+// Context-aware messages based on what user clicked
+const WHATSAPP_MESSAGES = {
+  hero: (service, location) => 
+    `Hi! 👋 I'm interested in ${service} services in ${location}. Can we discuss my project?`,
+  
+  service: (serviceName, price) => 
+    `Hi! I'm interested in *${serviceName}* (${price}). Can you tell me more about this service?`,
+  
+  testimonial: (clientName, project) => 
+    `Hi! I just read ${clientName}'s review about their ${project}. I'd love similar results for my villa!`,
+  
+  videoTestimonial: (clientName, location) => 
+    `Hi! I watched ${clientName}'s video testimonial from ${location}. Very impressive! I'd like to discuss my project.`,
+  
+  process: (stepName) => 
+    `Hi! I'd like to start the *${stepName}* phase for my renovation project. What's the next step?`,
+  
+  faq: (question) => 
+    `Hi! I have a question about: "${question}" - Can you help me understand better?`,
+  
+  area: (areaName) => 
+    `Hi! I have a property in *${areaName}* and I'm interested in renovation services. Do you work in this area?`,
+  
+  pricing: (service) => 
+    `Hi! I'd like to get a *fixed price quote* for ${service}. Can we schedule a site visit?`,
+  
+  warranty: () => 
+    `Hi! I'm interested in your *5-year warranty*. Can you explain what's covered?`,
+  
+  urgency: (slotsLeft) => 
+    `Hi! I saw you have only ${slotsLeft} consultation slots left. I'd like to book one before they're gone!`,
+  
+  gallery: (imageType) => 
+    `Hi! I love the ${imageType} work I saw in your gallery. Can you do something similar for my villa?`,
+  
+  trustBadge: (badge) => 
+    `Hi! I noticed you're ${badge}. Can you tell me more about your credentials?`,
+  
+  exitIntent: (service) => 
+    `Hi! I was just browsing your ${service} page. Before I go, can you quickly tell me about your free consultation?`,
+  
+  sticky: (engagement) => 
+    engagement === 'hot' 
+      ? `Hi! 🔥 I've been looking at your site and I'm VERY interested. Let's talk!`
+      : `Hi! I have some questions about your renovation services.`,
+  
+  floatingButton: () => 
+    `Hi! I'd like to discuss my renovation project. Are you available to chat?`,
+  
+  callToAction: () => 
+    `Hi! I'm ready to start my villa transformation. What's the first step?`,
+  
+  default: () => 
+    `Hi! I'm interested in your renovation services. Can we chat?`
+};
+
+// Universal WhatsApp opener with tracking
+const openWhatsApp = (context, params = {}) => {
+  let message = WHATSAPP_MESSAGES.default();
+  
+  // Get the right message based on context
+  if (typeof WHATSAPP_MESSAGES[context] === 'function') {
+    message = WHATSAPP_MESSAGES[context](...Object.values(params));
+  }
+  
+  // Track the click (Google Ads conversion)
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'conversion', { 
+      send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC', 
+      value: 150000, 
+      currency: 'AED',
+      event_category: 'WhatsApp',
+      event_label: context
+    });
+    
+    // Also track as custom event for analytics
+    window.gtag('event', 'whatsapp_click', {
+      click_context: context,
+      click_params: JSON.stringify(params)
+    });
+  }
+  
+  // Open WhatsApp
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+};
 
 // ============================================
 // KEYWORD MAPPING (QS Critical - Keep All)
@@ -195,7 +286,7 @@ const KEYWORD_MAP = {
 };
 
 // ============================================
-// SERVICES (QS Critical - Elegant Styling)
+// SERVICES - All Clickable to WhatsApp
 // ============================================
 const ALL_SERVICES = [
   { id: 'villa-renovation', title: 'Villa Renovation', desc: 'Complete villa transformation with bespoke finishes', price: 'From AED 150,000', image: '/villa-renovation.webp', tags: ['villa', 'home', 'company', 'contractor', 'location'] },
@@ -217,18 +308,18 @@ const getRelevantServices = (highlight) => {
 };
 
 // ============================================
-// PROCESS STEPS (QS Critical - Shows Expertise)
+// PROCESS STEPS - All Clickable
 // ============================================
 const PROCESS_STEPS = [
-  { step: '01', title: 'Discovery', desc: 'Complimentary site visit & vision alignment', icon: '◈', time: 'Day 1' },
-  { step: '02', title: 'Design', desc: '3D visualization & detailed proposal', icon: '◇', time: 'Days 2-5' },
-  { step: '03', title: 'Approvals', desc: 'Municipality permits handled seamlessly', icon: '◆', time: 'Days 6-14' },
-  { step: '04', title: 'Craft', desc: 'Master execution with weekly updates', icon: '▣', time: 'Weeks 3-7' },
-  { step: '05', title: 'Handover', desc: 'Final walkthrough & warranty activation', icon: '✧', time: 'Week 8' },
+  { step: '01', title: 'Discovery', desc: 'Complimentary site visit & vision alignment', icon: '◈', time: 'Day 1', cta: 'Book Free Visit' },
+  { step: '02', title: 'Design', desc: '3D visualization & detailed proposal', icon: '◇', time: 'Days 2-5', cta: 'See 3D Samples' },
+  { step: '03', title: 'Approvals', desc: 'Municipality permits handled seamlessly', icon: '◆', time: 'Days 6-14', cta: 'Learn More' },
+  { step: '04', title: 'Craft', desc: 'Master execution with weekly updates', icon: '▣', time: 'Weeks 3-7', cta: 'View Timeline' },
+  { step: '05', title: 'Handover', desc: 'Final walkthrough & warranty activation', icon: '✧', time: 'Week 8', cta: 'Start Now' },
 ];
 
 // ============================================
-// TESTIMONIALS (QS Critical - Social Proof)
+// TESTIMONIALS - All Clickable
 // ============================================
 const TESTIMONIALS = [
   { 
@@ -258,7 +349,7 @@ const TESTIMONIALS = [
 ];
 
 // ============================================
-// VIDEO TESTIMONIALS (Local MP4 - Lazy-loaded)
+// VIDEO TESTIMONIALS
 // ============================================
 const VIDEO_TESTIMONIALS = [
   {
@@ -291,7 +382,29 @@ const VIDEO_TESTIMONIALS = [
 ];
 
 // ============================================
-// AREAS SERVED (QS Critical - Local SEO)
+// TRUST BADGES - All Clickable
+// ============================================
+const TRUST_BADGES = [
+  { icon: '◈', title: 'DED Licensed', desc: 'Fully registered contractor', context: 'DED Licensed contractor' },
+  { icon: '◇', title: 'Municipality Approved', desc: 'All permits handled', context: 'Municipality Approved' },
+  { icon: '◆', title: 'Fully Insured', desc: 'Complete coverage', context: 'Fully Insured' },
+  { icon: '✧', title: 'Flexible Payment', desc: 'Milestone-based plans', context: 'offering flexible payment plans' },
+];
+
+// ============================================
+// WHY CHOOSE US - All Clickable
+// ============================================
+const WHY_CHOOSE_US = [
+  { icon: '◈', title: 'Municipality Approved', desc: 'All permits and approvals handled seamlessly by our dedicated team', context: 'municipality approvals' },
+  { icon: '◇', title: 'Fixed Price Guarantee', desc: 'Transparent pricing with no hidden costs or surprise additions', context: 'fixed pricing guarantee' },
+  { icon: '◆', title: 'On-Time Delivery', desc: '6-8 weeks completion with weekly progress updates', context: 'project timeline' },
+  { icon: '✧', title: '5-Year Warranty', desc: 'Comprehensive craftsmanship coverage for peace of mind', context: '5-year warranty' },
+  { icon: '❖', title: 'Complimentary 3D Design', desc: 'Visualize your transformation before commitment', context: 'free 3D design service' },
+  { icon: '✦', title: '4.9/5 Client Rating', desc: '287 verified reviews from distinguished homeowners', context: 'client reviews and rating' },
+];
+
+// ============================================
+// AREAS SERVED - All Clickable
 // ============================================
 const AREAS_SERVED = [
   'Emirates Hills', 'Palm Jumeirah', 'Dubai Hills Estate', 'Arabian Ranches',
@@ -344,17 +457,14 @@ function buildFaq(content) {
   const service = content.service || 'Renovation';
   const loc = content.location || 'Dubai';
   return [
-    { q: `What is the investment range for ${service.toLowerCase()} in ${loc}?`, a: `Investment varies based on scope, size, and specification level. We provide a comprehensive fixed-price proposal following a complimentary site assessment. You'll receive a detailed 3D visualization to experience your transformation before commitment.` },
-    { q: `What is the typical timeline for a ${service.toLowerCase()} project?`, a: `Most projects reach completion within 6–8 weeks, depending on approvals, material procurement, and scope complexity. We provide a detailed timeline and weekly progress updates throughout your journey.` },
-    { q: `Do you manage municipality permits and approvals?`, a: `Absolutely. We handle all required approvals and coordinate documentation seamlessly for your project type and community requirements in ${loc}. This is included in our service.` },
-    { q: `Is your quotation truly fixed?`, a: `Yes. We provide a fixed-price proposal for the agreed scope. Should you request modifications or upgrades, we present a clear variation quote for your approval before any work commences. No surprises, ever.` },
-    { q: `What warranty coverage do you provide?`, a: `We provide up to 5 years craftsmanship warranty depending on scope, complemented by manufacturer warranties for all materials and fixtures supplied. Your peace of mind is paramount.` },
+    { q: `What is the investment range for ${service.toLowerCase()} in ${loc}?`, a: `Investment varies based on scope, size, and specification level. We provide a comprehensive fixed-price proposal following a complimentary site assessment.` },
+    { q: `What is the typical timeline for a ${service.toLowerCase()} project?`, a: `Most projects reach completion within 6–8 weeks, depending on approvals, material procurement, and scope complexity.` },
+    { q: `Do you manage municipality permits and approvals?`, a: `Absolutely. We handle all required approvals and coordinate documentation seamlessly for your project type.` },
+    { q: `Is your quotation truly fixed?`, a: `Yes. We provide a fixed-price proposal for the agreed scope. No surprises, ever.` },
+    { q: `What warranty coverage do you provide?`, a: `We provide up to 5 years craftsmanship warranty depending on scope, complemented by manufacturer warranties.` },
   ];
 }
 
-// ============================================
-// SSR - CRITICAL FOR QS
-// ============================================
 export async function getServerSideProps(ctx) {
   const q = ctx.query || {};
   const keywordRaw = q.kw || q.keyword || q.utm_term || q.q || '';
@@ -386,14 +496,39 @@ function useInView(options = {}) {
 }
 
 // ============================================
-// LAZY VIDEO COMPONENT (Responsive Mobile/Desktop)
+// CLICKABLE CARD COMPONENT - Everything Leads to WhatsApp
 // ============================================
-function LazyVideo({ video, isVisible }) {
+function ClickableCard({ children, onClick, className = '', style = {} }) {
+  return (
+    <div 
+      onClick={onClick}
+      className={`clickable-card ${className}`}
+      style={{ 
+        cursor: 'pointer', 
+        transition: 'all 0.3s ease',
+        ...style 
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ============================================
+// LAZY VIDEO COMPONENT
+// ============================================
+function LazyVideo({ video, isVisible, onChatClick }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef(null);
 
-  const handlePlay = () => {
+  const handlePlay = (e) => {
+    e.stopPropagation();
     setIsPlaying(true);
+  };
+
+  const handleChatClick = (e) => {
+    e.stopPropagation();
+    onChatClick();
   };
 
   useEffect(() => {
@@ -402,7 +537,6 @@ function LazyVideo({ video, isVisible }) {
     }
   }, [isPlaying]);
 
-  // Common container styles (responsive)
   const containerStyle = {
     position: 'relative',
     width: '100%',
@@ -414,10 +548,10 @@ function LazyVideo({ video, isVisible }) {
     boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
   };
 
-  if (isPlaying) {
-    return (
-      <div style={containerStyle}>
-        <div style={{ paddingBottom: '148%', position: 'relative' }}>
+  return (
+    <div style={containerStyle} className="video-card">
+      <div style={{ paddingBottom: '148%', position: 'relative' }}>
+        {isPlaying ? (
           <video
             ref={videoRef}
             src={video.videoSrc}
@@ -433,133 +567,130 @@ function LazyVideo({ video, isVisible }) {
               objectFit: 'cover',
             }}
           />
-        </div>
-      </div>
-    );
-  }
+        ) : (
+          <>
+            {isVisible && (
+              <Image
+                src={video.thumbnail}
+                alt={`${video.name} video testimonial`}
+                fill
+                sizes="(max-width: 768px) 280px, 320px"
+                style={{ objectFit: 'cover' }}
+                loading="lazy"
+                quality={75}
+              />
+            )}
+            
+            {/* Gradient Overlay */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.85) 100%)',
+            }} />
 
-  return (
-    <div 
-      onClick={handlePlay}
-      style={{
-        ...containerStyle,
-        cursor: 'pointer',
-        transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease',
-      }}
-      className="video-card"
-    >
-      {/* Aspect ratio container */}
-      <div style={{ paddingBottom: '148%', position: 'relative' }}>
-        {/* Thumbnail */}
-        {isVisible && (
-          <Image
-            src={video.thumbnail}
-            alt={`${video.name} video testimonial`}
-            fill
-            sizes="(max-width: 768px) 280px, 320px"
-            style={{ objectFit: 'cover' }}
-            loading="lazy"
-            quality={75}
-          />
-        )}
-        
-        {/* Gradient Overlay */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.85) 100%)',
-        }} />
+            {/* Play Button */}
+            <div 
+              onClick={handlePlay}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '72px',
+                height: '72px',
+                background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 32px rgba(201, 162, 39, 0.4)',
+                cursor: 'pointer',
+                paddingLeft: '4px',
+              }}
+              className="play-btn"
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
 
-        {/* Play Button - Centered */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <div 
-            className="play-btn"
-            style={{
-              width: '72px',
-              height: '72px',
+            {/* Duration Badge */}
+            <div style={{
+              position: 'absolute',
+              top: '16px',
+              right: '16px',
+              background: 'rgba(0,0,0,0.6)',
+              backdropFilter: 'blur(8px)',
+              color: '#fff',
+              padding: '6px 14px',
+              borderRadius: '24px',
+              fontSize: '13px',
+              fontWeight: '500',
+            }}>
+              ▶ {video.duration}
+            </div>
+
+            {/* Project Badge */}
+            <div style={{
+              position: 'absolute',
+              top: '16px',
+              left: '16px',
               background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 8px 32px rgba(201, 162, 39, 0.4)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              paddingLeft: '4px',
-            }}
-          >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
-          </div>
-        </div>
+              color: '#fff',
+              padding: '6px 14px',
+              borderRadius: '24px',
+              fontSize: '11px',
+              fontWeight: '600',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+            }}>
+              {video.project}
+            </div>
 
-        {/* Duration Badge */}
-        <div style={{
-          position: 'absolute',
-          top: '16px',
-          right: '16px',
-          background: 'rgba(0,0,0,0.6)',
-          backdropFilter: 'blur(8px)',
-          color: '#fff',
-          padding: '6px 14px',
-          borderRadius: '24px',
-          fontSize: '13px',
-          fontWeight: '500',
-          letterSpacing: '0.5px',
-        }}>
-          ▶ {video.duration}
-        </div>
-
-        {/* Project Badge */}
-        <div style={{
-          position: 'absolute',
-          top: '16px',
-          left: '16px',
-          background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)',
-          color: '#fff',
-          padding: '6px 14px',
-          borderRadius: '24px',
-          fontSize: '11px',
-          fontWeight: '600',
-          letterSpacing: '1px',
-          textTransform: 'uppercase',
-        }}>
-          {video.project}
-        </div>
-
-        {/* Client Info */}
-        <div style={{
-          position: 'absolute',
-          bottom: '20px',
-          left: '20px',
-          right: '20px',
-          color: '#fff',
-        }}>
-          <p className="font-display" style={{ 
-            fontWeight: '600', 
-            fontSize: '20px', 
-            marginBottom: '4px',
-            textShadow: '0 2px 8px rgba(0,0,0,0.5)'
-          }}>
-            {video.name}
-          </p>
-          <p style={{ 
-            fontSize: '14px', 
-            opacity: 0.9,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}>
-            <span style={{ color: 'var(--gold-light)' }}>◆</span>
-            {video.location}
-          </p>
-        </div>
+            {/* Client Info + WhatsApp CTA */}
+            <div style={{
+              position: 'absolute',
+              bottom: '20px',
+              left: '20px',
+              right: '20px',
+              color: '#fff',
+            }}>
+              <p className="font-display" style={{ 
+                fontWeight: '600', 
+                fontSize: '20px', 
+                marginBottom: '4px',
+              }}>
+                {video.name}
+              </p>
+              <p style={{ fontSize: '14px', opacity: 0.9, marginBottom: '12px' }}>
+                <span style={{ color: 'var(--gold-light)' }}>◆</span> {video.location}
+              </p>
+              
+              {/* WhatsApp CTA */}
+              <button
+                onClick={handleChatClick}
+                style={{
+                  background: '#25D366',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '24px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  justifyContent: 'center'
+                }}
+              >
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                I Want This Too!
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -568,13 +699,14 @@ function LazyVideo({ video, isVisible }) {
 // ============================================
 // MAIN COMPONENT
 // ============================================
-export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
-  const [formData, setFormData] = useState({ name: '', phone: '', service: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+export default function WhatsAppEverywhereLP({ initialContent, initialServices }) {
   const [slotsLeft, setSlotsLeft] = useState(3);
+  const [showExitPopup, setShowExitPopup] = useState(false);
+  const [scrollDepth, setScrollDepth] = useState(0);
+  const [engagement, setEngagement] = useState('new'); // new, browsing, engaged, hot
+  const exitPopupShown = useRef(false);
 
-  // Intersection observers for animations
+  // Intersection observers
   const [heroRef, heroInView] = useInView();
   const [statsRef, statsInView] = useInView();
   const [servicesRef, servicesInView] = useInView();
@@ -582,6 +714,7 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
   const [testimonialsRef, testimonialsInView] = useInView();
   const [videoRef, videoInView] = useInView();
   const [faqRef, faqInView] = useInView();
+  const [whyRef, whyInView] = useInView();
 
   const content = initialContent;
   const services = initialServices;
@@ -601,16 +734,38 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
     return () => clearInterval(t);
   }, []);
 
-  // Schema markup
-  const breadcrumbSchema = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dubailuxrenovate.com" },
-      { "@type": "ListItem", "position": 2, "name": content.service, "item": `https://dubailuxrenovate.com/?kw=${encodeURIComponent(content.keyword)}` }
-    ]
-  }), [content]);
+  // Scroll tracking + engagement level
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPct = Math.round((scrollTop / docHeight) * 100);
+      setScrollDepth(scrollPct);
 
+      // Update engagement level
+      if (scrollPct >= 75) setEngagement('hot');
+      else if (scrollPct >= 50) setEngagement('engaged');
+      else if (scrollPct > 20) setEngagement('browsing');
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Exit intent detection
+  useEffect(() => {
+    const handleMouseLeave = (e) => {
+      if (e.clientY < 50 && !exitPopupShown.current) {
+        exitPopupShown.current = true;
+        setShowExitPopup(true);
+      }
+    };
+
+    document.addEventListener('mouseleave', handleMouseLeave);
+    return () => document.removeEventListener('mouseleave', handleMouseLeave);
+  }, []);
+
+  // Schema markup
   const faqSchema = useMemo(() => ({
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -621,50 +776,8 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Unicorn Renovations",
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "287", "bestRating": "5" },
-    "review": TESTIMONIALS.map(t => ({
-      "@type": "Review",
-      "author": { "@type": "Person", "name": t.name },
-      "reviewRating": { "@type": "Rating", "ratingValue": t.rating },
-      "reviewBody": t.text
-    }))
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "287", "bestRating": "5" }
   }), []);
-
-  // Video testimonials schema for rich results
-  const videoSchema = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "itemListElement": VIDEO_TESTIMONIALS.map((v, i) => ({
-      "@type": "VideoObject",
-      "position": i + 1,
-      "name": `${v.name} - ${v.project} Testimonial`,
-      "description": `Video testimonial from ${v.name} in ${v.location} about their ${v.project} experience with Unicorn Renovations Dubai.`,
-      "thumbnailUrl": `https://dubailuxrenovate.com${v.thumbnail}`,
-      "uploadDate": "2024-01-15",
-      "contentUrl": `https://dubailuxrenovate.com${v.videoSrc}`,
-      "duration": "PT6S"
-    }))
-  }), []);
-
-  const handleSubmit = useCallback((e) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    const message = `✦ *VILLA PROJECT INQUIRY* ✦\n━━━━━━━━━━━━━━━━━━\n\n◈ Name: ${formData.name}\n◈ Phone: ${formData.phone}\n◈ Service: ${formData.service || content.service}\n◈ Location: ${content.location}\n\n━━━━━━━━━━━━━━━━━━\n🔍 Interest: ${content.keyword}\n📊 Source: Google Ads`;
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'conversion', { send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC', value: 150000, currency: 'AED' });
-    }
-    setSubmitted(true);
-    window.location.href = `https://wa.me/971585658002?text=${encodeURIComponent(message)}`;
-  }, [formData, content, isSubmitting]);
-
-  const quickWhatsApp = useCallback(() => {
-    const msg = `Hello, I'm interested in ${content.service} services in ${content.location}. I'd appreciate a complimentary consultation.`;
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'conversion', { send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC', value: 150000, currency: 'AED' });
-    }
-    window.open(`https://wa.me/971585658002?text=${encodeURIComponent(msg)}`, '_blank');
-  }, [content]);
 
   return (
     <>
@@ -675,11 +788,8 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
         <meta name="robots" content="index, follow" />
         <link rel="preconnect" href="https://wa.me" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         
-        {/* Business Schema */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "HomeAndConstructionBusiness",
@@ -687,35 +797,15 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
           "description": content.metaDesc,
           "url": "https://dubailuxrenovate.com",
           "telephone": "+971585658002",
-          "email": "info@unicornrenovations.com",
-          "address": { "@type": "PostalAddress", "streetAddress": "Al Quoz Industrial Area 3", "addressLocality": "Dubai", "addressCountry": "AE" },
-          "geo": { "@type": "GeoCoordinates", "latitude": "25.1425", "longitude": "55.2235" },
-          "openingHours": "Mo-Sa 09:00-18:00",
+          "address": { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" },
           "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "287" },
-          "priceRange": "AED 25,000 - AED 500,000",
           "areaServed": AREAS_SERVED,
-          "hasOfferCatalog": {
-            "@type": "OfferCatalog",
-            "name": "Renovation Services",
-            "itemListElement": ALL_SERVICES.map(s => ({ "@type": "Offer", "itemOffered": { "@type": "Service", "name": s.title } }))
-          }
         })}} />
-        
-        {/* FAQ Schema */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-        
-        {/* Review Schema */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }} />
-        
-        {/* Breadcrumb Schema */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-        
-        {/* Video Testimonials Schema */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }} />
 
-        {/* Critical CSS + Luxury Fonts */}
         <style dangerouslySetInnerHTML={{ __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
           
           :root {
             --gold: #c9a227;
@@ -726,6 +816,8 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
             --charcoal-light: #2d2d2d;
             --cream: #faf8f5;
             --cream-dark: #f5f0e8;
+            --whatsapp: #25D366;
+            --whatsapp-dark: #128c7e;
           }
           
           * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -739,10 +831,66 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
           }
           
           .font-display { font-family: 'Playfair Display', Georgia, serif; }
-          
           .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
           
-          /* Luxury Button Styles */
+          /* Clickable Card Hover */
+          .clickable-card {
+            position: relative;
+          }
+          .clickable-card::after {
+            content: '💬 Tap to Chat';
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: var(--whatsapp);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.3s ease;
+          }
+          .clickable-card:hover::after {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          .clickable-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(37, 211, 102, 0.15);
+          }
+          
+          /* WhatsApp Pulse Animation */
+          @keyframes whatsapp-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+          }
+          .whatsapp-pulse {
+            animation: whatsapp-pulse 2s infinite;
+          }
+          
+          /* Buttons */
+          .btn-whatsapp {
+            background: linear-gradient(135deg, var(--whatsapp) 0%, var(--whatsapp-dark) 100%);
+            color: #fff;
+            border: none;
+            padding: 18px 36px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+          }
+          .btn-whatsapp:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
+          }
+          
           .btn-gold {
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
             color: #fff;
@@ -752,7 +900,7 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
             font-weight: 600;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s ease;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             box-shadow: 0 4px 20px rgba(201, 162, 39, 0.3);
@@ -771,10 +919,9 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
             font-weight: 500;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s ease;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            backdrop-filter: blur(10px);
           }
           .btn-outline-light:hover {
             background: rgba(255,255,255,0.1);
@@ -790,44 +937,41 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
             font-weight: 600;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
+            transition: all 0.4s ease;
           }
           .btn-dark:hover {
             background: var(--charcoal-light);
             transform: translateY(-2px);
           }
           
-          /* Form Styles */
-          .form-input {
-            width: 100%;
-            padding: 16px 20px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 16px;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
-            background: #fff;
-          }
-          .form-input:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.1);
-          }
-          
-          /* Card Styles */
+          /* Cards */
           .luxury-card {
             background: #fff;
             border-radius: 8px;
             overflow: hidden;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid #f0f0f0;
+            cursor: pointer;
+            position: relative;
           }
           .luxury-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            border-color: var(--gold-light);
+            border-color: var(--whatsapp);
+          }
+          .luxury-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--whatsapp), var(--gold));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+          }
+          .luxury-card:hover::before {
+            opacity: 1;
           }
           
           /* Animations */
@@ -840,17 +984,17 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
             opacity: 1;
             transform: translateY(0);
           }
-          
           .fade-up-delay-1 { transition-delay: 0.1s; }
           .fade-up-delay-2 { transition-delay: 0.2s; }
           .fade-up-delay-3 { transition-delay: 0.3s; }
           .fade-up-delay-4 { transition-delay: 0.4s; }
           .fade-up-delay-5 { transition-delay: 0.5s; }
           
-          /* FAQ Styles */
+          /* FAQ */
           .faq-item {
             border-bottom: 1px solid #e8e8e8;
             transition: all 0.3s ease;
+            cursor: pointer;
           }
           .faq-item:hover { background: var(--cream); }
           .faq-summary {
@@ -880,112 +1024,158 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
             line-height: 1.8;
           }
           
+          /* Exit Popup */
+          .exit-popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+          }
+          @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+          
+          /* Sticky Bar */
+          .sticky-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+          }
+          .sticky-bar.new { background: var(--charcoal); }
+          .sticky-bar.browsing { background: var(--charcoal); }
+          .sticky-bar.engaged { background: linear-gradient(135deg, var(--charcoal) 0%, #2a2a2a 100%); }
+          .sticky-bar.hot { background: linear-gradient(135deg, var(--whatsapp-dark) 0%, var(--whatsapp) 100%); }
+          
           /* Responsive */
           @media (max-width: 768px) {
             .container { padding: 0 16px; }
             .hide-mobile { display: none !important; }
-            .btn-gold, .btn-outline-light, .btn-dark {
+            .btn-whatsapp, .btn-gold, .btn-outline-light, .btn-dark {
               padding: 16px 24px;
               font-size: 14px;
               width: 100%;
+              justify-content: center;
             }
-            /* Mobile: Stack everything vertically */
             section { padding: 60px 0 !important; }
-            .font-display { letter-spacing: -0.5px; }
-            /* Mobile: Services stacked */
-            .services-grid {
-              grid-template-columns: 1fr !important;
-              gap: 20px !important;
-            }
-            /* Mobile: Process 2 columns */
-            .process-grid {
-              grid-template-columns: repeat(2, 1fr) !important;
-              gap: 16px !important;
-            }
-            /* Mobile: Testimonials stacked */
-            .testimonials-grid {
-              grid-template-columns: 1fr !important;
-              gap: 20px !important;
-            }
-            /* Mobile: Videos stacked */
-            .video-grid {
-              grid-template-columns: 1fr !important;
-              gap: 24px !important;
-            }
-            /* Mobile: Form padding */
-            .form-section { padding: 24px !important; }
-            /* Mobile: Smaller stats */
-            .stats-num { font-size: 28px !important; }
-            /* Mobile: Hero stats centered */
-            .hero-stats {
-              justify-content: center !important;
-              gap: 24px !important;
-              text-align: center;
-            }
-            .hero-stats > div {
-              text-align: center !important;
-              min-width: 100px !important;
-            }
+            .services-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+            .process-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+            .testimonials-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+            .video-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+            .why-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+            .areas-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .hero-stats { justify-content: center !important; gap: 24px !important; text-align: center; }
+            .hero-stats > div { text-align: center !important; min-width: 100px !important; }
+            .clickable-card::after { display: none; }
           }
           @media (min-width: 769px) {
             .hide-desktop { display: none !important; }
-            /* Desktop: 3 column grid for videos */
-            .video-grid {
-              grid-template-columns: repeat(3, 320px) !important;
-            }
-            /* Desktop: Services grid */
-            .services-grid {
-              grid-template-columns: repeat(3, 1fr) !important;
-            }
-            /* Desktop: Process grid */
-            .process-grid {
-              grid-template-columns: repeat(5, 1fr) !important;
-            }
-            /* Desktop: Testimonials grid */
-            .testimonials-grid {
-              grid-template-columns: repeat(3, 1fr) !important;
-            }
-            /* Hover effects for video cards */
-            .video-card:hover {
-              transform: translateY(-12px) !important;
-              box-shadow: 0 30px 80px rgba(0,0,0,0.5) !important;
-            }
-            .video-card:hover .play-btn {
-              transform: scale(1.1);
-              box-shadow: 0 12px 40px rgba(201, 162, 39, 0.5);
-            }
-            /* Desktop: Card hovers */
-            .luxury-card:hover {
-              transform: translateY(-8px);
-            }
-          }
-          @media (min-width: 1200px) {
-            .video-grid {
-              gap: 48px !important;
-            }
-            .container { max-width: 1400px; }
+            .video-grid { grid-template-columns: repeat(3, 320px) !important; }
+            .services-grid { grid-template-columns: repeat(3, 1fr) !important; }
+            .process-grid { grid-template-columns: repeat(5, 1fr) !important; }
+            .testimonials-grid { grid-template-columns: repeat(3, 1fr) !important; }
+            .why-grid { grid-template-columns: repeat(3, 1fr) !important; }
+            .video-card:hover { transform: translateY(-12px) !important; box-shadow: 0 30px 80px rgba(0,0,0,0.5) !important; }
+            .video-card:hover .play-btn { transform: scale(1.1); }
           }
         `}} />
       </Head>
 
       <div style={{ minHeight: '100vh' }}>
         
-        {/* SUBTLE URGENCY BAR */}
-        <div style={{ 
-          background: 'linear-gradient(90deg, var(--charcoal) 0%, var(--charcoal-light) 100%)', 
-          color: '#fff', 
-          padding: '12px 24px', 
-          textAlign: 'center', 
-          fontSize: '13px', 
-          letterSpacing: '1px',
-          fontWeight: '400'
-        }}>
+        {/* EXIT INTENT POPUP */}
+        {showExitPopup && (
+          <div className="exit-popup-overlay" onClick={() => setShowExitPopup(false)}>
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: '#fff',
+                borderRadius: '20px',
+                padding: '48px',
+                maxWidth: '480px',
+                textAlign: 'center',
+                position: 'relative',
+                margin: '20px'
+              }}
+            >
+              <button 
+                onClick={() => setShowExitPopup(false)}
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#999'
+                }}
+              >×</button>
+              
+              <div style={{ fontSize: '64px', marginBottom: '16px' }}>🎁</div>
+              <h2 className="font-display" style={{ fontSize: '28px', marginBottom: '12px' }}>
+                Wait! Don't Leave Empty-Handed
+              </h2>
+              <p style={{ color: '#666', marginBottom: '24px', fontSize: '16px' }}>
+                Get a <strong>FREE 3D visualization</strong> of your dream renovation – no strings attached!
+              </p>
+              
+              <button 
+                onClick={() => {
+                  openWhatsApp('exitIntent', { service: content.service });
+                  setShowExitPopup(false);
+                }}
+                className="btn-whatsapp whatsapp-pulse"
+                style={{ width: '100%', fontSize: '18px', padding: '20px' }}
+              >
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                Claim My Free 3D Design
+              </button>
+              
+              <p style={{ marginTop: '16px', fontSize: '13px', color: '#999' }}>
+                ⏱️ Response within 2 minutes • No spam, ever
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* URGENCY BAR - Clickable */}
+        <div 
+          onClick={() => openWhatsApp('urgency', { slotsLeft })}
+          style={{ 
+            background: 'linear-gradient(90deg, var(--charcoal) 0%, var(--charcoal-light) 100%)', 
+            color: '#fff', 
+            padding: '14px 24px', 
+            textAlign: 'center', 
+            fontSize: '14px', 
+            letterSpacing: '0.5px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+        >
           <span style={{ color: 'var(--gold-light)' }}>✦</span>
-          &nbsp;&nbsp;COMPLIMENTARY 3D VISUALIZATION&nbsp;&nbsp;•&nbsp;&nbsp;Only {slotsLeft} Consultation Slots Remaining This Month&nbsp;&nbsp;
-          <span style={{ color: 'var(--gold-light)' }}>✦</span>
+          &nbsp;&nbsp;FREE 3D VISUALIZATION&nbsp;&nbsp;•&nbsp;&nbsp;
+          <strong>Only {slotsLeft} Consultation Slots Left</strong>&nbsp;&nbsp;•&nbsp;&nbsp;
+          <span style={{ 
+            background: 'var(--whatsapp)', 
+            padding: '4px 12px', 
+            borderRadius: '12px',
+            fontSize: '12px',
+            fontWeight: '600'
+          }}>
+            TAP TO BOOK →
+          </span>
         </div>
 
-        {/* HEADER - Minimal Luxury */}
+        {/* HEADER */}
         <header style={{ 
           background: 'rgba(255,255,255,0.95)', 
           backdropFilter: 'blur(20px)',
@@ -1001,19 +1191,28 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
                 UNICORN
               </span>
             </a>
-            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-              <span className="hide-mobile" style={{ fontSize: '13px', color: '#888', letterSpacing: '0.5px' }}>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <span 
+                className="hide-mobile" 
+                onClick={() => openWhatsApp('trustBadge', { badge: 'rated 4.9/5' })}
+                style={{ fontSize: '13px', color: '#888', cursor: 'pointer' }}
+              >
                 ★ 4.9/5 from 287 Reviews
               </span>
-              <a href="tel:+971585658002" className="btn-dark" style={{ padding: '12px 24px', fontSize: '13px' }}>
-                <span className="hide-mobile">+971 58 565 8002</span>
-                <span className="hide-desktop">Call</span>
-              </a>
+              <button 
+                onClick={() => openWhatsApp('hero', { service: content.service, location: content.location })}
+                className="btn-whatsapp"
+                style={{ padding: '12px 20px', fontSize: '13px', borderRadius: '8px' }}
+              >
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                <span className="hide-mobile">Chat Now</span>
+                <span className="hide-desktop">💬</span>
+              </button>
             </div>
           </div>
         </header>
 
-        {/* HERO - Cinematic Luxury */}
+        {/* HERO */}
         <section ref={heroRef} style={{ 
           position: 'relative', 
           minHeight: '90vh', 
@@ -1021,7 +1220,6 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
           alignItems: 'center',
           background: 'var(--charcoal)'
         }}>
-          {/* Hero Background */}
           <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
             <Image
               src="/villa-renovation.webp"
@@ -1032,33 +1230,34 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
               priority
               quality={75}
             />
-            <div style={{ 
-              position: 'absolute', 
-              inset: 0, 
-              background: 'linear-gradient(to bottom, rgba(26,26,26,0.7) 0%, rgba(26,26,26,0.9) 100%)' 
-            }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(26,26,26,0.7) 0%, rgba(26,26,26,0.9) 100%)' }} />
           </div>
 
           <div className="container" style={{ position: 'relative', zIndex: 10, color: '#fff', paddingTop: '40px', paddingBottom: '60px' }}>
             <div className={`fade-up ${heroInView ? 'visible' : ''}`}>
               
-              {/* Trust Badge */}
-              <div style={{ 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: '12px', 
-                background: 'rgba(255,255,255,0.08)', 
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                padding: '10px 20px', 
-                borderRadius: '40px', 
-                marginBottom: '32px' 
-              }}>
-                <span style={{ color: 'var(--gold-light)', letterSpacing: '2px' }}>★★★★★</span>
-                <span style={{ fontSize: '14px', fontWeight: '400', letterSpacing: '0.5px' }}>4.9 Rating • 287 Verified Reviews</span>
+              {/* Trust Badge - Clickable */}
+              <div 
+                onClick={() => openWhatsApp('trustBadge', { badge: 'rated 4.9/5 with 287 reviews' })}
+                style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '12px', 
+                  background: 'rgba(255,255,255,0.08)', 
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  padding: '10px 20px', 
+                  borderRadius: '40px', 
+                  marginBottom: '32px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                <span style={{ color: 'var(--gold-light)' }}>★★★★★</span>
+                <span style={{ fontSize: '14px' }}>4.9 Rating • 287 Reviews</span>
+                <span style={{ background: 'var(--whatsapp)', padding: '2px 8px', borderRadius: '10px', fontSize: '11px' }}>Verify →</span>
               </div>
 
-              {/* H1 - Keyword Optimized + Luxury Typography */}
               <h1 className="font-display" style={{ 
                 fontSize: 'clamp(40px, 7vw, 80px)', 
                 fontWeight: '500', 
@@ -1069,7 +1268,6 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
                 {content.h1}
               </h1>
 
-              {/* H2 - Elegant Subheadline */}
               <h2 className="font-display" style={{ 
                 fontSize: 'clamp(20px, 3vw, 32px)', 
                 fontWeight: '400', 
@@ -1080,7 +1278,6 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
                 {content.h2}
               </h2>
 
-              {/* Keyword Reinforcement */}
               <p style={{ 
                 fontSize: '18px', 
                 opacity: 0.8, 
@@ -1090,27 +1287,22 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
                 fontWeight: '300'
               }}>
                 Seeking exceptional <strong style={{ fontWeight: '500' }}>{content.keyword}</strong> in <strong style={{ fontWeight: '500' }}>{content.location}</strong>? 
-                Experience the art of transformation with complimentary 3D visualization and fixed pricing.
+                Chat with us now – get a free 3D visualization in 24 hours!
               </p>
 
-              {/* Stats Row - Responsive */}
-              <div 
-                className="hero-stats"
-                style={{ 
-                  display: 'flex', 
-                  gap: '32px', 
-                  marginBottom: '48px', 
-                  flexWrap: 'wrap',
-                  justifyContent: 'flex-start'
-                }}
-              >
+              {/* Stats Row - All Clickable */}
+              <div className="hero-stats" style={{ display: 'flex', gap: '32px', marginBottom: '48px', flexWrap: 'wrap' }}>
                 {[
-                  { num: '800+', label: 'Villas Transformed' },
-                  { num: '15+', label: 'Years of Mastery' },
-                  { num: '5yr', label: 'Craftsmanship Warranty' },
+                  { num: '800+', label: 'Villas Transformed', context: 'your 800+ completed projects' },
+                  { num: '15+', label: 'Years of Mastery', context: 'your 15+ years of experience' },
+                  { num: '5yr', label: 'Warranty', context: '5-year warranty coverage' },
                 ].map((s, i) => (
-                  <div key={i} style={{ textAlign: 'left', minWidth: '120px' }}>
-                    <div className="stats-num" style={{ fontSize: '36px', fontWeight: '700', color: 'var(--gold-light)', marginBottom: '4px' }}>{s.num}</div>
+                  <div 
+                    key={i} 
+                    onClick={() => openWhatsApp('trustBadge', { badge: s.context })}
+                    style={{ textAlign: 'left', minWidth: '120px', cursor: 'pointer' }}
+                  >
+                    <div style={{ fontSize: '36px', fontWeight: '700', color: 'var(--gold-light)', marginBottom: '4px' }}>{s.num}</div>
                     <div style={{ fontSize: '12px', opacity: 0.7, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{s.label}</div>
                   </div>
                 ))}
@@ -1118,123 +1310,126 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
 
               {/* CTA Buttons */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '500px' }}>
-                <button onClick={quickWhatsApp} className="btn-gold" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-                  <svg style={{ width: '20px', height: '20px' }} fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                  Begin Your Journey
+                <button 
+                  onClick={() => openWhatsApp('hero', { service: content.service, location: content.location })}
+                  className="btn-whatsapp whatsapp-pulse"
+                  style={{ fontSize: '18px', padding: '20px 36px' }}
+                >
+                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                  Chat With Us Now
                 </button>
-                <a href="tel:+971585658002" className="btn-outline-light" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', textDecoration: 'none' }}>
-                  <svg style={{ width: '18px', height: '18px' }} fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-                  Speak With Our Team
-                </a>
+                <p style={{ fontSize: '14px', opacity: 0.7, textAlign: 'center' }}>
+                  ⚡ Average response: 2 minutes • Free consultation
+                </p>
               </div>
 
-              {/* Trust Points */}
-              <div style={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: '24px', 
-                marginTop: '32px',
-                fontSize: '13px',
-                opacity: 0.7,
-                letterSpacing: '0.5px'
-              }}>
-                <span>✓ Complimentary 3D Design</span>
-                <span>✓ Fixed Pricing</span>
-                <span>✓ Municipality Approved</span>
-                <span>✓ 5-Year Warranty</span>
+              {/* Trust Points - All Clickable */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginTop: '32px' }}>
+                {[
+                  { text: '✓ Free 3D Design', context: 'free 3D design service' },
+                  { text: '✓ Fixed Pricing', context: 'fixed pricing guarantee' },
+                  { text: '✓ Municipality Approved', context: 'municipality approvals' },
+                  { text: '✓ 5-Year Warranty', context: '5-year warranty' },
+                ].map((item, i) => (
+                  <span 
+                    key={i}
+                    onClick={() => openWhatsApp('trustBadge', { badge: item.context })}
+                    style={{ 
+                      fontSize: '13px', 
+                      opacity: 0.8, 
+                      cursor: 'pointer',
+                      padding: '6px 12px',
+                      background: 'rgba(255,255,255,0.05)',
+                      borderRadius: '20px',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    {item.text}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
-        {/* TRUST BAR - Elegant */}
-        <section ref={statsRef} style={{ 
-          padding: '80px 0', 
-          background: 'var(--cream)',
-          borderBottom: '1px solid rgba(0,0,0,0.05)'
-        }}>
+        {/* TRUST BAR - All Clickable */}
+        <section ref={statsRef} style={{ padding: '80px 0', background: 'var(--cream)', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
           <div className="container">
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-              gap: '48px', 
-              textAlign: 'center' 
-            }}>
-              {[
-                { icon: '◈', title: 'DED Licensed', desc: 'Fully registered contractor' },
-                { icon: '◇', title: 'Municipality Approved', desc: 'All permits handled' },
-                { icon: '◆', title: 'Fully Insured', desc: 'Complete coverage' },
-                { icon: '✧', title: 'Flexible Payment', desc: 'Milestone-based plans' },
-              ].map((item, i) => (
-                <div 
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '48px', textAlign: 'center' }}>
+              {TRUST_BADGES.map((item, i) => (
+                <ClickableCard 
                   key={i} 
+                  onClick={() => openWhatsApp('trustBadge', { badge: item.context })}
                   className={`fade-up fade-up-delay-${i+1} ${statsInView ? 'visible' : ''}`}
+                  style={{ padding: '24px', borderRadius: '12px', background: '#fff' }}
                 >
                   <div style={{ fontSize: '32px', color: 'var(--gold)', marginBottom: '16px' }}>{item.icon}</div>
                   <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px', textTransform: 'uppercase' }}>{item.title}</h3>
-                  <p style={{ fontSize: '14px', color: '#666' }}>{item.desc}</p>
-                </div>
+                  <p style={{ fontSize: '14px', color: '#666', marginBottom: '12px' }}>{item.desc}</p>
+                  <span style={{ fontSize: '12px', color: 'var(--whatsapp)', fontWeight: '600' }}>Learn More →</span>
+                </ClickableCard>
               ))}
             </div>
           </div>
         </section>
 
-        {/* SERVICES - Elegant Grid */}
+        {/* SERVICES - All Clickable */}
         <section ref={servicesRef} style={{ padding: '100px 0', background: '#fff' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ 
-                fontSize: '13px', 
-                color: 'var(--gold)', 
-                letterSpacing: '3px', 
-                textTransform: 'uppercase', 
-                marginBottom: '16px',
-                fontWeight: '500'
-              }}>
+              <p style={{ fontSize: '13px', color: 'var(--gold)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
                 Our Expertise
               </p>
-              <h2 className="font-display" style={{ 
-                fontSize: 'clamp(32px, 5vw, 48px)', 
-                fontWeight: '500',
-                marginBottom: '16px'
-              }}>
+              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
                 {content.service} Services
               </h2>
               <p style={{ fontSize: '18px', color: '#666', maxWidth: '600px', margin: '0 auto' }}>
-                Comprehensive solutions with fixed pricing and guaranteed timelines
+                Tap any service to chat about your project
               </p>
             </div>
 
-            <div 
-              className="services-grid"
-              style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', 
-                gap: '32px' 
-              }}
-            >
+            <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '32px' }}>
               {services.map((s, i) => (
                 <div 
                   key={i} 
                   className={`luxury-card fade-up fade-up-delay-${i+1} ${servicesInView ? 'visible' : ''}`}
-                  onClick={quickWhatsApp} 
-                  style={{ cursor: 'pointer' }}
+                  onClick={() => openWhatsApp('service', { serviceName: s.title, price: s.price })}
                 >
                   <div style={{ position: 'relative', height: '240px', background: 'var(--cream)' }}>
-                    <Image 
-                      src={s.image} 
-                      alt={`${s.title} in ${content.location}`} 
-                      fill
-                      sizes="(max-width: 768px) 100vw, 400px" 
-                      style={{ objectFit: 'cover' }} 
-                      loading={i < 2 ? 'eager' : 'lazy'} 
-                      quality={70}
-                    />
+                    <Image src={s.image} alt={`${s.title} in ${content.location}`} fill sizes="(max-width: 768px) 100vw, 400px" style={{ objectFit: 'cover' }} loading={i < 2 ? 'eager' : 'lazy'} quality={70} />
+                    {/* WhatsApp overlay on hover */}
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(180deg, transparent 50%, rgba(37, 211, 102, 0.9) 100%)',
+                      opacity: 0,
+                      transition: 'opacity 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      justifyContent: 'center',
+                      padding: '20px'
+                    }} className="service-overlay">
+                      <span style={{ color: '#fff', fontWeight: '600', fontSize: '14px' }}>
+                        💬 Tap to discuss this service
+                      </span>
+                    </div>
                   </div>
                   <div style={{ padding: '28px' }}>
                     <h3 className="font-display" style={{ fontSize: '24px', fontWeight: '500', marginBottom: '8px' }}>{s.title}</h3>
                     <p style={{ fontSize: '15px', color: '#666', marginBottom: '16px', lineHeight: 1.6 }}>{s.desc}</p>
-                    <p style={{ fontSize: '18px', fontWeight: '600', color: 'var(--gold-dark)' }}>{s.price}</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <p style={{ fontSize: '18px', fontWeight: '600', color: 'var(--gold-dark)' }}>{s.price}</p>
+                      <span style={{ 
+                        background: 'var(--whatsapp)', 
+                        color: '#fff', 
+                        padding: '8px 16px', 
+                        borderRadius: '20px', 
+                        fontSize: '13px',
+                        fontWeight: '600'
+                      }}>
+                        Get Quote →
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1242,47 +1437,26 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
           </div>
         </section>
 
-        {/* PROCESS - Elegant Timeline */}
-        <section ref={processRef} style={{ 
-          padding: '100px 0', 
-          background: 'var(--charcoal)', 
-          color: '#fff' 
-        }}>
+        {/* PROCESS - All Steps Clickable */}
+        <section ref={processRef} style={{ padding: '100px 0', background: 'var(--charcoal)', color: '#fff' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ 
-                fontSize: '13px', 
-                color: 'var(--gold-light)', 
-                letterSpacing: '3px', 
-                textTransform: 'uppercase', 
-                marginBottom: '16px',
-                fontWeight: '500'
-              }}>
+              <p style={{ fontSize: '13px', color: 'var(--gold-light)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
                 The Journey
               </p>
-              <h2 className="font-display" style={{ 
-                fontSize: 'clamp(32px, 5vw, 48px)', 
-                fontWeight: '500',
-                marginBottom: '16px'
-              }}>
+              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
                 Our {content.service} Process
               </h2>
               <p style={{ fontSize: '18px', opacity: 0.7, maxWidth: '600px', margin: '0 auto' }}>
-                From vision to reality in 6-8 weeks
+                Tap any step to start your journey
               </p>
             </div>
 
-            <div 
-              className="process-grid"
-              style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-                gap: '24px' 
-              }}
-            >
+            <div className="process-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px' }}>
               {PROCESS_STEPS.map((step, i) => (
-                <div 
+                <ClickableCard 
                   key={i} 
+                  onClick={() => openWhatsApp('process', { stepName: step.title })}
                   className={`fade-up fade-up-delay-${i+1} ${processInView ? 'visible' : ''}`}
                   style={{ 
                     textAlign: 'center', 
@@ -1292,250 +1466,162 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
                     border: '1px solid rgba(255,255,255,0.08)'
                   }}
                 >
-                  <div style={{ 
-                    fontSize: '14px', 
-                    color: 'var(--gold-light)', 
-                    letterSpacing: '2px',
-                    marginBottom: '16px',
-                    fontWeight: '600'
-                  }}>
+                  <div style={{ fontSize: '14px', color: 'var(--gold-light)', letterSpacing: '2px', marginBottom: '16px', fontWeight: '600' }}>
                     {step.step}
                   </div>
                   <div style={{ fontSize: '28px', marginBottom: '16px', color: 'var(--gold-light)' }}>{step.icon}</div>
                   <h3 className="font-display" style={{ fontSize: '20px', fontWeight: '500', marginBottom: '8px' }}>{step.title}</h3>
                   <p style={{ fontSize: '14px', opacity: 0.7, marginBottom: '12px' }}>{step.desc}</p>
-                  <span style={{ 
-                    fontSize: '12px', 
-                    color: 'var(--gold-muted)', 
-                    letterSpacing: '1px',
-                    textTransform: 'uppercase'
-                  }}>
+                  <span style={{ fontSize: '12px', color: 'var(--gold-muted)', letterSpacing: '1px', textTransform: 'uppercase', display: 'block', marginBottom: '16px' }}>
                     {step.time}
                   </span>
-                </div>
+                  <span style={{ 
+                    background: 'var(--whatsapp)', 
+                    color: '#fff', 
+                    padding: '8px 16px', 
+                    borderRadius: '20px', 
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    {step.cta} →
+                  </span>
+                </ClickableCard>
               ))}
             </div>
           </div>
         </section>
 
-        {/* WHY CHOOSE US - Elegant Grid */}
-        <section style={{ padding: '100px 0', background: '#fff' }}>
+        {/* WHY CHOOSE US - All Clickable */}
+        <section ref={whyRef} style={{ padding: '100px 0', background: '#fff' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ 
-                fontSize: '13px', 
-                color: 'var(--gold)', 
-                letterSpacing: '3px', 
-                textTransform: 'uppercase', 
-                marginBottom: '16px',
-                fontWeight: '500'
-              }}>
+              <p style={{ fontSize: '13px', color: 'var(--gold)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
                 The Difference
               </p>
-              <h2 className="font-display" style={{ 
-                fontSize: 'clamp(32px, 5vw, 48px)', 
-                fontWeight: '500'
-              }}>
+              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500' }}>
                 Why Discerning Homeowners Choose Us
               </h2>
             </div>
 
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-              gap: '32px' 
-            }}>
-              {[
-                { icon: '◈', title: 'Municipality Approved', desc: 'All permits and approvals handled seamlessly by our dedicated team' },
-                { icon: '◇', title: 'Fixed Price Guarantee', desc: 'Transparent pricing with no hidden costs or surprise additions' },
-                { icon: '◆', title: 'On-Time Delivery', desc: '6-8 weeks completion with weekly progress updates' },
-                { icon: '✧', title: '5-Year Warranty', desc: 'Comprehensive craftsmanship coverage for peace of mind' },
-                { icon: '❖', title: 'Complimentary 3D Design', desc: 'Visualize your transformation before commitment' },
-                { icon: '✦', title: '4.9/5 Client Rating', desc: '287 verified reviews from distinguished homeowners' },
-              ].map((item, i) => (
-                <div key={i} style={{ 
-                  padding: '32px',
-                  background: 'var(--cream)',
-                  borderRadius: '8px',
-                  transition: 'all 0.3s ease'
-                }}>
+            <div className="why-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+              {WHY_CHOOSE_US.map((item, i) => (
+                <ClickableCard 
+                  key={i} 
+                  onClick={() => openWhatsApp('trustBadge', { badge: item.context })}
+                  className={`fade-up fade-up-delay-${i % 3 + 1} ${whyInView ? 'visible' : ''}`}
+                  style={{ padding: '32px', background: 'var(--cream)', borderRadius: '8px' }}
+                >
                   <div style={{ fontSize: '28px', color: 'var(--gold)', marginBottom: '20px' }}>{item.icon}</div>
                   <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '12px' }}>{item.title}</h3>
-                  <p style={{ fontSize: '15px', color: '#666', lineHeight: 1.7 }}>{item.desc}</p>
-                </div>
+                  <p style={{ fontSize: '15px', color: '#666', lineHeight: 1.7, marginBottom: '16px' }}>{item.desc}</p>
+                  <span style={{ fontSize: '13px', color: 'var(--whatsapp)', fontWeight: '600' }}>Ask About This →</span>
+                </ClickableCard>
               ))}
             </div>
           </div>
         </section>
 
-        {/* TESTIMONIALS - Elegant Cards */}
-        <section ref={testimonialsRef} style={{ 
-          padding: '100px 0', 
-          background: 'var(--cream)' 
-        }}>
+        {/* TESTIMONIALS - All Clickable */}
+        <section ref={testimonialsRef} style={{ padding: '100px 0', background: 'var(--cream)' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ 
-                fontSize: '13px', 
-                color: 'var(--gold)', 
-                letterSpacing: '3px', 
-                textTransform: 'uppercase', 
-                marginBottom: '16px',
-                fontWeight: '500'
-              }}>
+              <p style={{ fontSize: '13px', color: 'var(--gold)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
                 Client Stories
               </p>
-              <h2 className="font-display" style={{ 
-                fontSize: 'clamp(32px, 5vw, 48px)', 
-                fontWeight: '500',
-                marginBottom: '16px'
-              }}>
+              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
                 Voices of Transformation
               </h2>
               <p style={{ fontSize: '18px', color: '#666' }}>
-                ★ 4.9/5 average from 287 verified reviews
+                Tap any review to start your transformation
               </p>
             </div>
 
-            <div 
-              className="testimonials-grid"
-              style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
-                gap: '32px' 
-              }}
-            >
+            <div className="testimonials-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '32px' }}>
               {TESTIMONIALS.map((t, i) => (
-                <div 
+                <ClickableCard 
                   key={i} 
+                  onClick={() => openWhatsApp('testimonial', { clientName: t.name, project: t.project })}
                   className={`fade-up fade-up-delay-${i+1} ${testimonialsInView ? 'visible' : ''}`}
-                  style={{ 
-                    background: '#fff', 
-                    padding: '40px', 
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.04)'
-                  }}
+                  style={{ background: '#fff', padding: '40px', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}
                 >
                   <div style={{ display: 'flex', gap: '4px', marginBottom: '20px', color: 'var(--gold)' }}>
                     {[...Array(t.rating)].map((_, j) => <span key={j}>★</span>)}
                   </div>
-                  <p className="font-display" style={{ 
-                    fontSize: '18px', 
-                    color: '#444', 
-                    marginBottom: '28px', 
-                    lineHeight: 1.8,
-                    fontStyle: 'italic'
-                  }}>
+                  <p className="font-display" style={{ fontSize: '18px', color: '#444', marginBottom: '28px', lineHeight: 1.8, fontStyle: 'italic' }}>
                     "{t.text}"
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <div>
                       <p style={{ fontWeight: '600', fontSize: '16px' }}>{t.name}</p>
                       <p style={{ fontSize: '14px', color: '#888' }}>{t.location}</p>
                     </div>
-                    <span style={{ 
-                      fontSize: '12px', 
-                      color: 'var(--gold-dark)', 
-                      background: 'var(--cream)', 
-                      padding: '6px 12px', 
-                      borderRadius: '4px',
-                      letterSpacing: '0.5px'
-                    }}>
+                    <span style={{ fontSize: '12px', color: 'var(--gold-dark)', background: 'var(--cream)', padding: '6px 12px', borderRadius: '4px' }}>
                       {t.project}
                     </span>
                   </div>
-                </div>
+                  <div style={{ 
+                    background: 'var(--whatsapp)', 
+                    color: '#fff', 
+                    padding: '12px', 
+                    borderRadius: '8px', 
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    fontWeight: '600'
+                  }}>
+                    💬 I Want Results Like This!
+                  </div>
+                </ClickableCard>
               ))}
             </div>
           </div>
         </section>
 
-        {/* VIDEO TESTIMONIALS - Responsive Mobile/Desktop */}
-        <section ref={videoRef} style={{ 
-          padding: '100px 0', 
-          background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)',
-          overflow: 'hidden'
-        }}>
+        {/* VIDEO TESTIMONIALS */}
+        <section ref={videoRef} style={{ padding: '100px 0', background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)', overflow: 'hidden' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ 
-                fontSize: '13px', 
-                color: 'var(--gold-light)', 
-                letterSpacing: '3px', 
-                textTransform: 'uppercase', 
-                marginBottom: '16px',
-                fontWeight: '500'
-              }}>
+              <p style={{ fontSize: '13px', color: 'var(--gold-light)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
                 Hear Their Stories
               </p>
-              <h2 className="font-display" style={{ 
-                fontSize: 'clamp(32px, 5vw, 48px)', 
-                fontWeight: '500',
-                marginBottom: '16px',
-                color: '#fff'
-              }}>
+              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px', color: '#fff' }}>
                 Video Testimonials
               </h2>
               <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.7)', maxWidth: '500px', margin: '0 auto' }}>
-                Real stories from homeowners who transformed their villas with us
+                Watch, then tap "I Want This Too!" to start your journey
               </p>
             </div>
 
-            {/* Responsive Grid - Horizontal scroll on mobile, grid on desktop */}
-            <div 
-              className="video-grid"
-              style={{ 
-                display: 'grid',
-                gap: '32px',
-                justifyContent: 'center',
-              }}
-            >
+            <div className="video-grid" style={{ display: 'grid', gap: '32px', justifyContent: 'center' }}>
               {VIDEO_TESTIMONIALS.map((video, i) => (
-                <div 
-                  key={video.id} 
-                  className={`fade-up fade-up-delay-${i+1} ${videoInView ? 'visible' : ''}`}
-                >
-                  <LazyVideo video={video} isVisible={videoInView} />
+                <div key={video.id} className={`fade-up fade-up-delay-${i+1} ${videoInView ? 'visible' : ''}`}>
+                  <LazyVideo 
+                    video={video} 
+                    isVisible={videoInView} 
+                    onChatClick={() => openWhatsApp('videoTestimonial', { clientName: video.name, location: video.location })}
+                  />
                 </div>
               ))}
             </div>
 
-            {/* Trust indicator */}
-            <div style={{ 
-              textAlign: 'center', 
-              marginTop: '48px',
-              color: 'rgba(255,255,255,0.6)',
-              fontSize: '14px'
-            }}>
+            <div style={{ textAlign: 'center', marginTop: '48px', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
               <span style={{ color: 'var(--gold-light)' }}>★★★★★</span>
               &nbsp;&nbsp;Join 800+ satisfied homeowners
             </div>
           </div>
         </section>
 
-        {/* FAQ - Elegant Accordion */}
+        {/* FAQ - All Questions Clickable */}
         <section ref={faqRef} style={{ padding: '100px 0', background: '#fff' }}>
           <div className="container" style={{ maxWidth: '800px' }}>
             <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ 
-                fontSize: '13px', 
-                color: 'var(--gold)', 
-                letterSpacing: '3px', 
-                textTransform: 'uppercase', 
-                marginBottom: '16px',
-                fontWeight: '500'
-              }}>
+              <p style={{ fontSize: '13px', color: 'var(--gold)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
                 Common Questions
               </p>
-              <h2 className="font-display" style={{ 
-                fontSize: 'clamp(32px, 5vw, 48px)', 
-                fontWeight: '500',
-                marginBottom: '16px'
-              }}>
+              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
                 {content.service} FAQ
               </h2>
               <p style={{ fontSize: '16px', color: '#666' }}>
-                Everything you need to know about {content.keyword} in {content.location}
+                Have a question? Tap to ask us directly!
               </p>
             </div>
             
@@ -1543,269 +1629,166 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
               {faqs.map((f, idx) => (
                 <details key={idx} className="faq-item">
                   <summary className="faq-summary">{f.q}</summary>
-                  <div className="faq-content">{f.a}</div>
+                  <div className="faq-content">
+                    <p style={{ marginBottom: '20px' }}>{f.a}</p>
+                    <button 
+                      onClick={() => openWhatsApp('faq', { question: f.q })}
+                      style={{
+                        background: 'var(--whatsapp)',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '12px 24px',
+                        borderRadius: '24px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                      Ask About This
+                    </button>
+                  </div>
                 </details>
               ))}
             </div>
           </div>
         </section>
 
-        {/* LEAD FORM - Elegant */}
-        <section id="quote" style={{ 
-          padding: '100px 0', 
-          background: 'var(--cream)' 
-        }}>
-          <div className="container" style={{ maxWidth: '520px' }}>
-            <div style={{ 
-              background: '#fff', 
-              borderRadius: '12px', 
-              padding: '48px',
-              boxShadow: '0 8px 40px rgba(0,0,0,0.08)'
-            }}>
-              <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                <p style={{ 
-                  fontSize: '13px', 
-                  color: 'var(--gold)', 
-                  letterSpacing: '3px', 
-                  textTransform: 'uppercase', 
-                  marginBottom: '16px',
-                  fontWeight: '500'
-                }}>
-                  Begin Your Journey
-                </p>
-                <h2 className="font-display" style={{ fontSize: '28px', fontWeight: '500', marginBottom: '8px' }}>
-                  Request Your Consultation
-                </h2>
-                <p style={{ fontSize: '15px', color: '#666' }}>
-                  Complimentary 3D visualization • Response within 30 minutes
-                </p>
-              </div>
+        {/* INSTANT QUOTE SECTION - Replaces Form */}
+        <section style={{ padding: '100px 0', background: 'var(--cream)' }}>
+          <div className="container" style={{ maxWidth: '600px', textAlign: 'center' }}>
+            <div style={{ fontSize: '64px', marginBottom: '24px' }}>💬</div>
+            <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
+              Skip the Form.<br />Just Chat.
+            </h2>
+            <p style={{ fontSize: '18px', color: '#666', marginBottom: '40px', maxWidth: '500px', margin: '0 auto 40px' }}>
+              No forms, no emails, no waiting. Just tap the button and tell us about your project. 
+              Get a personalized quote within minutes.
+            </p>
 
-              {submitted ? (
-                <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '16px', color: 'var(--gold)' }}>✓</div>
-                  <h3 className="font-display" style={{ fontSize: '24px', fontWeight: '500', marginBottom: '8px' }}>Request Received</h3>
-                  <p style={{ color: '#666' }}>We'll be in touch within 30 minutes.</p>
+            <button 
+              onClick={() => openWhatsApp('callToAction')}
+              className="btn-whatsapp whatsapp-pulse"
+              style={{ fontSize: '20px', padding: '24px 48px' }}
+            >
+              <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              Start Chatting Now
+            </button>
+
+            <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'center', gap: '32px', flexWrap: 'wrap' }}>
+              {[
+                { icon: '⚡', text: '2 min response' },
+                { icon: '🎁', text: 'Free 3D design' },
+                { icon: '🔒', text: 'No spam ever' },
+              ].map((item, i) => (
+                <div key={i} style={{ fontSize: '14px', color: '#666' }}>
+                  {item.icon} {item.text}
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <input 
-                    type="text" 
-                    placeholder="Your Name" 
-                    required 
-                    value={formData.name} 
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
-                    className="form-input"
-                  />
-                  <input 
-                    type="tel" 
-                    placeholder="WhatsApp Number" 
-                    required 
-                    value={formData.phone} 
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
-                    className="form-input"
-                  />
-                  <select 
-                    value={formData.service} 
-                    onChange={(e) => setFormData({ ...formData, service: e.target.value })} 
-                    className="form-input"
-                    style={{ color: formData.service ? 'var(--charcoal)' : '#999' }}
-                  >
-                    <option value="">Select Service</option>
-                    <option value="Villa Renovation">Villa Renovation</option>
-                    <option value="Interior Renovation">Interior Renovation</option>
-                    <option value="Villa Extension">Villa Extension</option>
-                    <option value="Office Fit Out">Office Fit Out</option>
-                    <option value="Kitchen Renovation">Kitchen Renovation</option>
-                    <option value="Bathroom Renovation">Bathroom Renovation</option>
-                  </select>
-                  <button type="submit" className="btn-gold" disabled={isSubmitting} style={{ marginTop: '8px' }}>
-                    {isSubmitting ? 'Sending...' : 'Request Consultation'}
-                  </button>
-                  <p style={{ fontSize: '12px', color: '#999', textAlign: 'center' }}>
-                    ✓ Your information remains confidential
-                  </p>
-                </form>
-              )}
+              ))}
             </div>
           </div>
         </section>
 
-        {/* AREAS SERVED - Elegant List */}
+        {/* AREAS SERVED - All Clickable */}
         <section style={{ padding: '64px 0', background: '#fff', borderTop: '1px solid #f0f0f0' }}>
           <div className="container">
-            <h3 className="font-display" style={{ 
-              fontSize: '24px', 
-              fontWeight: '500', 
-              textAlign: 'center', 
-              marginBottom: '24px' 
-            }}>
+            <h3 className="font-display" style={{ fontSize: '24px', fontWeight: '500', textAlign: 'center', marginBottom: '24px' }}>
               Serving Dubai's Finest Communities
             </h3>
-            <p style={{ 
-              textAlign: 'center', 
-              color: '#666', 
-              fontSize: '15px', 
-              maxWidth: '900px', 
-              margin: '0 auto', 
-              lineHeight: 2 
-            }}>
-              {AREAS_SERVED.join('  •  ')}
+            <p style={{ textAlign: 'center', marginBottom: '24px', color: '#888', fontSize: '14px' }}>
+              Tap your area to get local expertise
             </p>
-          </div>
-        </section>
-
-        {/* COMPANY INFO - Trust Signals */}
-        <section style={{ padding: '48px 0', background: 'var(--cream)', borderTop: '1px solid #e8e8e8' }}>
-          <div className="container">
-            <div style={{ 
+            <div className="areas-grid" style={{ 
               display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-              gap: '32px', 
-              textAlign: 'center', 
-              fontSize: '14px', 
-              color: '#666' 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+              gap: '12px', 
+              maxWidth: '900px', 
+              margin: '0 auto' 
             }}>
-              <div>
-                <p style={{ fontWeight: '600', color: 'var(--charcoal)', marginBottom: '4px' }}>Office Address</p>
-                <p>Al Quoz Industrial Area 3, Dubai, UAE</p>
-              </div>
-              <div>
-                <p style={{ fontWeight: '600', color: 'var(--charcoal)', marginBottom: '4px' }}>Contact</p>
-                <p>+971 58 565 8002</p>
-              </div>
-              <div>
-                <p style={{ fontWeight: '600', color: 'var(--charcoal)', marginBottom: '4px' }}>Working Hours</p>
-                <p>Monday - Saturday: 9AM - 6PM</p>
-              </div>
-              <div>
-                <p style={{ fontWeight: '600', color: 'var(--charcoal)', marginBottom: '4px' }}>Trade License</p>
-                <p>DED Licensed & Fully Insured</p>
-              </div>
+              {AREAS_SERVED.map((area, i) => (
+                <button
+                  key={i}
+                  onClick={() => openWhatsApp('area', { areaName: area })}
+                  style={{
+                    background: 'var(--cream)',
+                    border: '1px solid #e8e8e8',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    textAlign: 'center'
+                  }}
+                  className="area-btn"
+                >
+                  {area}
+                </button>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* FINAL CTA - Cinematic */}
-        <section style={{ 
-          padding: '120px 0', 
-          background: 'var(--charcoal)', 
-          color: '#fff', 
-          textAlign: 'center',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
-          <div style={{ 
-            position: 'absolute', 
-            inset: 0, 
-            background: 'radial-gradient(ellipse at center, rgba(201,162,39,0.1) 0%, transparent 70%)' 
-          }} />
+        {/* FINAL CTA */}
+        <section style={{ padding: '120px 0', background: 'var(--charcoal)', color: '#fff', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(37,211,102,0.1) 0%, transparent 70%)' }} />
           
           <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-            <p style={{ 
-              fontSize: '13px', 
-              color: 'var(--gold-light)', 
-              letterSpacing: '3px', 
-              textTransform: 'uppercase', 
-              marginBottom: '24px',
-              fontWeight: '500'
-            }}>
-              Your Vision Awaits
+            <p style={{ fontSize: '13px', color: 'var(--gold-light)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>
+              Your Dream Villa Awaits
             </p>
-            <h2 className="font-display" style={{ 
-              fontSize: 'clamp(36px, 6vw, 64px)', 
-              fontWeight: '500', 
-              marginBottom: '24px',
-              lineHeight: 1.2
-            }}>
-              Ready to Transform<br />Your Villa?
+            <h2 className="font-display" style={{ fontSize: 'clamp(36px, 6vw, 64px)', fontWeight: '500', marginBottom: '24px', lineHeight: 1.2 }}>
+              One Tap Away From<br />Your Dream Home
             </h2>
-            <p style={{ 
-              fontSize: '20px', 
-              opacity: 0.8, 
-              marginBottom: '48px',
-              maxWidth: '600px',
-              margin: '0 auto 48px'
-            }}>
-              Complimentary consultation • 3D visualization • Fixed pricing
+            <p style={{ fontSize: '20px', opacity: 0.8, marginBottom: '48px', maxWidth: '600px', margin: '0 auto 48px' }}>
+              800+ homeowners started their journey with a simple WhatsApp message.<br />You're next.
             </p>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px', margin: '0 auto' }}>
-              <button onClick={quickWhatsApp} className="btn-gold" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-                <svg style={{ width: '20px', height: '20px' }} fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                Begin Your Journey
-              </button>
-              <a href="tel:+971585658002" className="btn-outline-light" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', textDecoration: 'none' }}>
-                <svg style={{ width: '18px', height: '18px' }} fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-                +971 58 565 8002
-              </a>
-            </div>
+            <button 
+              onClick={() => openWhatsApp('callToAction')}
+              className="btn-whatsapp whatsapp-pulse"
+              style={{ fontSize: '20px', padding: '24px 48px' }}
+            >
+              <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              Let's Create Magic Together
+            </button>
           </div>
         </section>
 
-        {/* FOOTER - Minimal Elegant */}
-        <footer style={{ 
-          padding: '48px 0', 
-          background: '#0d0d0d', 
-          color: '#fff' 
-        }}>
+        {/* FOOTER */}
+        <footer style={{ padding: '48px 0', background: '#0d0d0d', color: '#fff' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <span className="font-display" style={{ fontSize: '28px', fontWeight: '600', letterSpacing: '3px' }}>
-                UNICORN
-              </span>
-              <p style={{ fontSize: '14px', opacity: 0.5, marginTop: '12px' }}>
-                Crafting Timeless Villa Transformations Since 2012
-              </p>
+              <span className="font-display" style={{ fontSize: '28px', fontWeight: '600', letterSpacing: '3px' }}>UNICORN</span>
+              <p style={{ fontSize: '14px', opacity: 0.5, marginTop: '12px' }}>Crafting Timeless Villa Transformations Since 2012</p>
             </div>
             
-            <div style={{ 
-              display: 'flex', 
-              flexWrap: 'wrap', 
-              justifyContent: 'center', 
-              gap: '24px', 
-              marginBottom: '32px' 
-            }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', marginBottom: '32px' }}>
               {[
                 { label: 'Villa Renovation', url: 'https://unicornrenovations.com/villa-renovation/' },
                 { label: 'Interior Design', url: 'https://unicornrenovations.com/interior-design/' },
-                { label: 'Villa Extension', url: 'https://unicornrenovations.com/villa-extension/' },
                 { label: 'Portfolio', url: 'https://unicornrenovations.com/portfolio/' },
-                { label: 'About', url: 'https://unicornrenovations.com/about-us/' },
                 { label: 'Contact', url: 'https://unicornrenovations.com/contact/' },
               ].map((link, i) => (
-                <a 
-                  key={i} 
-                  href={link.url} 
-                  target="_blank" 
-                  rel="noopener" 
-                  style={{ 
-                    color: 'rgba(255,255,255,0.6)', 
-                    fontSize: '13px', 
-                    textDecoration: 'none',
-                    transition: 'color 0.3s ease',
-                    letterSpacing: '0.5px'
-                  }}
-                >
+                <a key={i} href={link.url} target="_blank" rel="noopener" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', textDecoration: 'none' }}>
                   {link.label}
                 </a>
               ))}
             </div>
             
-            <p style={{ 
-              fontSize: '12px', 
-              opacity: 0.4, 
-              textAlign: 'center' 
-            }}>
+            <p style={{ fontSize: '12px', opacity: 0.4, textAlign: 'center' }}>
               © {new Date().getFullYear()} Unicorn Renovations. All rights reserved.
             </p>
           </div>
         </footer>
 
-        {/* FLOATING WHATSAPP - Elegant */}
+        {/* FLOATING WHATSAPP BUTTON */}
         <button 
-          onClick={quickWhatsApp} 
+          onClick={() => openWhatsApp('floatingButton')}
           aria-label="WhatsApp" 
+          className="whatsapp-pulse"
           style={{ 
             position: 'fixed', 
             bottom: '100px', 
@@ -1821,69 +1804,57 @@ export default function LuxuryQSOptimizer({ initialContent, initialServices }) {
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            transition: 'all 0.3s ease'
           }}
         >
           <svg style={{ width: '32px', height: '32px' }} fill="#fff" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
         </button>
 
-        {/* MOBILE BOTTOM BAR - Glassmorphism */}
-        <div className="hide-desktop" style={{ 
-          position: 'fixed', 
-          bottom: 0, 
-          left: 0, 
-          right: 0, 
-          background: 'rgba(255,255,255,0.95)', 
-          backdropFilter: 'blur(20px)',
-          borderTop: '1px solid rgba(0,0,0,0.08)', 
-          zIndex: 40, 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 1fr', 
-          height: '72px' 
-        }}>
-          <a 
-            href="tel:+971585658002" 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              gap: '8px', 
-              color: 'var(--charcoal)', 
-              textDecoration: 'none', 
-              fontWeight: '600',
-              fontSize: '15px',
-              borderRight: '1px solid rgba(0,0,0,0.08)' 
-            }}
-          >
-            <svg style={{ width: '20px', height: '20px' }} fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-            Call
-          </a>
+        {/* SMART STICKY BAR - Changes based on engagement */}
+        <div className={`sticky-bar ${engagement} hide-desktop`} style={{ display: 'flex' }}>
+          <div style={{ color: '#fff', fontSize: '14px', flex: 1 }}>
+            {engagement === 'hot' && '🔥 You look ready!'}
+            {engagement === 'engaged' && '✨ Have questions?'}
+            {engagement === 'browsing' && '👋 Need help?'}
+            {engagement === 'new' && '💬 Chat with us'}
+          </div>
           <button 
-            onClick={quickWhatsApp} 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              gap: '8px', 
-              background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)', 
-              color: '#fff', 
-              border: 'none', 
+            onClick={() => openWhatsApp('sticky', { engagement })}
+            style={{
+              background: engagement === 'hot' ? '#fff' : 'var(--whatsapp)',
+              color: engagement === 'hot' ? 'var(--whatsapp-dark)' : '#fff',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '24px',
+              fontSize: '14px',
               fontWeight: '600',
-              fontSize: '15px',
-              cursor: 'pointer' 
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
             }}
           >
-            <svg style={{ width: '20px', height: '20px' }} fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-            WhatsApp
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            {engagement === 'hot' ? "Let's Talk!" : 'WhatsApp'}
           </button>
         </div>
         <div className="hide-desktop" style={{ height: '72px' }} />
 
-        {/* DEFERRED ANALYTICS */}
+        {/* ANALYTICS */}
         <script dangerouslySetInnerHTML={{ __html: `window.addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.src='https://www.googletagmanager.com/gtag/js?id=AW-612864132';s.async=true;document.head.appendChild(s);s.onload=function(){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','AW-612864132');};},1500);});` }} />
-        
-        {/* Microsoft Clarity Analytics */}
         <script dangerouslySetInnerHTML={{ __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "v5bkaisuew");` }} />
+        
+        {/* EXTRA HOVER STYLES */}
+        <style jsx global>{`
+          .area-btn:hover {
+            background: var(--whatsapp) !important;
+            color: #fff !important;
+            border-color: var(--whatsapp) !important;
+            transform: translateY(-2px);
+          }
+          .luxury-card:hover .service-overlay {
+            opacity: 1 !important;
+          }
+        `}</style>
       </div>
     </>
   );
