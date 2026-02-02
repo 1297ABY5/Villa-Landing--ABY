@@ -80,7 +80,7 @@ const WHATSAPP_MESSAGES = {
     `Hi! I'm ready to start my apartment transformation. What's the first step?`,
   
   qualified: (service, budget, timeline, apartmentSize) => 
-    `Hi! I'm interested in *${service)}*.\n\n📊 Budget: ${budget}\n⏰ Timeline: ${timeline}\n🏠 Size: ${apartmentSize}\n\nCan we discuss my apartment project?`,
+    `Hi! I'm interested in *${service}*.\n\n📊 Budget: ${budget}\n⏰ Timeline: ${timeline}\n🏠 Size: ${apartmentSize}\n\nCan we discuss my apartment project?`,
   
   default: () => 
     `Hi! I'm interested in your apartment renovation services. Can we chat?`
