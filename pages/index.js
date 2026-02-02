@@ -1,7 +1,9 @@
-// pages/index.js - FINAL PRODUCTION VERSION v3.5
+// pages/index.js - FINAL PRODUCTION VERSION v3.6
 // ✅ All fixes applied
 // ✅ VERTICAL SCROLL ONLY (no horizontal carousels)
-// Version: 3.5 FINAL
+// ✅ Hidden CTA buttons in testimonials (cards still clickable)
+// ✅ Reduced mobile padding and gaps
+// Version: 3.6 FINAL
 
 import Head from 'next/head';
 import Image from 'next/image';
@@ -134,7 +136,7 @@ function getAttribution() {
     utm_term: p.get('utm_term') || p.get('kw') || p.get('keyword') || '',
     utm_content: p.get('utm_content') || '',
     loc: p.get('loc') || p.get('location') || 'Dubai',
-    lp: 'wa-everywhere-v3.1',
+    lp: 'wa-everywhere-v3.6',
     ts: Date.now(), // Timestamp for expiry check
   };
 
@@ -769,8 +771,7 @@ function VideoCard({ video, onChatClick }) {
             <p className="video-name">{video.name}</p>
             <p className="video-location"><span style={{ color: 'var(--gold-light)' }}>◆</span> {video.location}</p>
             
-            <button onClick={(e) => { e.stopPropagation(); onChatClick(); }} className="video-cta">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            <button onClick={(e) => { e.stopPropagation(); onChatClick(); }} className="video-cta" style={{ opacity: 0, height: 0, padding: 0, overflow: 'hidden' }}>
               I Want This Too!
             </button>
           </div>
@@ -994,7 +995,7 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           }
           
           .font-display { font-family: var(--font-display), 'Playfair Display', Georgia, serif; }
-          .c { width: 100%; padding: 0 16px; max-width: 1400px; margin: 0 auto; }
+          .c { width: 100%; padding: 0 12px; max-width: 1200px; margin: 0 auto; }
           
           /* Buttons - min 48px touch target */
           .btn {
@@ -1032,21 +1033,21 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           .clickable-card:focus-visible { outline: 3px solid var(--wa); outline-offset: 2px; }
           .clickable-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
           
-          /* Sections */
-          section { padding: 60px 0; }
+          /* Sections - tighter on mobile */
+          section { padding: 40px 0; }
           
           /* Typography */
-          h1 { font-size: 32px; font-weight: 700; line-height: 1.15; }
-          h2 { font-size: 26px; font-weight: 600; line-height: 1.2; }
-          h3 { font-size: 18px; font-weight: 600; }
+          h1 { font-size: 28px; font-weight: 700; line-height: 1.15; }
+          h2 { font-size: 22px; font-weight: 600; line-height: 1.2; }
+          h3 { font-size: 16px; font-weight: 600; }
           
           /* VERTICAL GRIDS - No horizontal scroll */
-          .grid-1 { display: grid; grid-template-columns: 1fr; gap: 16px; }
-          .grid-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
-          .grid-3 { display: grid; grid-template-columns: 1fr; gap: 16px; }
-          .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-          .grid-5 { display: grid; grid-template-columns: 1fr; gap: 16px; }
-          .grid-6 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+          .grid-1 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+          .grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+          .grid-3 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+          .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+          .grid-5 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+          .grid-6 { display: grid; grid-template-columns: 1fr; gap: 12px; }
           
           /* FIX #1: Areas grid - mobile default is flex, desktop is grid */
           .areas-grid {
@@ -1198,57 +1199,57 @@ export default function FinalLandingPage({ initialContent, initialServices, init
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(26,26,26,0.6) 0%, rgba(26,26,26,0.9) 100%)' }} />
           </div>
 
-          <div className="c" style={{ position: 'relative', zIndex: 10, color: '#fff', paddingTop: '40px', paddingBottom: '60px' }}>
+          <div className="c" style={{ position: 'relative', zIndex: 10, color: '#fff', paddingTop: '24px', paddingBottom: '40px' }}>
             <button 
               onClick={() => openWhatsApp('trustBadge', ['highly rated'])} 
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', padding: '10px 18px', borderRadius: '30px', marginBottom: '28px', cursor: 'pointer', color: '#fff', fontSize: '13px' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 14px', borderRadius: '30px', marginBottom: '16px', cursor: 'pointer', color: '#fff', fontSize: '12px' }}
             >
               <span style={{ color: 'var(--gold-light)' }}>★★★★★</span>
               <span>Highly Rated • Trusted by Dubai Homeowners</span>
             </button>
 
-            <h1 className="font-display" style={{ fontSize: 'clamp(36px, 7vw, 72px)', fontWeight: '500', lineHeight: 1.1, marginBottom: '12px', letterSpacing: '-0.5px' }}>{content.h1}</h1>
-            <h2 className="font-display" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontWeight: '400', color: 'var(--gold-light)', marginBottom: '20px', fontStyle: 'italic' }}>{content.h2}</h2>
+            <h1 className="font-display" style={{ fontSize: 'clamp(32px, 7vw, 72px)', fontWeight: '500', lineHeight: 1.1, marginBottom: '6px', letterSpacing: '-0.5px' }}>{content.h1}</h1>
+            <h2 className="font-display" style={{ fontSize: 'clamp(16px, 3vw, 28px)', fontWeight: '400', color: 'var(--gold-light)', marginBottom: '14px', fontStyle: 'italic' }}>{content.h2}</h2>
             
-            <p style={{ fontSize: '17px', opacity: 0.85, maxWidth: '550px', marginBottom: '32px', lineHeight: 1.7, fontWeight: '300' }}>
+            <p style={{ fontSize: '15px', opacity: 0.85, maxWidth: '550px', marginBottom: '24px', lineHeight: 1.6, fontWeight: '300' }}>
               Get a <strong style={{ fontWeight: '500' }}>FREE 3D visualization</strong> of your dream {content.service.toLowerCase()} in {content.location}. 
               Chat with us now – response within 2 minutes!
             </p>
 
-            <div style={{ display: 'flex', gap: '32px', marginBottom: '40px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '24px', marginBottom: '28px', flexWrap: 'wrap' }}>
               {[{ n: '800+', l: 'Villas Transformed', c: 'your 800+ completed projects' }, { n: '15+', l: 'Years of Mastery', c: 'your 15+ years of experience' }, { n: '5yr', l: 'Warranty', c: '5-year warranty coverage' }].map((s, i) => (
                 <button key={i} onClick={() => openWhatsApp('trustBadge', [s.c])} style={{ textAlign: 'left', background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 0 }}>
-                  <div style={{ fontSize: '32px', fontWeight: '700', color: 'var(--gold-light)', marginBottom: '2px' }}>{s.n}</div>
-                  <div style={{ fontSize: '12px', opacity: 0.7, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{s.l}</div>
+                  <div style={{ fontSize: '28px', fontWeight: '700', color: 'var(--gold-light)', marginBottom: '2px' }}>{s.n}</div>
+                  <div style={{ fontSize: '11px', opacity: 0.7, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{s.l}</div>
                 </button>
               ))}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxWidth: '400px' }}>
-              <button className="btn btn-wa wa-pulse" onClick={() => openWhatsApp('hero', [content.service, content.location])} style={{ width: '100%', fontSize: '17px', padding: '18px 28px' }}>
-                <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px' }}>
+              <button className="btn btn-wa wa-pulse" onClick={() => openWhatsApp('hero', [content.service, content.location])} style={{ width: '100%', fontSize: '16px', padding: '16px 24px' }}>
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
                 Chat With Us Now
               </button>
-              <p style={{ fontSize: '13px', opacity: 0.65, textAlign: 'center' }}>⚡ Reply in 2 minutes • Free consultation</p>
+              <p style={{ fontSize: '12px', opacity: 0.65, textAlign: 'center' }}>⚡ Reply in 2 minutes • Free consultation</p>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '28px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '20px' }}>
               {['Free 3D Design', 'Fixed Pricing', 'Municipality Approved', '5-Year Warranty'].map((item, i) => (
-                <span key={i} style={{ fontSize: '13px', opacity: 0.8, padding: '6px 14px', background: 'rgba(255,255,255,0.06)', borderRadius: '20px' }}>✓ {item}</span>
+                <span key={i} style={{ fontSize: '11px', opacity: 0.8, padding: '5px 10px', background: 'rgba(255,255,255,0.06)', borderRadius: '16px' }}>✓ {item}</span>
               ))}
             </div>
           </div>
         </section>
 
         {/* TRUST BADGES */}
-        <section style={{ padding: '50px 0', background: 'var(--cream)' }}>
+        <section style={{ padding: '32px 0', background: 'var(--cream)' }}>
           <div className="c">
             <div className="grid-4">
               {TRUST_BADGES.map((b, i) => (
-                <ClickableCard key={i} onClick={() => openWhatsApp('trustBadge', [b.context])} style={{ padding: '24px', textAlign: 'center' }} ariaLabel={`Learn more about ${b.title}`}>
-                  <div style={{ fontSize: '28px', color: 'var(--gold)', marginBottom: '12px' }}>{b.icon}</div>
-                  <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>{b.title}</h3>
-                  <p style={{ fontSize: '13px', color: '#666' }}>{b.desc}</p>
+                <ClickableCard key={i} onClick={() => openWhatsApp('trustBadge', [b.context])} style={{ padding: '16px', textAlign: 'center' }} ariaLabel={`Learn more about ${b.title}`}>
+                  <div style={{ fontSize: '24px', color: 'var(--gold)', marginBottom: '8px' }}>{b.icon}</div>
+                  <h3 style={{ fontSize: '13px', fontWeight: '600', marginBottom: '2px' }}>{b.title}</h3>
+                  <p style={{ fontSize: '11px', color: '#666' }}>{b.desc}</p>
                 </ClickableCard>
               ))}
             </div>
@@ -1339,7 +1340,7 @@ export default function FinalLandingPage({ initialContent, initialServices, init
                     </div>
                     <span style={{ fontSize: '11px', color: 'var(--gold-dark)', background: 'rgba(201,162,39,0.1)', padding: '4px 10px', borderRadius: '4px' }}>{t.project}</span>
                   </div>
-                  <div style={{ background: 'var(--wa)', color: '#fff', padding: '12px', borderRadius: '8px', textAlign: 'center', fontSize: '14px', fontWeight: '600' }}>💬 I Want Results Like This!</div>
+                  <div style={{ opacity: 0, height: 0, overflow: 'hidden' }}>💬 I Want Results Like This!</div>
                 </ClickableCard>
               ))}
             </div>
