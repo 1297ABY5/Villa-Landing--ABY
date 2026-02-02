@@ -1,9 +1,10 @@
-// pages/index.js - FINAL PRODUCTION VERSION v3.6
+// pages/index.js - FINAL PRODUCTION VERSION v3.7
 // ✅ All fixes applied
 // ✅ VERTICAL SCROLL ONLY (no horizontal carousels)
 // ✅ Hidden CTA buttons in testimonials (cards still clickable)
 // ✅ Reduced mobile padding and gaps
-// Version: 3.6 FINAL
+// ✅ Smart background click - tap dead space = WhatsApp
+// Version: 3.7 FINAL
 
 import Head from 'next/head';
 import Image from 'next/image';
@@ -136,7 +137,7 @@ function getAttribution() {
     utm_term: p.get('utm_term') || p.get('kw') || p.get('keyword') || '',
     utm_content: p.get('utm_content') || '',
     loc: p.get('loc') || p.get('location') || 'Dubai',
-    lp: 'wa-everywhere-v3.6',
+    lp: 'wa-everywhere-v3.7',
     ts: Date.now(), // Timestamp for expiry check
   };
 
@@ -866,6 +867,19 @@ export default function FinalLandingPage({ initialContent, initialServices, init
   const faqs = useMemo(() => buildFaq(content), [content]);
   const isHot = scrollPct >= 60;
 
+  // Smart background click - opens WhatsApp on dead space taps
+  const handleBackgroundClick = (e) => {
+    // Don't trigger if clicking interactive elements
+    const interactive = ['BUTTON', 'A', 'INPUT', 'VIDEO', 'SVG', 'PATH'];
+    if (interactive.includes(e.target.tagName)) return;
+    
+    // Don't trigger if clicking inside cards, buttons, or other interactive areas
+    if (e.target.closest('button, a, .clickable-card, .btn, video, .faq-q, .qualifier-sheet, .sheet')) return;
+    
+    // Open WhatsApp
+    openWhatsApp('floatingButton', []);
+  };
+
   // Initialize attribution on mount
   useEffect(() => {
     getAttribution();
@@ -1135,7 +1149,7 @@ export default function FinalLandingPage({ initialContent, initialServices, init
         {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "v5bkaisuew");`}
       </Script>
 
-      <div className={`${inter.variable} ${playfair.variable}`} style={{ paddingBottom: '80px' }}>
+      <div className={`${inter.variable} ${playfair.variable}`} style={{ paddingBottom: '80px', cursor: 'pointer' }} onClick={handleBackgroundClick}>
         
         {/* LEAD QUALIFIER MODAL */}
         {qualifier && (
