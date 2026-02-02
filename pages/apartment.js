@@ -1,6 +1,7 @@
-// pages/apartment.js - APARTMENT RENOVATION LANDING PAGE v1.0
+// pages/apartment.js - APARTMENT RENOVATION LANDING PAGE v1.1
 // High-converting page optimized for apartment renovation keywords
-// Adapted from villa v3.7 with apartment-specific content, pricing, areas, testimonials
+// ✅ Clean short tracking code (Ref: XXXXXX only)
+// Adapted from villa v3.8 with apartment-specific content, pricing, areas, testimonials
 
 import Head from 'next/head';
 import Image from 'next/image';
@@ -116,7 +117,7 @@ function getAttribution() {
     utm_term: p.get('utm_term') || p.get('kw') || p.get('keyword') || '',
     utm_content: p.get('utm_content') || '',
     loc: p.get('loc') || p.get('location') || 'Dubai',
-    lp: 'apartment-v1.0',
+    lp: 'apartment-v1.1',
     ts: Date.now(),
   };
   const hasNewParams = attr.gclid || attr.wbraid || attr.gbraid || attr.utm_source || attr.utm_campaign || attr.utm_term;
@@ -159,11 +160,15 @@ function hasClickedWhatsApp() {
   try { return sessionStorage.getItem('wa_clicked') === '1'; } catch(e) { return false; }
 }
 
+// ============================================
+// WHATSAPP OPENER - Clean short ref code
+// ============================================
 const openWhatsApp = (context, args = [], meta = {}) => {
   let message = WHATSAPP_MESSAGES.default();
   if (typeof WHATSAPP_MESSAGES[context] === 'function') {
     message = WHATSAPP_MESSAGES[context](...args);
   }
+  
   const attr = readAttribution();
   const clickId = Math.random().toString(36).slice(2, 8).toUpperCase();
   
@@ -177,17 +182,18 @@ const openWhatsApp = (context, args = [], meta = {}) => {
       wbraid: attr.wbraid || '',
       gbraid: attr.gbraid || '',
       campaign: attr.utm_campaign || '',
-      page: attr.lp || 'apt',
+      page: attr.lp || 'apartment',
       time: new Date().toISOString()
     };
     const existing = JSON.parse(localStorage.getItem('unicorn_leads') || '[]');
     existing.push(trackingData);
-    localStorage.setItem('unicorn_leads', JSON.stringify(existing.slice(-100))); // Keep last 100
+    localStorage.setItem('unicorn_leads', JSON.stringify(existing.slice(-100)));
   } catch(e) {}
   
   // Clean short footer for customer
   const trackingFooter = `\n\n— Ref: ${clickId}`;
   message += trackingFooter;
+  
   const value = CONVERSION_VALUES[context] || CONVERSION_VALUES.default;
   fireGtag('event', 'conversion', {
     send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC',
@@ -313,12 +319,12 @@ const KEYWORD_MAP = {
 // APARTMENT SERVICES (Different pricing than villas)
 // ============================================
 const APARTMENT_SERVICES = [
-  { id: 'full-apartment', title: 'Full Apartment Renovation', desc: 'Complete transformation from floor to ceiling', price: 'From AED 60,000', image: '/Interior-Design.webp', tags: ['apartment', 'full'] },
+  { id: 'full-apartment', title: 'Full Apartment Renovation', desc: 'Complete transformation from floor to ceiling', price: 'From AED 60,000', image: '/ap1.jpg', tags: ['apartment', 'full'] },
   { id: 'kitchen', title: 'Kitchen Renovation', desc: 'Space-optimized culinary spaces for city living', price: 'From AED 35,000', image: '/v16.webp', tags: ['kitchen', 'apartment'] },
   { id: 'bathroom', title: 'Bathroom Renovation', desc: 'Spa-inspired sanctuaries with waterproofing guarantee', price: 'From AED 18,000', image: '/v12.webp', tags: ['bathroom', 'apartment'] },
-  { id: 'studio', title: 'Studio Renovation', desc: 'Smart space solutions that maximize every foot', price: 'From AED 25,000', image: '/Interior-Design.webp', tags: ['studio', 'apartment'] },
-  { id: 'living-dining', title: 'Living & Dining Makeover', desc: 'Open-plan designs for modern entertaining', price: 'From AED 28,000', image: '/Interior-Design.webp', tags: ['apartment', 'interior'] },
-  { id: 'penthouse', title: 'Penthouse Renovation', desc: 'Ultra-luxury transformations at the top', price: 'From AED 150,000', image: '/villa-renovation.webp', tags: ['penthouse', 'luxury'] },
+  { id: 'studio', title: 'Studio Renovation', desc: 'Smart space solutions that maximize every foot', price: 'From AED 25,000', image: '/ap3.jpg', tags: ['studio', 'apartment'] },
+  { id: 'living-dining', title: 'Living & Dining Makeover', desc: 'Open-plan designs for modern entertaining', price: 'From AED 28,000', image: '/ap2.jpg', tags: ['apartment', 'interior'] },
+  { id: 'penthouse', title: 'Penthouse Renovation', desc: 'Ultra-luxury transformations at the top', price: 'From AED 150,000', image: '/ap4.jpg', tags: ['penthouse', 'luxury'] },
 ];
 
 // ============================================
@@ -825,7 +831,7 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
         {/* HERO */}
         <section style={{ position: 'relative', minHeight: '85vh', display: 'flex', alignItems: 'center', background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)' }}>
           <div style={{ position: 'absolute', inset: 0 }}>
-            <Image src="/Interior-Design.webp" alt={content.h1} fill sizes="100vw" style={{ objectFit: 'cover', opacity: 0.25 }} priority quality={75} />
+            <Image src="/ap1.jpg" alt={content.h1} fill sizes="100vw" style={{ objectFit: 'cover', opacity: 0.25 }} priority quality={75} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(15,23,42,0.7) 0%, rgba(15,23,42,0.95) 100%)' }} />
           </div>
 
