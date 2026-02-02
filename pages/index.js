@@ -1,10 +1,11 @@
-// pages/index.js - FINAL PRODUCTION VERSION v3.7
+// pages/index.js - FINAL PRODUCTION VERSION v3.8
 // ✅ All fixes applied
 // ✅ VERTICAL SCROLL ONLY (no horizontal carousels)
 // ✅ Hidden CTA buttons in testimonials (cards still clickable)
 // ✅ Reduced mobile padding and gaps
 // ✅ Smart background click - tap dead space = WhatsApp
-// Version: 3.7 FINAL
+// ✅ SHORT REFERENCE CODE - Clean WhatsApp messages
+// Version: 3.8 FINAL
 
 import Head from 'next/head';
 import Image from 'next/image';
@@ -118,7 +119,7 @@ const CONVERSION_VALUES = {
 };
 
 // ============================================
-// FIX #4: ATTRIBUTION TRACKING WITH LOCALSTORAGE
+// ATTRIBUTION TRACKING WITH LOCALSTORAGE
 // Persist beyond session with 7-day expiry
 // ============================================
 const ATTR_EXPIRY_DAYS = 7;
@@ -137,19 +138,17 @@ function getAttribution() {
     utm_term: p.get('utm_term') || p.get('kw') || p.get('keyword') || '',
     utm_content: p.get('utm_content') || '',
     loc: p.get('loc') || p.get('location') || 'Dubai',
-    lp: 'wa-everywhere-v3.7',
-    ts: Date.now(), // Timestamp for expiry check
+    lp: 'villa-v3.8',
+    ts: Date.now(),
   };
 
-  // Only update if we have new tracking params
   const hasNewParams = attr.gclid || attr.wbraid || attr.gbraid || attr.utm_source || attr.utm_campaign || attr.utm_term;
   
   if (hasNewParams) {
-    // Store in both sessionStorage AND localStorage
     try { 
       sessionStorage.setItem('unicorn_attr', JSON.stringify(attr)); 
       localStorage.setItem('unicorn_attr_persist', JSON.stringify(attr));
-    } catch (e) { /* Storage blocked */ }
+    } catch (e) {}
   }
   
   return attr;
@@ -159,28 +158,18 @@ function readAttribution() {
   if (typeof window === 'undefined') return {};
   
   try {
-    // Try sessionStorage first (current session)
     const sessionAttr = sessionStorage.getItem('unicorn_attr');
-    if (sessionAttr) {
-      return JSON.parse(sessionAttr);
-    }
+    if (sessionAttr) return JSON.parse(sessionAttr);
     
-    // Fall back to localStorage (returning visitor)
     const persistAttr = localStorage.getItem('unicorn_attr_persist');
     if (persistAttr) {
       const parsed = JSON.parse(persistAttr);
-      // Check if expired (7 days)
       const ageMs = Date.now() - (parsed.ts || 0);
       const expiryMs = ATTR_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
-      if (ageMs < expiryMs) {
-        return parsed;
-      } else {
-        // Expired, remove it
-        localStorage.removeItem('unicorn_attr_persist');
-      }
+      if (ageMs < expiryMs) return parsed;
+      localStorage.removeItem('unicorn_attr_persist');
     }
     
-    // No stored attribution, try to get fresh
     return getAttribution();
   } catch (e) {
     return getAttribution();
@@ -189,29 +178,23 @@ function readAttribution() {
 
 // ============================================
 // GTAG WITH STUB FALLBACK
-// Creates stub if gtag not loaded yet - guarantees no missed conversions
 // ============================================
 function fireGtag(command, eventName, params = {}) {
   if (typeof window === 'undefined') return;
-
   window.dataLayer = window.dataLayer || [];
-
-  // Create stub if gtag doesn't exist yet - this is the key fix
-  // The stub pushes `arguments` (not arrays) so gtag replays correctly when it loads
   if (!window.gtag) {
     window.gtag = function() { window.dataLayer.push(arguments); };
   }
-
   window.gtag(command, eventName, params);
 }
 
-// Helper to check if user already clicked WhatsApp (don't annoy hot leads)
 function hasClickedWhatsApp() {
   try { return sessionStorage.getItem('wa_clicked') === '1'; } catch(e) { return false; }
 }
 
 // ============================================
-// WHATSAPP OPENER - All fixes applied
+// WHATSAPP OPENER - SHORT REFERENCE CODE
+// Full tracking stored locally, customer sees clean message
 // ============================================
 const openWhatsApp = (context, args = [], meta = {}) => {
   let message = WHATSAPP_MESSAGES.default();
@@ -220,21 +203,31 @@ const openWhatsApp = (context, args = [], meta = {}) => {
     message = WHATSAPP_MESSAGES[context](...args);
   }
 
-  // Add tracking footer to message
   const attr = readAttribution();
   const clickId = Math.random().toString(36).slice(2, 8).toUpperCase();
-
-  const trackingFooter =
-    `\n\n—\nRef: ${attr.lp || 'wa'}-${clickId}` +
-    (attr.utm_term ? `\nKW: ${attr.utm_term}` : '') +
-    (attr.gclid ? `\nGCLID: ${attr.gclid}` : '') +
-    (attr.wbraid ? `\nWB: ${attr.wbraid}` : '') +
-    (attr.gbraid ? `\nGB: ${attr.gbraid}` : '') +
-    (attr.utm_campaign ? `\nCamp: ${attr.utm_campaign}` : '');
-
+  
+  // Store full tracking data locally for your reference
+  try {
+    const trackingData = {
+      id: clickId,
+      context,
+      keyword: attr.utm_term || '',
+      gclid: attr.gclid || '',
+      wbraid: attr.wbraid || '',
+      gbraid: attr.gbraid || '',
+      campaign: attr.utm_campaign || '',
+      page: attr.lp || 'villa',
+      time: new Date().toISOString()
+    };
+    const existing = JSON.parse(localStorage.getItem('unicorn_leads') || '[]');
+    existing.push(trackingData);
+    localStorage.setItem('unicorn_leads', JSON.stringify(existing.slice(-100)));
+  } catch(e) {}
+  
+  // Clean short footer for customer
+  const trackingFooter = `\n\n— Ref: ${clickId}`;
   message += trackingFooter;
 
-  // Fire conversion with click IDs for better Google Ads attribution
   const value = CONVERSION_VALUES[context] || CONVERSION_VALUES.default;
   
   fireGtag('event', 'conversion', {
@@ -243,7 +236,6 @@ const openWhatsApp = (context, args = [], meta = {}) => {
     currency: 'AED',
     event_category: 'WhatsApp',
     event_label: context,
-    // Pass click IDs for attribution (Google may use for debugging/some setups)
     gclid: attr.gclid || undefined,
     wbraid: attr.wbraid || undefined,
     gbraid: attr.gbraid || undefined,
@@ -256,10 +248,8 @@ const openWhatsApp = (context, args = [], meta = {}) => {
     click_value: value
   });
 
-  // Mark that user clicked WhatsApp (don't show exit popup to hot leads)
-  try { sessionStorage.setItem('wa_clicked', '1'); } catch(e) { /* Storage blocked */ }
+  try { sessionStorage.setItem('wa_clicked', '1'); } catch(e) {}
 
-  // Security flags: noopener,noreferrer
   window.open(
     `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
     '_blank',
@@ -294,219 +284,39 @@ function ClickableCard({ children, onClick, className = '', style = {}, ariaLabe
 }
 
 // ============================================
-// KEYWORD MAPPING (QS Critical - Complete)
+// KEYWORD MAPPING
 // ============================================
 const KEYWORD_MAP = {
-  'interior renovation company': {
-    h1: 'Interior Renovation Company',
-    h2: 'Bespoke Interior Transformations in Dubai',
-    service: 'Interior Renovation',
-    highlight: 'interior',
-    metaDesc: 'Premier interior renovation company in Dubai. 800+ projects completed. Municipality approved. Complimentary 3D visualization.',
-  },
-  'interior renovation': {
-    h1: 'Interior Renovation Dubai',
-    h2: 'Elevated Interior Design & Renovation',
-    service: 'Interior Renovation',
-    highlight: 'interior',
-    metaDesc: 'Luxury interior renovation in Dubai. Complete transformations with fixed pricing and 5-year warranty.',
-  },
-  'villa renovation dubai': {
-    h1: 'Villa Renovation Dubai',
-    h2: 'Where Architecture Meets Artistry',
-    service: 'Villa Renovation',
-    highlight: 'villa',
-    metaDesc: 'Premier villa renovation in Dubai. 800+ villas transformed. Fixed pricing. 6-8 weeks delivery.',
-  },
-  'villa renovation in dubai': {
-    h1: 'Villa Renovation in Dubai',
-    h2: 'Timeless Villa Transformations',
-    service: 'Villa Renovation',
-    highlight: 'villa',
-    metaDesc: 'Luxury villa renovation in Dubai. Municipality approved. 5-year craftsmanship warranty.',
-  },
-  'villa renovation': {
-    h1: 'Villa Renovation Dubai',
-    h2: "Dubai's Most Distinguished Villa Renovation Studio",
-    service: 'Villa Renovation',
-    highlight: 'villa',
-    metaDesc: 'Bespoke villa renovation services in Dubai. Fixed pricing. On-time delivery guaranteed.',
-  },
-  'villa renovations': {
-    h1: 'Villa Renovations Dubai',
-    h2: 'Crafting Legacy Homes Since 2012',
-    service: 'Villa Renovation',
-    highlight: 'villa',
-    metaDesc: 'Exquisite villa renovations in Dubai by master craftsmen. 800+ projects completed.',
-  },
-  'villa contractors in dubai': {
-    h1: 'Villa Contractors in Dubai',
-    h2: 'Licensed Master Contractors',
-    service: 'Villa Contracting',
-    highlight: 'contractor',
-    metaDesc: 'Licensed villa contractors in Dubai. Municipality approved. Fixed price guarantee.',
-  },
-  'villa contractors': {
-    h1: 'Villa Contractors Dubai',
-    h2: 'Master Craftsmen for Discerning Homeowners',
-    service: 'Villa Contracting',
-    highlight: 'contractor',
-    metaDesc: 'Elite villa contractors in Dubai. 15+ years mastery. 800+ prestigious projects.',
-  },
-  'villa renovation contractors': {
-    h1: 'Villa Renovation Contractors Dubai',
-    h2: 'The Architects of Transformation',
-    service: 'Villa Contracting',
-    highlight: 'contractor',
-    metaDesc: 'Premier villa renovation contractors in Dubai. Licensed. Insured. 5-year warranty.',
-  },
-  'villa extension': {
-    h1: 'Villa Extension Dubai',
-    h2: 'Expand Your Living Legacy',
-    service: 'Villa Extension',
-    highlight: 'extension',
-    metaDesc: 'Luxury villa extension Dubai. Additional rooms, floors, outdoor sanctuaries. Municipality approved.',
-  },
-  'villa extension dubai': {
-    h1: 'Villa Extension Dubai',
-    h2: 'Seamless Expansion, Timeless Design',
-    service: 'Villa Extension',
-    highlight: 'extension',
-    metaDesc: 'Bespoke villa extension services in Dubai. Expert architects. Fixed pricing.',
-  },
-  'office fit out dubai': {
-    h1: 'Office Fit Out Dubai',
-    h2: 'Professional Workspaces, Exceptional Results',
-    service: 'Office Fit Out',
-    highlight: 'fitout',
-    metaDesc: 'Premium office fit out Dubai. Complete commercial solutions. Complimentary 3D design.',
-  },
-  'office fitout dubai': {
-    h1: 'Office Fitout Dubai',
-    h2: 'Transforming Commercial Spaces',
-    service: 'Office Fit Out',
-    highlight: 'fitout',
-    metaDesc: 'Expert office fitout Dubai. Turnkey solutions. Municipality approved.',
-  },
-  'office fit out': {
-    h1: 'Office Fit Out Dubai',
-    h2: 'Where Productivity Meets Design',
-    service: 'Office Fit Out',
-    highlight: 'fitout',
-    metaDesc: 'Bespoke office fit out services in Dubai. Premium finishes. On-time delivery.',
-  },
-  'home renovation companies dubai': {
-    h1: 'Home Renovation Company Dubai',
-    h2: "Dubai's Premier Home Transformation Studio",
-    service: 'Home Renovation',
-    highlight: 'home',
-    metaDesc: 'Leading home renovation company in Dubai. 800+ homes transformed. Complimentary consultation.',
-  },
-  'home renovation': {
-    h1: 'Home Renovation Dubai',
-    h2: 'Reimagine Your Living Space',
-    service: 'Home Renovation',
-    highlight: 'home',
-    metaDesc: 'Luxury home renovation Dubai. Complete makeovers. Fixed price guarantee.',
-  },
-  'home remodeling': {
-    h1: 'Home Remodeling Dubai',
-    h2: 'Architectural Excellence, Personal Touch',
-    service: 'Home Remodeling',
-    highlight: 'home',
-    metaDesc: 'Bespoke home remodeling Dubai. Kitchen, bathroom, complete transformation.',
-  },
-  'renovation companies': {
-    h1: 'Renovation Company Dubai',
-    h2: "Dubai's Distinguished Renovation Atelier",
-    service: 'Renovation Services',
-    highlight: 'company',
-    metaDesc: 'Premier renovation company in Dubai. Villa, home, interior. 800+ projects.',
-  },
-  'renovation company in dubai': {
-    h1: 'Renovation Company in Dubai',
-    h2: 'Crafting Extraordinary Spaces',
-    service: 'Renovation Services',
-    highlight: 'company',
-    metaDesc: 'Elite renovation company in Dubai. Municipality approved. Complimentary consultation.',
-  },
-  'apartment renovation': {
-    h1: 'Apartment Renovation Dubai',
-    h2: 'Elevated Urban Living',
-    service: 'Apartment Renovation',
-    highlight: 'apartment',
-    metaDesc: 'Luxury apartment renovation Dubai. Studio to penthouse. Complimentary 3D design.',
-  },
-  'kitchen renovation': {
-    h1: 'Kitchen Renovation Dubai',
-    h2: 'Culinary Spaces Crafted for Modern Living',
-    service: 'Kitchen Renovation',
-    highlight: 'kitchen',
-    metaDesc: 'Luxury kitchen renovation in Dubai. German fittings. Fixed pricing. 5-year warranty.',
-  },
-  'kitchen renovation dubai': {
-    h1: 'Kitchen Renovation Dubai',
-    h2: 'Where Culinary Dreams Come True',
-    service: 'Kitchen Renovation',
-    highlight: 'kitchen',
-    metaDesc: 'Premium kitchen renovation Dubai. Complete transformations. Complimentary 3D design.',
-  },
-  'bathroom renovation': {
-    h1: 'Bathroom Renovation Dubai',
-    h2: 'Spa-Inspired Sanctuaries',
-    service: 'Bathroom Renovation',
-    highlight: 'bathroom',
-    metaDesc: 'Luxury bathroom renovation in Dubai. Premium finishes. Fixed pricing.',
-  },
-  'bathroom renovation dubai': {
-    h1: 'Bathroom Renovation Dubai',
-    h2: 'Transform Your Daily Ritual',
-    service: 'Bathroom Renovation',
-    highlight: 'bathroom',
-    metaDesc: 'Spa-inspired bathroom renovation Dubai. Italian tiles. German fittings.',
-  },
-  'damac hills villa renovation': {
-    h1: 'DAMAC Hills Villa Renovation',
-    h2: 'Local Expertise, Global Standards',
-    service: 'Villa Renovation',
-    highlight: 'location',
-    metaDesc: 'DAMAC Hills villa renovation specialists. Community experts. Complimentary consultation.',
-  },
-  'arabian ranches villa renovation': {
-    h1: 'Arabian Ranches Villa Renovation',
-    h2: 'Transforming Arabian Ranches Since 2012',
-    service: 'Villa Renovation',
-    highlight: 'location',
-    metaDesc: 'Arabian Ranches villa renovation. 100+ projects in community. Local specialists.',
-  },
-  'palm jumeirah villa renovation': {
-    h1: 'Palm Jumeirah Villa Renovation',
-    h2: 'Iconic Homes Deserve Iconic Craftsmanship',
-    service: 'Villa Renovation',
-    highlight: 'location',
-    metaDesc: 'Palm Jumeirah villa renovation. Luxury waterfront specialists. Complimentary 3D design.',
-  },
-  'emirates hills villa renovation': {
-    h1: 'Emirates Hills Villa Renovation',
-    h2: 'Elevating Emirates Hills Estates',
-    service: 'Villa Renovation',
-    highlight: 'location',
-    metaDesc: 'Emirates Hills villa renovation. Ultra-luxury specialists. Municipality approved.',
-  },
-  'dubai hills villa renovation': {
-    h1: 'Dubai Hills Villa Renovation',
-    h2: 'Modern Elegance in Dubai Hills',
-    service: 'Villa Renovation',
-    highlight: 'location',
-    metaDesc: 'Dubai Hills villa renovation specialists. Contemporary design. Complimentary quote.',
-  },
-  default: {
-    h1: 'Villa Renovation Dubai',
-    h2: 'Where Vision Becomes Legacy',
-    service: 'Villa Renovation',
-    highlight: 'villa',
-    metaDesc: 'Premier villa renovation studio in Dubai. 800+ projects. Complimentary 3D visualization.',
-  },
+  'interior renovation company': { h1: 'Interior Renovation Company', h2: 'Bespoke Interior Transformations in Dubai', service: 'Interior Renovation', highlight: 'interior', metaDesc: 'Premier interior renovation company in Dubai. 800+ projects completed. Municipality approved. Complimentary 3D visualization.' },
+  'interior renovation': { h1: 'Interior Renovation Dubai', h2: 'Elevated Interior Design & Renovation', service: 'Interior Renovation', highlight: 'interior', metaDesc: 'Luxury interior renovation in Dubai. Complete transformations with fixed pricing and 5-year warranty.' },
+  'villa renovation dubai': { h1: 'Villa Renovation Dubai', h2: 'Where Architecture Meets Artistry', service: 'Villa Renovation', highlight: 'villa', metaDesc: 'Premier villa renovation in Dubai. 800+ villas transformed. Fixed pricing. 6-8 weeks delivery.' },
+  'villa renovation in dubai': { h1: 'Villa Renovation in Dubai', h2: 'Timeless Villa Transformations', service: 'Villa Renovation', highlight: 'villa', metaDesc: 'Luxury villa renovation in Dubai. Municipality approved. 5-year craftsmanship warranty.' },
+  'villa renovation': { h1: 'Villa Renovation Dubai', h2: "Dubai's Most Distinguished Villa Renovation Studio", service: 'Villa Renovation', highlight: 'villa', metaDesc: 'Bespoke villa renovation services in Dubai. Fixed pricing. On-time delivery guaranteed.' },
+  'villa renovations': { h1: 'Villa Renovations Dubai', h2: 'Crafting Legacy Homes Since 2012', service: 'Villa Renovation', highlight: 'villa', metaDesc: 'Exquisite villa renovations in Dubai by master craftsmen. 800+ projects completed.' },
+  'villa contractors in dubai': { h1: 'Villa Contractors in Dubai', h2: 'Licensed Master Contractors', service: 'Villa Contracting', highlight: 'contractor', metaDesc: 'Licensed villa contractors in Dubai. Municipality approved. Fixed price guarantee.' },
+  'villa contractors': { h1: 'Villa Contractors Dubai', h2: 'Master Craftsmen for Discerning Homeowners', service: 'Villa Contracting', highlight: 'contractor', metaDesc: 'Elite villa contractors in Dubai. 15+ years mastery. 800+ prestigious projects.' },
+  'villa renovation contractors': { h1: 'Villa Renovation Contractors Dubai', h2: 'The Architects of Transformation', service: 'Villa Contracting', highlight: 'contractor', metaDesc: 'Premier villa renovation contractors in Dubai. Licensed. Insured. 5-year warranty.' },
+  'villa extension': { h1: 'Villa Extension Dubai', h2: 'Expand Your Living Legacy', service: 'Villa Extension', highlight: 'extension', metaDesc: 'Luxury villa extension Dubai. Additional rooms, floors, outdoor sanctuaries. Municipality approved.' },
+  'villa extension dubai': { h1: 'Villa Extension Dubai', h2: 'Seamless Expansion, Timeless Design', service: 'Villa Extension', highlight: 'extension', metaDesc: 'Bespoke villa extension services in Dubai. Expert architects. Fixed pricing.' },
+  'office fit out dubai': { h1: 'Office Fit Out Dubai', h2: 'Professional Workspaces, Exceptional Results', service: 'Office Fit Out', highlight: 'fitout', metaDesc: 'Premium office fit out Dubai. Complete commercial solutions. Complimentary 3D design.' },
+  'office fitout dubai': { h1: 'Office Fitout Dubai', h2: 'Transforming Commercial Spaces', service: 'Office Fit Out', highlight: 'fitout', metaDesc: 'Expert office fitout Dubai. Turnkey solutions. Municipality approved.' },
+  'office fit out': { h1: 'Office Fit Out Dubai', h2: 'Where Productivity Meets Design', service: 'Office Fit Out', highlight: 'fitout', metaDesc: 'Bespoke office fit out services in Dubai. Premium finishes. On-time delivery.' },
+  'home renovation companies dubai': { h1: 'Home Renovation Company Dubai', h2: "Dubai's Premier Home Transformation Studio", service: 'Home Renovation', highlight: 'home', metaDesc: 'Leading home renovation company in Dubai. 800+ homes transformed. Complimentary consultation.' },
+  'home renovation': { h1: 'Home Renovation Dubai', h2: 'Reimagine Your Living Space', service: 'Home Renovation', highlight: 'home', metaDesc: 'Luxury home renovation Dubai. Complete makeovers. Fixed price guarantee.' },
+  'home remodeling': { h1: 'Home Remodeling Dubai', h2: 'Architectural Excellence, Personal Touch', service: 'Home Remodeling', highlight: 'home', metaDesc: 'Bespoke home remodeling Dubai. Kitchen, bathroom, complete transformation.' },
+  'renovation companies': { h1: 'Renovation Company Dubai', h2: "Dubai's Distinguished Renovation Atelier", service: 'Renovation Services', highlight: 'company', metaDesc: 'Premier renovation company in Dubai. Villa, home, interior. 800+ projects.' },
+  'renovation company in dubai': { h1: 'Renovation Company in Dubai', h2: 'Crafting Extraordinary Spaces', service: 'Renovation Services', highlight: 'company', metaDesc: 'Elite renovation company in Dubai. Municipality approved. Complimentary consultation.' },
+  'apartment renovation': { h1: 'Apartment Renovation Dubai', h2: 'Elevated Urban Living', service: 'Apartment Renovation', highlight: 'apartment', metaDesc: 'Luxury apartment renovation Dubai. Studio to penthouse. Complimentary 3D design.' },
+  'kitchen renovation': { h1: 'Kitchen Renovation Dubai', h2: 'Culinary Spaces Crafted for Modern Living', service: 'Kitchen Renovation', highlight: 'kitchen', metaDesc: 'Luxury kitchen renovation in Dubai. German fittings. Fixed pricing. 5-year warranty.' },
+  'kitchen renovation dubai': { h1: 'Kitchen Renovation Dubai', h2: 'Where Culinary Dreams Come True', service: 'Kitchen Renovation', highlight: 'kitchen', metaDesc: 'Premium kitchen renovation Dubai. Complete transformations. Complimentary 3D design.' },
+  'bathroom renovation': { h1: 'Bathroom Renovation Dubai', h2: 'Spa-Inspired Sanctuaries', service: 'Bathroom Renovation', highlight: 'bathroom', metaDesc: 'Luxury bathroom renovation in Dubai. Premium finishes. Fixed pricing.' },
+  'bathroom renovation dubai': { h1: 'Bathroom Renovation Dubai', h2: 'Transform Your Daily Ritual', service: 'Bathroom Renovation', highlight: 'bathroom', metaDesc: 'Spa-inspired bathroom renovation Dubai. Italian tiles. German fittings.' },
+  'damac hills villa renovation': { h1: 'DAMAC Hills Villa Renovation', h2: 'Local Expertise, Global Standards', service: 'Villa Renovation', highlight: 'location', metaDesc: 'DAMAC Hills villa renovation specialists. Community experts. Complimentary consultation.' },
+  'arabian ranches villa renovation': { h1: 'Arabian Ranches Villa Renovation', h2: 'Transforming Arabian Ranches Since 2012', service: 'Villa Renovation', highlight: 'location', metaDesc: 'Arabian Ranches villa renovation. 100+ projects in community. Local specialists.' },
+  'palm jumeirah villa renovation': { h1: 'Palm Jumeirah Villa Renovation', h2: 'Iconic Homes Deserve Iconic Craftsmanship', service: 'Villa Renovation', highlight: 'location', metaDesc: 'Palm Jumeirah villa renovation. Luxury waterfront specialists. Complimentary 3D design.' },
+  'emirates hills villa renovation': { h1: 'Emirates Hills Villa Renovation', h2: 'Elevating Emirates Hills Estates', service: 'Villa Renovation', highlight: 'location', metaDesc: 'Emirates Hills villa renovation. Ultra-luxury specialists. Municipality approved.' },
+  'dubai hills villa renovation': { h1: 'Dubai Hills Villa Renovation', h2: 'Modern Elegance in Dubai Hills', service: 'Villa Renovation', highlight: 'location', metaDesc: 'Dubai Hills villa renovation specialists. Contemporary design. Complimentary quote.' },
+  default: { h1: 'Villa Renovation Dubai', h2: 'Where Vision Becomes Legacy', service: 'Villa Renovation', highlight: 'villa', metaDesc: 'Premier villa renovation studio in Dubai. 800+ projects. Complimentary 3D visualization.' },
 };
 
 // ============================================
@@ -522,51 +332,31 @@ const ALL_SERVICES = [
 ];
 
 const getRelevantServices = (highlight) => {
-  return [...ALL_SERVICES]
-    .sort((a, b) => {
-      const aMatch = a.tags.includes(highlight) ? 0 : 1;
-      const bMatch = b.tags.includes(highlight) ? 0 : 1;
-      return aMatch - bMatch;
-    })
-    .slice(0, 6);
+  return [...ALL_SERVICES].sort((a, b) => {
+    const aMatch = a.tags.includes(highlight) ? 0 : 1;
+    const bMatch = b.tags.includes(highlight) ? 0 : 1;
+    return aMatch - bMatch;
+  }).slice(0, 6);
 };
 
 // ============================================
 // PROCESS STEPS
 // ============================================
 const PROCESS_STEPS = [
-  { step: '01', title: 'Discovery', desc: 'Complimentary site visit & vision alignment', icon: '◈', time: 'Day 1', cta: 'Book Free Visit' },
-  { step: '02', title: 'Design', desc: '3D visualization & detailed proposal', icon: '◇', time: 'Days 2-5', cta: 'See 3D Samples' },
-  { step: '03', title: 'Approvals', desc: 'Municipality permits handled seamlessly', icon: '◆', time: 'Days 6-14', cta: 'Learn More' },
-  { step: '04', title: 'Craft', desc: 'Master execution with weekly updates', icon: '▣', time: 'Weeks 3-7', cta: 'View Timeline' },
-  { step: '05', title: 'Handover', desc: 'Final walkthrough & warranty activation', icon: '✧', time: 'Week 8', cta: 'Start Now' },
+  { step: '01', title: 'Discovery', desc: 'Complimentary site visit & vision alignment', icon: '◈', time: 'Day 1' },
+  { step: '02', title: 'Design', desc: '3D visualization & detailed proposal', icon: '◇', time: 'Days 2-5' },
+  { step: '03', title: 'Approvals', desc: 'Municipality permits handled seamlessly', icon: '◆', time: 'Days 6-14' },
+  { step: '04', title: 'Craft', desc: 'Master execution with weekly updates', icon: '▣', time: 'Weeks 3-7' },
+  { step: '05', title: 'Handover', desc: 'Final walkthrough & warranty activation', icon: '✧', time: 'Week 8' },
 ];
 
 // ============================================
 // TESTIMONIALS
 // ============================================
 const TESTIMONIALS = [
-  { 
-    name: 'Ahmed Al-Rashid', 
-    location: 'Emirates Hills', 
-    text: 'An exceptional experience from start to finish. The team understood our vision for a contemporary yet timeless aesthetic. The 3D visualization was remarkably accurate, and the craftsmanship exceeded our highest expectations.',
-    rating: 5,
-    project: 'Complete Villa Renovation',
-  },
-  { 
-    name: 'Sarah Mitchell', 
-    location: 'Arabian Ranches', 
-    text: 'We interviewed five contractors before choosing Unicorn. Their attention to detail, transparent pricing, and respect for our home during construction set them apart. The result is nothing short of transformative.',
-    rating: 5,
-    project: 'Interior Transformation',
-  },
-  { 
-    name: 'James & Victoria Chen', 
-    location: 'Palm Jumeirah', 
-    text: 'Our waterfront villa required specialists who understood both luxury and the unique challenges of Palm properties. Unicorn delivered impeccably—on time, on budget, and beyond our vision.',
-    rating: 5,
-    project: 'Villa Extension',
-  },
+  { name: 'Ahmed Al-Rashid', location: 'Emirates Hills', text: 'An exceptional experience from start to finish. The team understood our vision for a contemporary yet timeless aesthetic. The 3D visualization was remarkably accurate, and the craftsmanship exceeded our highest expectations.', rating: 5, project: 'Complete Villa Renovation' },
+  { name: 'Sarah Mitchell', location: 'Arabian Ranches', text: 'We interviewed five contractors before choosing Unicorn. Their attention to detail, transparent pricing, and respect for our home during construction set them apart. The result is nothing short of transformative.', rating: 5, project: 'Interior Transformation' },
+  { name: 'James & Victoria Chen', location: 'Palm Jumeirah', text: 'Our waterfront villa required specialists who understood both luxury and the unique challenges of Palm properties. Unicorn delivered impeccably—on time, on budget, and beyond our vision.', rating: 5, project: 'Villa Extension' },
 ];
 
 // ============================================
@@ -628,13 +418,11 @@ const TIMELINES = [
 ];
 
 // ============================================
-// FIX #6: COMPUTE SLOTS ON SERVER (Dubai timezone)
-// Avoids hydration mismatch
+// COMPUTE SLOTS ON SERVER (Dubai timezone)
 // ============================================
 function computeSlotsLeft() {
-  // Get Dubai time (UTC+4)
   const now = new Date();
-  const dubaiOffset = 4 * 60; // minutes
+  const dubaiOffset = 4 * 60;
   const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
   const dubaiMinutes = utcMinutes + dubaiOffset;
   const dubaiHour = Math.floor(dubaiMinutes / 60) % 24;
@@ -648,15 +436,8 @@ function computeSlotsLeft() {
 // ============================================
 // SSR FUNCTIONS
 // ============================================
-
-// FIX #5: Safer regex for keyword normalization
 function normalizeKeyword(raw) {
-  return (raw || '')
-    .toString()
-    .toLowerCase()
-    .replace(/[+_-]/g, ' ')
-    .replace(/[\[\]"'{}]/g, '') // Fixed: properly escaped brackets
-    .trim();
+  return (raw || '').toString().toLowerCase().replace(/[+_-]/g, ' ').replace(/[\[\]"'{}]/g, '').trim();
 }
 
 function resolveKeywordConfig(keywordRaw, locationRaw) {
@@ -705,14 +486,11 @@ function buildFaq(content) {
   ];
 }
 
-// FIX #6: Compute slots + year on server to avoid hydration mismatch
 export async function getServerSideProps(ctx) {
   const q = ctx.query || {};
   const keywordRaw = q.kw || q.keyword || q.utm_term || q.q || '';
   const locationRaw = q.loc || q.location || 'Dubai';
   const { content, services } = resolveKeywordConfig(keywordRaw, locationRaw);
-  
-  // Compute slots on server
   const initialSlots = computeSlotsLeft();
   
   return { 
@@ -720,7 +498,7 @@ export async function getServerSideProps(ctx) {
       initialContent: content, 
       initialServices: services,
       initialSlots,
-      currentYear: new Date().getFullYear(), // For footer - avoids hydration mismatch
+      currentYear: new Date().getFullYear(),
     } 
   };
 }
@@ -735,46 +513,20 @@ function VideoCard({ video, onChatClick }) {
   return (
     <div className="video-card">
       {isPlaying ? (
-        <video
-          ref={videoRef}
-          src={video.videoSrc}
-          poster={video.thumbnail}
-          controls
-          playsInline
-          autoPlay
-        />
+        <video ref={videoRef} src={video.videoSrc} poster={video.thumbnail} controls playsInline autoPlay />
       ) : (
         <>
-          <Image
-            src={video.thumbnail}
-            alt={`${video.name} testimonial video`}
-            fill
-            sizes="320px"
-            style={{ objectFit: 'cover' }}
-            loading="lazy"
-            quality={75}
-          />
-          
+          <Image src={video.thumbnail} alt={`${video.name} testimonial video`} fill sizes="320px" style={{ objectFit: 'cover' }} loading="lazy" quality={75} />
           <div className="video-overlay" />
-
           <div className="video-duration">▶ {video.duration}</div>
           <div className="video-project">{video.project}</div>
-
-          <button 
-            onClick={() => setIsPlaying(true)}
-            aria-label={`Play ${video.name}'s testimonial video`}
-            className="video-play-btn"
-          >
+          <button onClick={() => setIsPlaying(true)} aria-label={`Play ${video.name}'s testimonial video`} className="video-play-btn">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
           </button>
-
           <div className="video-info">
             <p className="video-name">{video.name}</p>
             <p className="video-location"><span style={{ color: 'var(--gold-light)' }}>◆</span> {video.location}</p>
-            
-            <button onClick={(e) => { e.stopPropagation(); onChatClick(); }} className="video-cta" style={{ opacity: 0, height: 0, padding: 0, overflow: 'hidden' }}>
-              I Want This Too!
-            </button>
+            <button onClick={(e) => { e.stopPropagation(); onChatClick(); }} className="video-cta" style={{ opacity: 0, height: 0, padding: 0, overflow: 'hidden' }}>I Want This Too!</button>
           </div>
         </>
       )}
@@ -790,62 +542,33 @@ function LeadQualifier({ service, price, onClose, onSubmit }) {
   const [timeline, setTimeline] = useState(null);
 
   const handleSubmit = () => {
-    if (budget && timeline) {
-      onSubmit(budget.value, timeline.value);
-    }
+    if (budget && timeline) onSubmit(budget.value, timeline.value);
   };
 
   return (
     <>
       <div className="qualifier-backdrop" onClick={onClose} aria-hidden="true" />
-      
       <div className="qualifier-sheet" role="dialog" aria-modal="true" aria-labelledby="qualifier-title">
         <div className="qualifier-handle" />
-        
         <h3 id="qualifier-title" className="qualifier-title">Quick Questions 🎯</h3>
         <p className="qualifier-subtitle">Help us prepare the perfect quote for your <strong>{service}</strong></p>
-
         <p className="qualifier-label">💰 Approximate Budget (AED)</p>
         <div className="qualifier-chips">
           {BUDGETS.map((b) => (
-            <button
-              key={b.label}
-              onClick={() => setBudget(b)}
-              className={`qualifier-chip ${budget?.label === b.label ? 'selected' : ''}`}
-            >
-              {b.label}
-            </button>
+            <button key={b.label} onClick={() => setBudget(b)} className={`qualifier-chip ${budget?.label === b.label ? 'selected' : ''}`}>{b.label}</button>
           ))}
         </div>
-
         <p className="qualifier-label">⏰ When do you want to start?</p>
         <div className="qualifier-chips">
           {TIMELINES.map((t) => (
-            <button
-              key={t.label}
-              onClick={() => setTimeline(t)}
-              className={`qualifier-chip ${timeline?.label === t.label ? 'selected' : ''}`}
-            >
-              {t.label}
-            </button>
+            <button key={t.label} onClick={() => setTimeline(t)} className={`qualifier-chip ${timeline?.label === t.label ? 'selected' : ''}`}>{t.label}</button>
           ))}
         </div>
-
-        <button
-          onClick={handleSubmit}
-          disabled={!budget || !timeline}
-          className={`qualifier-submit ${budget && timeline ? 'active' : ''}`}
-        >
+        <button onClick={handleSubmit} disabled={!budget || !timeline} className={`qualifier-submit ${budget && timeline ? 'active' : ''}`}>
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
           {budget && timeline ? 'Chat on WhatsApp' : 'Select both options'}
         </button>
-
-        <button
-          onClick={() => { openWhatsApp('service', [service, price], { skipped_qualifier: true }); onClose(); }}
-          className="qualifier-skip"
-        >
-          Skip, just chat →
-        </button>
+        <button onClick={() => { openWhatsApp('service', [service, price], { skipped_qualifier: true }); onClose(); }} className="qualifier-skip">Skip, just chat →</button>
       </div>
     </>
   );
@@ -855,7 +578,7 @@ function LeadQualifier({ service, price, onClose, onSubmit }) {
 // MAIN COMPONENT
 // ============================================
 export default function FinalLandingPage({ initialContent, initialServices, initialSlots, currentYear }) {
-  const [slotsLeft] = useState(initialSlots); // FIX #6: Use SSR value, no client update
+  const [slotsLeft] = useState(initialSlots);
   const [showExitSheet, setShowExitSheet] = useState(false);
   const [scrollPct, setScrollPct] = useState(0);
   const [openFaq, setOpenFaq] = useState(null);
@@ -867,37 +590,24 @@ export default function FinalLandingPage({ initialContent, initialServices, init
   const faqs = useMemo(() => buildFaq(content), [content]);
   const isHot = scrollPct >= 60;
 
-  // Smart background click - opens WhatsApp on dead space taps
   const handleBackgroundClick = (e) => {
-    // Don't trigger if clicking interactive elements
     const interactive = ['BUTTON', 'A', 'INPUT', 'VIDEO', 'SVG', 'PATH'];
     if (interactive.includes(e.target.tagName)) return;
-    
-    // Don't trigger if clicking inside cards, buttons, or other interactive areas
     if (e.target.closest('button, a, .clickable-card, .btn, video, .faq-q, .qualifier-sheet, .sheet')) return;
-    
-    // Open WhatsApp
     openWhatsApp('floatingButton', []);
   };
 
-  // Initialize attribution on mount
-  useEffect(() => {
-    getAttribution();
-  }, []);
+  useEffect(() => { getAttribution(); }, []);
 
-  // Scroll tracking
   useEffect(() => {
     const onScroll = () => {
       const scrollable = document.body.scrollHeight - window.innerHeight;
-      if (scrollable > 0) {
-        setScrollPct(Math.round((window.scrollY / scrollable) * 100));
-      }
+      if (scrollable > 0) setScrollPct(Math.round((window.scrollY / scrollable) * 100));
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Mobile exit intent (45 second timeout) - skip if already clicked WA
   useEffect(() => {
     const t = setTimeout(() => {
       if (!exitShown.current && !hasClickedWhatsApp() && typeof window !== 'undefined' && window.innerWidth < 768) {
@@ -908,52 +618,34 @@ export default function FinalLandingPage({ initialContent, initialServices, init
     return () => clearTimeout(t);
   }, []);
 
-  // Desktop exit intent (mouseout) - requires 15% scroll to avoid aggressive triggers
   useEffect(() => {
     const handleMouseOut = (e) => {
       if (exitShown.current || hasClickedWhatsApp()) return;
-      
-      // Require minimum engagement (15% scroll) before showing
       if (scrollPct < 15) return;
-      
-      // If leaving window (no relatedTarget) and near top of screen
       if (!e.relatedTarget && e.clientY < 50) {
         exitShown.current = true;
         setShowExitSheet(true);
       }
     };
-    
     window.addEventListener('mouseout', handleMouseOut);
     return () => window.removeEventListener('mouseout', handleMouseOut);
   }, [scrollPct]);
 
-  // Handle qualified lead
   const handleQualifiedSubmit = (budget, timeline) => {
-    openWhatsApp('qualified', [qualifier.service, budget, timeline], { 
-      budget, 
-      timeline,
-      service: qualifier.service 
-    });
+    openWhatsApp('qualified', [qualifier.service, budget, timeline], { budget, timeline, service: qualifier.service });
     setQualifier(null);
   };
 
-  // Service click opens qualifier
   const handleServiceClick = (service) => {
     setQualifier({ service: service.title, price: service.price });
   };
 
-  // Schema markup
   const faqSchema = useMemo(() => ({
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map(f => ({ 
-      "@type": "Question", 
-      "name": f.q, 
-      "acceptedAnswer": { "@type": "Answer", "text": f.a } 
-    }))
+    "mainEntity": faqs.map(f => ({ "@type": "Question", "name": f.q, "acceptedAnswer": { "@type": "Answer", "text": f.a } }))
   }), [faqs]);
 
-  // SEO title - limit length to prevent keyword stuffing
   const seoTitle = (content.h1 || 'Villa Renovation Dubai').slice(0, 50);
 
   return (
@@ -963,205 +655,24 @@ export default function FinalLandingPage({ initialContent, initialServices, init
         <meta name="description" content={content.metaDesc} />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#1a1a1a" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="robots" content="index, follow" />
         <link rel="preconnect" href="https://wa.me" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="canonical" href="https://dubailuxrenovate.com" />
-        
-        {/* Schema - LocalBusiness without specific review counts */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "HomeAndConstructionBusiness",
-          "name": "Unicorn Renovations",
-          "description": content.metaDesc,
-          "url": "https://dubailuxrenovate.com",
-          "telephone": "+971585658002",
-          "address": { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" },
-          "areaServed": AREAS_SERVED,
-        })}} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "HomeAndConstructionBusiness", "name": "Unicorn Renovations", "description": content.metaDesc, "url": "https://dubailuxrenovate.com", "telephone": "+971585658002", "address": { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" }, "areaServed": AREAS_SERVED }) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-
-        <style dangerouslySetInnerHTML={{ __html: `
-          :root {
-            --gold: #c9a227;
-            --gold-light: #d4af37;
-            --gold-dark: #a68521;
-            --charcoal: #1a1a1a;
-            --charcoal-light: #2d2d2d;
-            --cream: #faf8f5;
-            --wa: #25D366;
-            --wa-dark: #128c7e;
-            --safe-b: env(safe-area-inset-bottom, 0px);
-          }
-          
-          * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-          html { scroll-behavior: smooth; }
-          body { 
-            font-family: var(--font-inter), 'Inter', -apple-system, sans-serif; 
-            color: var(--charcoal); 
-            line-height: 1.6; 
-            background: #fff;
-            -webkit-font-smoothing: antialiased;
-          }
-          
-          .font-display { font-family: var(--font-display), 'Playfair Display', Georgia, serif; }
-          .c { width: 100%; padding: 0 12px; max-width: 1200px; margin: 0 auto; }
-          
-          /* Buttons - min 48px touch target */
-          .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            min-height: 52px;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.15s;
-            text-decoration: none;
-          }
-          .btn:active { transform: scale(0.97); }
-          .btn:focus-visible { outline: 3px solid var(--wa); outline-offset: 2px; }
-          
-          .btn-wa { 
-            background: linear-gradient(135deg, var(--wa) 0%, var(--wa-dark) 100%); 
-            color: #fff; 
-            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3); 
-          }
-          
-          /* Cards */
-          .clickable-card { 
-            transition: transform 0.2s, box-shadow 0.2s; 
-            border-radius: 16px;
-            background: #fff;
-            border: 1px solid #f0f0f0;
-          }
-          .clickable-card:active { transform: scale(0.98); }
-          .clickable-card:focus-visible { outline: 3px solid var(--wa); outline-offset: 2px; }
-          .clickable-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
-          
-          /* Sections - tighter on mobile */
-          section { padding: 40px 0; }
-          
-          /* Typography */
-          h1 { font-size: 28px; font-weight: 700; line-height: 1.15; }
-          h2 { font-size: 22px; font-weight: 600; line-height: 1.2; }
-          h3 { font-size: 16px; font-weight: 600; }
-          
-          /* VERTICAL GRIDS - No horizontal scroll */
-          .grid-1 { display: grid; grid-template-columns: 1fr; gap: 12px; }
-          .grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
-          .grid-3 { display: grid; grid-template-columns: 1fr; gap: 12px; }
-          .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-          .grid-5 { display: grid; grid-template-columns: 1fr; gap: 12px; }
-          .grid-6 { display: grid; grid-template-columns: 1fr; gap: 12px; }
-          
-          /* FIX #1: Areas grid - mobile default is flex, desktop is grid */
-          .areas-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-          }
-          
-          /* Bottom sheet */
-          .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
-          .sheet-bg.open { opacity: 1; pointer-events: auto; }
-          .sheet { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-radius: 24px 24px 0 0; padding: 24px 20px calc(24px + var(--safe-b)); z-index: 1000; transform: translateY(100%); transition: transform 0.3s ease; }
-          .sheet.open { transform: translateY(0); }
-          
-          /* Sticky bottom */
-          .sticky-b { position: fixed; bottom: 0; left: 0; right: 0; background: var(--charcoal); padding: 12px 16px calc(12px + var(--safe-b)); z-index: 100; display: flex; gap: 12px; }
-          .sticky-b.hot { background: linear-gradient(135deg, var(--wa) 0%, var(--wa-dark) 100%); }
-          
-          /* FAQ */
-          .faq-item { border-bottom: 1px solid #eee; }
-          .faq-q { padding: 20px 0; font-size: 16px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; cursor: pointer; min-height: 60px; width: 100%; background: none; border: none; text-align: left; }
-          .faq-q:focus-visible { outline: 2px solid var(--wa); outline-offset: -2px; }
-          .faq-a { padding: 0 0 20px; font-size: 15px; color: #666; line-height: 1.7; display: none; }
-          .faq-a.open { display: block; }
-          
-          /* Video Card - 16:9 aspect for vertical scroll */
-          .video-card { position: relative; width: 100%; border-radius: 16px; overflow: hidden; background: #0a0a0a; aspect-ratio: 16/9; }
-          .video-card video { width: 100%; height: 100%; object-fit: cover; }
-          .video-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%); }
-          .video-duration { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 12px; }
-          .video-project { position: absolute; top: 12px; left: 12px; background: var(--gold); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
-          .video-play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 72px; height: 72px; border-radius: 50%; background: var(--gold); border: none; display: flex; align-items: center; justify-content: center; padding-left: 4px; cursor: pointer; box-shadow: 0 8px 32px rgba(201, 162, 39, 0.4); }
-          .video-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; color: #fff; }
-          .video-name { font-weight: 600; font-size: 17px; margin-bottom: 4px; }
-          .video-location { font-size: 13px; opacity: 0.85; margin-bottom: 14px; }
-          .video-cta { background: #25D366; color: #fff; border: none; padding: 14px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; justify-content: center; min-height: 48px; }
-          
-          /* Qualifier Modal */
-          .qualifier-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; backdrop-filter: blur(4px); }
-          .qualifier-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-radius: 24px 24px 0 0; padding: 24px 20px calc(24px + var(--safe-b)); z-index: 1001; max-height: 85vh; overflow: auto; }
-          .qualifier-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 20px; }
-          .qualifier-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; text-align: center; }
-          .qualifier-subtitle { color: #666; font-size: 14px; margin-bottom: 24px; text-align: center; }
-          .qualifier-label { font-weight: 600; font-size: 14px; margin-bottom: 12px; }
-          .qualifier-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-          .qualifier-chip { padding: 12px 16px; border-radius: 10px; border: 1px solid #ddd; background: #fff; font-size: 14px; cursor: pointer; min-height: 48px; transition: all 0.15s; }
-          .qualifier-chip.selected { border: 2px solid var(--wa); background: rgba(37, 211, 102, 0.1); font-weight: 600; }
-          .qualifier-submit { width: 100%; padding: 16px; border-radius: 12px; border: none; background: #ccc; color: #fff; font-size: 16px; font-weight: 600; cursor: not-allowed; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s; }
-          .qualifier-submit.active { background: var(--wa); cursor: pointer; }
-          .qualifier-skip { width: 100%; padding: 14px; margin-top: 12px; background: none; border: none; color: #666; font-size: 14px; cursor: pointer; min-height: 48px; }
-          
-          /* WhatsApp pulse */
-          @keyframes wa-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); } 50% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); } }
-          .wa-pulse { animation: wa-pulse 2s infinite; }
-          
-          /* Desktop */
-          @media (min-width: 768px) {
-            .c { padding: 0 24px; }
-            section { padding: 100px 0; }
-            h1 { font-size: 56px; }
-            h2 { font-size: 40px; }
-            .mobile-only { display: none !important; }
-            .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 24px; }
-            .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 32px; }
-            .grid-4 { grid-template-columns: repeat(4, 1fr); gap: 24px; }
-            .grid-5 { grid-template-columns: repeat(5, 1fr); gap: 20px; }
-            .grid-6 { grid-template-columns: repeat(3, 1fr); gap: 24px; }
-            .areas-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
-            .sticky-b { display: none; }
-          }
-          @media (max-width: 767px) {
-            .desktop-only { display: none !important; }
-          }
-        `}} />
+        <style dangerouslySetInnerHTML={{ __html: `:root{--gold:#c9a227;--gold-light:#d4af37;--gold-dark:#a68521;--charcoal:#1a1a1a;--charcoal-light:#2d2d2d;--cream:#faf8f5;--wa:#25D366;--wa-dark:#128c7e;--safe-b:env(safe-area-inset-bottom,0px)}*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{scroll-behavior:smooth}body{font-family:var(--font-inter),'Inter',-apple-system,sans-serif;color:var(--charcoal);line-height:1.6;background:#fff;-webkit-font-smoothing:antialiased}.font-display{font-family:var(--font-display),'Playfair Display',Georgia,serif}.c{width:100%;padding:0 12px;max-width:1200px;margin:0 auto}.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:14px 28px;border-radius:12px;font-size:16px;font-weight:600;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s;text-decoration:none}.btn:active{transform:scale(.97)}.btn:focus-visible{outline:3px solid var(--wa);outline-offset:2px}.btn-wa{background:linear-gradient(135deg,var(--wa) 0%,var(--wa-dark) 100%);color:#fff;box-shadow:0 4px 16px rgba(37,211,102,.3)}.clickable-card{transition:transform .2s,box-shadow .2s;border-radius:16px;background:#fff;border:1px solid #f0f0f0}.clickable-card:active{transform:scale(.98)}.clickable-card:focus-visible{outline:3px solid var(--wa);outline-offset:2px}.clickable-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.08)}section{padding:40px 0}h1{font-size:28px;font-weight:700;line-height:1.15}h2{font-size:22px;font-weight:600;line-height:1.2}h3{font-size:16px;font-weight:600}.grid-1,.grid-2,.grid-3,.grid-5,.grid-6{display:grid;grid-template-columns:1fr;gap:12px}.grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.areas-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;opacity:0;pointer-events:none;transition:opacity .25s}.sheet-bg.open{opacity:1;pointer-events:auto}.sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:24px 24px 0 0;padding:24px 20px calc(24px + var(--safe-b));z-index:1000;transform:translateY(100%);transition:transform .3s ease}.sheet.open{transform:translateY(0)}.sticky-b{position:fixed;bottom:0;left:0;right:0;background:var(--charcoal);padding:12px 16px calc(12px + var(--safe-b));z-index:100;display:flex;gap:12px}.sticky-b.hot{background:linear-gradient(135deg,var(--wa) 0%,var(--wa-dark) 100%)}.faq-item{border-bottom:1px solid #eee}.faq-q{padding:20px 0;font-size:16px;font-weight:500;display:flex;justify-content:space-between;align-items:center;cursor:pointer;min-height:60px;width:100%;background:none;border:none;text-align:left}.faq-q:focus-visible{outline:2px solid var(--wa);outline-offset:-2px}.faq-a{padding:0 0 20px;font-size:15px;color:#666;line-height:1.7;display:none}.faq-a.open{display:block}.video-card{position:relative;width:100%;border-radius:16px;overflow:hidden;background:#0a0a0a;aspect-ratio:16/9}.video-card video{width:100%;height:100%;object-fit:cover}.video-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.75) 100%)}.video-duration{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:12px}.video-project{position:absolute;top:12px;left:12px;background:var(--gold);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}.video-play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:var(--gold);border:none;display:flex;align-items:center;justify-content:center;padding-left:4px;cursor:pointer;box-shadow:0 8px 32px rgba(201,162,39,.4)}.video-info{position:absolute;bottom:0;left:0;right:0;padding:16px;color:#fff}.video-name{font-weight:600;font-size:17px;margin-bottom:4px}.video-location{font-size:13px;opacity:.85;margin-bottom:14px}.video-cta{background:#25D366;color:#fff;border:none;padding:14px 20px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;justify-content:center;min-height:48px}.qualifier-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;backdrop-filter:blur(4px)}.qualifier-sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:24px 24px 0 0;padding:24px 20px calc(24px + var(--safe-b));z-index:1001;max-height:85vh;overflow:auto}.qualifier-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px}.qualifier-title{font-size:20px;font-weight:600;margin-bottom:8px;text-align:center}.qualifier-subtitle{color:#666;font-size:14px;margin-bottom:24px;text-align:center}.qualifier-label{font-weight:600;font-size:14px;margin-bottom:12px}.qualifier-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}.qualifier-chip{padding:12px 16px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:14px;cursor:pointer;min-height:48px;transition:all .15s}.qualifier-chip.selected{border:2px solid var(--wa);background:rgba(37,211,102,.1);font-weight:600}.qualifier-submit{width:100%;padding:16px;border-radius:12px;border:none;background:#ccc;color:#fff;font-size:16px;font-weight:600;cursor:not-allowed;min-height:52px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}.qualifier-submit.active{background:var(--wa);cursor:pointer}.qualifier-skip{width:100%;padding:14px;margin-top:12px;background:none;border:none;color:#666;font-size:14px;cursor:pointer;min-height:48px}@keyframes wa-pulse{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.4)}50%{box-shadow:0 0 0 12px rgba(37,211,102,0)}}.wa-pulse{animation:wa-pulse 2s infinite}@media(min-width:768px){.c{padding:0 24px}section{padding:100px 0}h1{font-size:56px}h2{font-size:40px}.mobile-only{display:none!important}.grid-2{grid-template-columns:repeat(2,1fr);gap:24px}.grid-3{grid-template-columns:repeat(3,1fr);gap:32px}.grid-4{grid-template-columns:repeat(4,1fr);gap:24px}.grid-5{grid-template-columns:repeat(5,1fr);gap:20px}.grid-6{grid-template-columns:repeat(3,1fr);gap:24px}.areas-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.sticky-b{display:none}}@media(max-width:767px){.desktop-only{display:none!important}}` }} />
       </Head>
 
-      {/* Analytics - stub loads beforeInteractive to guarantee no missed conversions */}
-      <Script id="gtag-stub" strategy="beforeInteractive">
-        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=window.gtag||gtag;gtag('js',new Date());gtag('config','AW-612864132');`}
-      </Script>
+      <Script id="gtag-stub" strategy="beforeInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=window.gtag||gtag;gtag('js',new Date());gtag('config','AW-612864132');`}</Script>
       <Script src="https://www.googletagmanager.com/gtag/js?id=AW-612864132" strategy="afterInteractive" />
-      {/* Clarity can remain lazyOnload - not critical for conversions */}
-      <Script id="clarity" strategy="lazyOnload">
-        {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "v5bkaisuew");`}
-      </Script>
+      <Script id="clarity" strategy="lazyOnload">{`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "v5bkaisuew");`}</Script>
 
       <div className={`${inter.variable} ${playfair.variable}`} style={{ paddingBottom: '80px', cursor: 'pointer' }} onClick={handleBackgroundClick}>
         
-        {/* LEAD QUALIFIER MODAL */}
-        {qualifier && (
-          <LeadQualifier
-            service={qualifier.service}
-            price={qualifier.price}
-            onClose={() => setQualifier(null)}
-            onSubmit={handleQualifiedSubmit}
-          />
-        )}
+        {qualifier && <LeadQualifier service={qualifier.service} price={qualifier.price} onClose={() => setQualifier(null)} onSubmit={handleQualifiedSubmit} />}
 
-        {/* EXIT SHEET */}
         <div className={`sheet-bg ${showExitSheet ? 'open' : ''}`} onClick={() => setShowExitSheet(false)} aria-hidden="true" />
         <div className={`sheet ${showExitSheet ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label="Special offer">
           <div style={{ textAlign: 'center' }}>
@@ -1177,11 +688,7 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </div>
 
-        {/* URGENCY BAR */}
-        <button 
-          onClick={() => openWhatsApp('urgency', [slotsLeft])} 
-          style={{ width: '100%', background: 'linear-gradient(90deg, var(--charcoal) 0%, var(--charcoal-light) 100%)', color: '#fff', padding: '14px 16px', fontSize: '13px', cursor: 'pointer', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', border: 'none', letterSpacing: '0.3px' }}
-        >
+        <button onClick={() => openWhatsApp('urgency', [slotsLeft])} style={{ width: '100%', background: 'linear-gradient(90deg, var(--charcoal) 0%, var(--charcoal-light) 100%)', color: '#fff', padding: '14px 16px', fontSize: '13px', cursor: 'pointer', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', border: 'none', letterSpacing: '0.3px' }}>
           <span style={{ color: 'var(--gold-light)' }}>✦</span>
           <span>FREE 3D VISUALIZATION</span>
           <span style={{ opacity: 0.5 }}>•</span>
@@ -1189,7 +696,6 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           <span style={{ background: 'var(--wa)', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', fontWeight: '600' }}>TAP TO BOOK →</span>
         </button>
 
-        {/* HEADER */}
         <header style={{ background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(12px)', padding: '14px 0', position: 'sticky', top: 0, zIndex: 50, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
           <div className="c" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <a href="https://unicornrenovations.com" style={{ textDecoration: 'none' }}>
@@ -1206,30 +712,19 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </header>
 
-        {/* HERO */}
         <section style={{ position: 'relative', minHeight: '85vh', display: 'flex', alignItems: 'center', background: 'var(--charcoal)' }}>
           <div style={{ position: 'absolute', inset: 0 }}>
             <Image src="/villa-renovation.webp" alt={`${content.service} in ${content.location}`} fill sizes="100vw" style={{ objectFit: 'cover', opacity: 0.35 }} priority quality={75} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(26,26,26,0.6) 0%, rgba(26,26,26,0.9) 100%)' }} />
           </div>
-
           <div className="c" style={{ position: 'relative', zIndex: 10, color: '#fff', paddingTop: '24px', paddingBottom: '40px' }}>
-            <button 
-              onClick={() => openWhatsApp('trustBadge', ['highly rated'])} 
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 14px', borderRadius: '30px', marginBottom: '16px', cursor: 'pointer', color: '#fff', fontSize: '12px' }}
-            >
+            <button onClick={() => openWhatsApp('trustBadge', ['highly rated'])} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 14px', borderRadius: '30px', marginBottom: '16px', cursor: 'pointer', color: '#fff', fontSize: '12px' }}>
               <span style={{ color: 'var(--gold-light)' }}>★★★★★</span>
               <span>Highly Rated • Trusted by Dubai Homeowners</span>
             </button>
-
             <h1 className="font-display" style={{ fontSize: 'clamp(32px, 7vw, 72px)', fontWeight: '500', lineHeight: 1.1, marginBottom: '6px', letterSpacing: '-0.5px' }}>{content.h1}</h1>
             <h2 className="font-display" style={{ fontSize: 'clamp(16px, 3vw, 28px)', fontWeight: '400', color: 'var(--gold-light)', marginBottom: '14px', fontStyle: 'italic' }}>{content.h2}</h2>
-            
-            <p style={{ fontSize: '15px', opacity: 0.85, maxWidth: '550px', marginBottom: '24px', lineHeight: 1.6, fontWeight: '300' }}>
-              Get a <strong style={{ fontWeight: '500' }}>FREE 3D visualization</strong> of your dream {content.service.toLowerCase()} in {content.location}. 
-              Chat with us now – response within 2 minutes!
-            </p>
-
+            <p style={{ fontSize: '15px', opacity: 0.85, maxWidth: '550px', marginBottom: '24px', lineHeight: 1.6, fontWeight: '300' }}>Get a <strong style={{ fontWeight: '500' }}>FREE 3D visualization</strong> of your dream {content.service.toLowerCase()} in {content.location}. Chat with us now – response within 2 minutes!</p>
             <div style={{ display: 'flex', gap: '24px', marginBottom: '28px', flexWrap: 'wrap' }}>
               {[{ n: '800+', l: 'Villas Transformed', c: 'your 800+ completed projects' }, { n: '15+', l: 'Years of Mastery', c: 'your 15+ years of experience' }, { n: '5yr', l: 'Warranty', c: '5-year warranty coverage' }].map((s, i) => (
                 <button key={i} onClick={() => openWhatsApp('trustBadge', [s.c])} style={{ textAlign: 'left', background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 0 }}>
@@ -1238,7 +733,6 @@ export default function FinalLandingPage({ initialContent, initialServices, init
                 </button>
               ))}
             </div>
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px' }}>
               <button className="btn btn-wa wa-pulse" onClick={() => openWhatsApp('hero', [content.service, content.location])} style={{ width: '100%', fontSize: '16px', padding: '16px 24px' }}>
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
@@ -1246,7 +740,6 @@ export default function FinalLandingPage({ initialContent, initialServices, init
               </button>
               <p style={{ fontSize: '12px', opacity: 0.65, textAlign: 'center' }}>⚡ Reply in 2 minutes • Free consultation</p>
             </div>
-
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '20px' }}>
               {['Free 3D Design', 'Fixed Pricing', 'Municipality Approved', '5-Year Warranty'].map((item, i) => (
                 <span key={i} style={{ fontSize: '11px', opacity: 0.8, padding: '5px 10px', background: 'rgba(255,255,255,0.06)', borderRadius: '16px' }}>✓ {item}</span>
@@ -1255,7 +748,6 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </section>
 
-        {/* TRUST BADGES */}
         <section style={{ padding: '32px 0', background: 'var(--cream)' }}>
           <div className="c">
             <div className="grid-4">
@@ -1270,13 +762,11 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </section>
 
-        {/* SERVICES */}
         <section style={{ background: '#fff' }}>
           <div className="c">
             <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500' }}>Our Expertise</p>
             <h2 className="font-display" style={{ marginBottom: '8px' }}>{content.service} Services</h2>
             <p style={{ fontSize: '16px', color: '#666', marginBottom: '32px' }}>Tap any service to get a personalized quote</p>
-            
             <div className="grid-2">
               {services.map((s, i) => (
                 <ClickableCard key={i} onClick={() => handleServiceClick(s)} style={{ overflow: 'hidden' }} ariaLabel={`Get quote for ${s.title}`}>
@@ -1297,12 +787,10 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </section>
 
-        {/* PROCESS */}
         <section style={{ background: 'var(--charcoal)', color: '#fff' }}>
           <div className="c">
             <p style={{ fontSize: '12px', color: 'var(--gold-light)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>The Journey</p>
             <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '40px' }}>Our {content.service} Process</h2>
-            
             <div className="grid-5">
               {PROCESS_STEPS.map((step, i) => (
                 <ClickableCard key={i} onClick={() => openWhatsApp('process', [step.title])} style={{ textAlign: 'center', padding: '28px 20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }} ariaLabel={`Start ${step.title} step`}>
@@ -1317,12 +805,10 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </section>
 
-        {/* WHY CHOOSE US */}
         <section style={{ background: '#fff' }}>
           <div className="c">
             <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>The Difference</p>
             <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '40px' }}>Why Discerning Homeowners Choose Us</h2>
-            
             <div className="grid-6">
               {WHY_CHOOSE_US.map((item, i) => (
                 <ClickableCard key={i} onClick={() => openWhatsApp('whyChooseUs', [item.context])} style={{ padding: '24px', background: 'var(--cream)' }} ariaLabel={`Learn about ${item.title}`}>
@@ -1335,13 +821,11 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
         <section style={{ background: 'var(--cream)' }}>
           <div className="c">
             <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>Client Stories</p>
             <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '8px' }}>Voices of Transformation</h2>
             <p style={{ fontSize: '16px', color: '#666', textAlign: 'center', marginBottom: '40px' }}>Tap any review to start your transformation</p>
-            
             <div className="grid-3">
               {TESTIMONIALS.map((t, i) => (
                 <ClickableCard key={i} onClick={() => openWhatsApp('testimonial', [t.name, t.project])} style={{ padding: '28px' }} ariaLabel={`Chat about ${t.name}'s project`}>
@@ -1354,37 +838,30 @@ export default function FinalLandingPage({ initialContent, initialServices, init
                     </div>
                     <span style={{ fontSize: '11px', color: 'var(--gold-dark)', background: 'rgba(201,162,39,0.1)', padding: '4px 10px', borderRadius: '4px' }}>{t.project}</span>
                   </div>
-                  <div style={{ opacity: 0, height: 0, overflow: 'hidden' }}>💬 I Want Results Like This!</div>
                 </ClickableCard>
               ))}
             </div>
           </div>
         </section>
 
-        {/* VIDEO TESTIMONIALS */}
         <section style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)' }}>
           <div className="c">
             <p style={{ fontSize: '12px', color: 'var(--gold-light)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>Hear Their Stories</p>
             <h2 className="font-display" style={{ color: '#fff', textAlign: 'center', marginBottom: '8px' }}>Video Testimonials</h2>
             <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginBottom: '40px' }}>Watch, then tap "I Want This Too!" to start</p>
-            
             <div className="grid-3">
               {VIDEO_TESTIMONIALS.map((video) => (
-                <div key={video.id}>
-                  <VideoCard video={video} onChatClick={() => openWhatsApp('videoTestimonial', [video.name, video.location])} />
-                </div>
+                <div key={video.id}><VideoCard video={video} onChatClick={() => openWhatsApp('videoTestimonial', [video.name, video.location])} /></div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* FAQ */}
         <section style={{ background: '#fff' }}>
           <div className="c" style={{ maxWidth: '800px' }}>
             <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>Common Questions</p>
             <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '8px' }}>{content.service} FAQ</h2>
             <p style={{ fontSize: '16px', color: '#666', textAlign: 'center', marginBottom: '32px' }}>Have a question? Tap to ask us directly!</p>
-            
             {faqs.map((f, i) => (
               <div key={i} className="faq-item">
                 <button className="faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i} aria-controls={`faq-${i}`}>
@@ -1393,16 +870,13 @@ export default function FinalLandingPage({ initialContent, initialServices, init
                 </button>
                 <div id={`faq-${i}`} className={`faq-a ${openFaq === i ? 'open' : ''}`} role="region" aria-hidden={openFaq !== i}>
                   <p style={{ marginBottom: '16px' }}>{f.a}</p>
-                  <button onClick={() => openWhatsApp('faq', [f.q])} style={{ background: 'var(--wa)', color: '#fff', border: 'none', padding: '12px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: '600', cursor: 'pointer', minHeight: '48px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    💬 Ask About This
-                  </button>
+                  <button onClick={() => openWhatsApp('faq', [f.q])} style={{ background: 'var(--wa)', color: '#fff', border: 'none', padding: '12px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: '600', cursor: 'pointer', minHeight: '48px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>💬 Ask About This</button>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* SKIP THE FORM */}
         <section style={{ padding: '80px 0', background: 'var(--cream)' }}>
           <div className="c" style={{ maxWidth: '600px', textAlign: 'center' }}>
             <div style={{ fontSize: '56px', marginBottom: '20px' }}>💬</div>
@@ -1420,7 +894,6 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </section>
 
-        {/* FIX #1: AREAS SERVED - NO inline display style, CSS handles it */}
         <section style={{ padding: '50px 0', background: '#fff' }}>
           <div className="c">
             <h3 className="font-display" style={{ fontSize: '24px', textAlign: 'center', marginBottom: '8px' }}>Serving Dubai's Finest Communities</h3>
@@ -1433,7 +906,6 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </section>
 
-        {/* FINAL CTA */}
         <section style={{ padding: '80px 0', background: 'var(--charcoal)', color: '#fff', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(37,211,102,0.08) 0%, transparent 70%)' }} />
           <div className="c" style={{ position: 'relative', zIndex: 10 }}>
@@ -1447,7 +919,6 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </section>
 
-        {/* FOOTER - Uses currentYear from SSR to avoid hydration mismatch */}
         <footer style={{ padding: '40px 0', background: '#0d0d0d', color: '#fff' }}>
           <div className="c" style={{ textAlign: 'center' }}>
             <span className="font-display" style={{ fontSize: '24px', fontWeight: '600', letterSpacing: '2px' }}>UNICORN</span>
@@ -1461,12 +932,10 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           </div>
         </footer>
 
-        {/* FLOATING WHATSAPP - Desktop */}
         <button onClick={() => openWhatsApp('floatingButton', [])} aria-label="Chat on WhatsApp" className="desktop-only wa-pulse" style={{ position: 'fixed', bottom: '28px', right: '28px', width: '64px', height: '64px', background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)', borderRadius: '50%', border: 'none', cursor: 'pointer', boxShadow: '0 8px 28px rgba(37, 211, 102, 0.4)', zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="32" height="32" fill="#fff" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
         </button>
 
-        {/* STICKY BOTTOM - Mobile */}
         <div className={`sticky-b mobile-only ${isHot ? 'hot' : ''}`}>
           <a href="tel:+971585658002" aria-label="Call us" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: 'rgba(255,255,255,0.1)', color: '#fff', borderRadius: '10px', padding: '12px', textDecoration: 'none', fontWeight: '600', fontSize: '14px', minHeight: '48px' }}>📞 Call</a>
           <button className="btn btn-wa" onClick={() => openWhatsApp('sticky', [isHot])} style={{ flex: 2, minHeight: '48px', padding: '12px' }}>
