@@ -1,17 +1,35 @@
-// pages/index.js - WHATSAPP EVERYWHERE EDITION
-// Every single click leads to WhatsApp with smart context
-// Optimized for Dubai market where WhatsApp is KING
+// pages/index.js - FINAL PRODUCTION VERSION v3.1
+// ✅ All 10 original Document 1 improvements
+// ✅ All 6 code review fixes applied
+// Version: 3.1 FINAL
 
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import Script from 'next/script';
+import { Inter, Playfair_Display } from 'next/font/google';
+import { useState, useMemo, useEffect, useRef } from 'react';
 
 // ============================================
-// WHATSAPP CONFIGURATION - THE HEART OF EVERYTHING
+// FONTS - next/font/google (no @import)
+// ============================================
+const inter = Inter({ 
+  subsets: ['latin'], 
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const playfair = Playfair_Display({ 
+  subsets: ['latin'], 
+  variable: '--font-display',
+  display: 'swap',
+});
+
+// ============================================
+// WHATSAPP CONFIGURATION
 // ============================================
 const WHATSAPP_NUMBER = '971585658002';
 
-// Context-aware messages based on what user clicked
+// Messages use positional args (not Object.values)
 const WHATSAPP_MESSAGES = {
   hero: (service, location) => 
     `Hi! 👋 I'm interested in ${service} services in ${location}. Can we discuss my project?`,
@@ -49,11 +67,14 @@ const WHATSAPP_MESSAGES = {
   trustBadge: (badge) => 
     `Hi! I noticed you're ${badge}. Can you tell me more about your credentials?`,
   
-  exitIntent: (service) => 
-    `Hi! I was just browsing your ${service} page. Before I go, can you quickly tell me about your free consultation?`,
+  whyChooseUs: (feature) => 
+    `Hi! I'm interested in your ${feature}. Can you tell me more?`,
   
-  sticky: (engagement) => 
-    engagement === 'hot' 
+  exitIntent: (service) => 
+    `Hi! I was just browsing your ${service} page. Before I go, can you tell me about your free consultation?`,
+  
+  sticky: (isHot) => 
+    isHot 
       ? `Hi! 🔥 I've been looking at your site and I'm VERY interested. Let's talk!`
       : `Hi! I have some questions about your renovation services.`,
   
@@ -63,42 +84,214 @@ const WHATSAPP_MESSAGES = {
   callToAction: () => 
     `Hi! I'm ready to start my villa transformation. What's the first step?`,
   
+  qualified: (service, budget, timeline) => 
+    `Hi! I'm interested in *${service}*.\n\n📊 Budget: ${budget}\n⏰ Timeline: ${timeline}\n\nCan we discuss my project?`,
+  
   default: () => 
     `Hi! I'm interested in your renovation services. Can we chat?`
 };
 
-// Universal WhatsApp opener with tracking
-const openWhatsApp = (context, params = {}) => {
-  let message = WHATSAPP_MESSAGES.default();
-  
-  // Get the right message based on context
-  if (typeof WHATSAPP_MESSAGES[context] === 'function') {
-    message = WHATSAPP_MESSAGES[context](...Object.values(params));
-  }
-  
-  // Track the click (Google Ads conversion)
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'conversion', { 
-      send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC', 
-      value: 150000, 
-      currency: 'AED',
-      event_category: 'WhatsApp',
-      event_label: context
-    });
-    
-    // Also track as custom event for analytics
-    window.gtag('event', 'whatsapp_click', {
-      click_context: context,
-      click_params: JSON.stringify(params)
-    });
-  }
-  
-  // Open WhatsApp
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+// Context-based conversion values
+const CONVERSION_VALUES = {
+  hero: 3,
+  service: 5,
+  callToAction: 6,
+  qualified: 8,
+  testimonial: 4,
+  videoTestimonial: 5,
+  process: 3,
+  area: 3,
+  urgency: 5,
+  sticky: 4,
+  exitIntent: 3,
+  floatingButton: 3,
+  trustBadge: 2,
+  whyChooseUs: 3,
+  faq: 2,
+  gallery: 4,
+  pricing: 5,
+  warranty: 3,
+  default: 1
 };
 
 // ============================================
-// KEYWORD MAPPING (QS Critical - Keep All)
+// FIX #4: ATTRIBUTION TRACKING WITH LOCALSTORAGE
+// Persist beyond session with 7-day expiry
+// ============================================
+const ATTR_EXPIRY_DAYS = 7;
+
+function getAttribution() {
+  if (typeof window === 'undefined') return {};
+  const p = new URLSearchParams(window.location.search);
+
+  const attr = {
+    gclid: p.get('gclid') || '',
+    wbraid: p.get('wbraid') || '',
+    gbraid: p.get('gbraid') || '',
+    utm_source: p.get('utm_source') || '',
+    utm_campaign: p.get('utm_campaign') || '',
+    utm_adgroup: p.get('utm_adgroup') || '',
+    utm_term: p.get('utm_term') || p.get('kw') || p.get('keyword') || '',
+    utm_content: p.get('utm_content') || '',
+    loc: p.get('loc') || p.get('location') || 'Dubai',
+    lp: 'wa-everywhere-v3.1',
+    ts: Date.now(), // Timestamp for expiry check
+  };
+
+  // Only update if we have new tracking params
+  const hasNewParams = attr.gclid || attr.wbraid || attr.gbraid || attr.utm_source || attr.utm_campaign || attr.utm_term;
+  
+  if (hasNewParams) {
+    // Store in both sessionStorage AND localStorage
+    try { 
+      sessionStorage.setItem('unicorn_attr', JSON.stringify(attr)); 
+      localStorage.setItem('unicorn_attr_persist', JSON.stringify(attr));
+    } catch (e) { /* Storage blocked */ }
+  }
+  
+  return attr;
+}
+
+function readAttribution() {
+  if (typeof window === 'undefined') return {};
+  
+  try {
+    // Try sessionStorage first (current session)
+    const sessionAttr = sessionStorage.getItem('unicorn_attr');
+    if (sessionAttr) {
+      return JSON.parse(sessionAttr);
+    }
+    
+    // Fall back to localStorage (returning visitor)
+    const persistAttr = localStorage.getItem('unicorn_attr_persist');
+    if (persistAttr) {
+      const parsed = JSON.parse(persistAttr);
+      // Check if expired (7 days)
+      const ageMs = Date.now() - (parsed.ts || 0);
+      const expiryMs = ATTR_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+      if (ageMs < expiryMs) {
+        return parsed;
+      } else {
+        // Expired, remove it
+        localStorage.removeItem('unicorn_attr_persist');
+      }
+    }
+    
+    // No stored attribution, try to get fresh
+    return getAttribution();
+  } catch (e) {
+    return getAttribution();
+  }
+}
+
+// ============================================
+// GTAG WITH STUB FALLBACK
+// Creates stub if gtag not loaded yet - guarantees no missed conversions
+// ============================================
+function fireGtag(command, eventName, params = {}) {
+  if (typeof window === 'undefined') return;
+
+  window.dataLayer = window.dataLayer || [];
+
+  // Create stub if gtag doesn't exist yet - this is the key fix
+  // The stub pushes `arguments` (not arrays) so gtag replays correctly when it loads
+  if (!window.gtag) {
+    window.gtag = function() { window.dataLayer.push(arguments); };
+  }
+
+  window.gtag(command, eventName, params);
+}
+
+// Helper to check if user already clicked WhatsApp (don't annoy hot leads)
+function hasClickedWhatsApp() {
+  try { return sessionStorage.getItem('wa_clicked') === '1'; } catch(e) { return false; }
+}
+
+// ============================================
+// WHATSAPP OPENER - All fixes applied
+// ============================================
+const openWhatsApp = (context, args = [], meta = {}) => {
+  let message = WHATSAPP_MESSAGES.default();
+  
+  if (typeof WHATSAPP_MESSAGES[context] === 'function') {
+    message = WHATSAPP_MESSAGES[context](...args);
+  }
+
+  // Add tracking footer to message
+  const attr = readAttribution();
+  const clickId = Math.random().toString(36).slice(2, 8).toUpperCase();
+
+  const trackingFooter =
+    `\n\n—\nRef: ${attr.lp || 'wa'}-${clickId}` +
+    (attr.utm_term ? `\nKW: ${attr.utm_term}` : '') +
+    (attr.gclid ? `\nGCLID: ${attr.gclid}` : '') +
+    (attr.wbraid ? `\nWB: ${attr.wbraid}` : '') +
+    (attr.gbraid ? `\nGB: ${attr.gbraid}` : '') +
+    (attr.utm_campaign ? `\nCamp: ${attr.utm_campaign}` : '');
+
+  message += trackingFooter;
+
+  // Fire conversion with click IDs for better Google Ads attribution
+  const value = CONVERSION_VALUES[context] || CONVERSION_VALUES.default;
+  
+  fireGtag('event', 'conversion', {
+    send_to: 'AW-612864132/qqQcQNeM-bADEISh7qQC',
+    value: value,
+    currency: 'AED',
+    event_category: 'WhatsApp',
+    event_label: context,
+    // Pass click IDs for attribution (Google may use for debugging/some setups)
+    gclid: attr.gclid || undefined,
+    wbraid: attr.wbraid || undefined,
+    gbraid: attr.gbraid || undefined,
+    ...meta
+  });
+  
+  fireGtag('event', 'whatsapp_click', {
+    click_context: context,
+    click_id: clickId,
+    click_value: value
+  });
+
+  // Mark that user clicked WhatsApp (don't show exit popup to hot leads)
+  try { sessionStorage.setItem('wa_clicked', '1'); } catch(e) { /* Storage blocked */ }
+
+  // Security flags: noopener,noreferrer
+  window.open(
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+    '_blank',
+    'noopener,noreferrer'
+  );
+};
+
+// ============================================
+// ACCESSIBLE CLICKABLE CARD
+// ============================================
+function ClickableCard({ children, onClick, className = '', style = {}, ariaLabel = '' }) {
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      aria-label={ariaLabel}
+      className={`clickable-card ${className}`}
+      style={{ cursor: 'pointer', ...style }}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ============================================
+// KEYWORD MAPPING (QS Critical - Complete)
 // ============================================
 const KEYWORD_MAP = {
   'interior renovation company': {
@@ -241,6 +434,34 @@ const KEYWORD_MAP = {
     highlight: 'apartment',
     metaDesc: 'Luxury apartment renovation Dubai. Studio to penthouse. Complimentary 3D design.',
   },
+  'kitchen renovation': {
+    h1: 'Kitchen Renovation Dubai',
+    h2: 'Culinary Spaces Crafted for Modern Living',
+    service: 'Kitchen Renovation',
+    highlight: 'kitchen',
+    metaDesc: 'Luxury kitchen renovation in Dubai. German fittings. Fixed pricing. 5-year warranty.',
+  },
+  'kitchen renovation dubai': {
+    h1: 'Kitchen Renovation Dubai',
+    h2: 'Where Culinary Dreams Come True',
+    service: 'Kitchen Renovation',
+    highlight: 'kitchen',
+    metaDesc: 'Premium kitchen renovation Dubai. Complete transformations. Complimentary 3D design.',
+  },
+  'bathroom renovation': {
+    h1: 'Bathroom Renovation Dubai',
+    h2: 'Spa-Inspired Sanctuaries',
+    service: 'Bathroom Renovation',
+    highlight: 'bathroom',
+    metaDesc: 'Luxury bathroom renovation in Dubai. Premium finishes. Fixed pricing.',
+  },
+  'bathroom renovation dubai': {
+    h1: 'Bathroom Renovation Dubai',
+    h2: 'Transform Your Daily Ritual',
+    service: 'Bathroom Renovation',
+    highlight: 'bathroom',
+    metaDesc: 'Spa-inspired bathroom renovation Dubai. Italian tiles. German fittings.',
+  },
   'damac hills villa renovation': {
     h1: 'DAMAC Hills Villa Renovation',
     h2: 'Local Expertise, Global Standards',
@@ -286,15 +507,15 @@ const KEYWORD_MAP = {
 };
 
 // ============================================
-// SERVICES - All Clickable to WhatsApp
+// SERVICES DATA
 // ============================================
 const ALL_SERVICES = [
   { id: 'villa-renovation', title: 'Villa Renovation', desc: 'Complete villa transformation with bespoke finishes', price: 'From AED 150,000', image: '/villa-renovation.webp', tags: ['villa', 'home', 'company', 'contractor', 'location'] },
   { id: 'interior-renovation', title: 'Interior Renovation', desc: 'Reimagine your living spaces with artistry', price: 'From AED 60,000', image: '/Interior-Design.webp', tags: ['interior', 'fitout', 'home', 'apartment'] },
   { id: 'villa-extension', title: 'Villa Extension', desc: 'Seamlessly expand your living legacy', price: 'From AED 120,000', image: '/villa-extension.webp', tags: ['extension', 'villa', 'contractor'] },
   { id: 'office-fitout', title: 'Office Fit Out', desc: 'Professional workspaces crafted for success', price: 'From AED 80,000', image: '/office-fitout.webp', tags: ['fitout', 'office', 'commercial'] },
-  { id: 'kitchen', title: 'Kitchen Renovation', desc: 'Culinary spaces crafted for modern living', price: 'From AED 45,000', image: '/v16.webp', tags: ['interior', 'home', 'villa', 'apartment'] },
-  { id: 'bathroom', title: 'Bathroom Renovation', desc: 'Spa-inspired sanctuaries of tranquility', price: 'From AED 25,000', image: '/v12.webp', tags: ['interior', 'home', 'villa', 'apartment'] },
+  { id: 'kitchen', title: 'Kitchen Renovation', desc: 'Culinary spaces crafted for modern living', price: 'From AED 45,000', image: '/v16.webp', tags: ['interior', 'home', 'villa', 'apartment', 'kitchen'] },
+  { id: 'bathroom', title: 'Bathroom Renovation', desc: 'Spa-inspired sanctuaries of tranquility', price: 'From AED 25,000', image: '/v12.webp', tags: ['interior', 'home', 'villa', 'apartment', 'bathroom'] },
 ];
 
 const getRelevantServices = (highlight) => {
@@ -308,7 +529,7 @@ const getRelevantServices = (highlight) => {
 };
 
 // ============================================
-// PROCESS STEPS - All Clickable
+// PROCESS STEPS
 // ============================================
 const PROCESS_STEPS = [
   { step: '01', title: 'Discovery', desc: 'Complimentary site visit & vision alignment', icon: '◈', time: 'Day 1', cta: 'Book Free Visit' },
@@ -319,7 +540,7 @@ const PROCESS_STEPS = [
 ];
 
 // ============================================
-// TESTIMONIALS - All Clickable
+// TESTIMONIALS
 // ============================================
 const TESTIMONIALS = [
   { 
@@ -328,7 +549,6 @@ const TESTIMONIALS = [
     text: 'An exceptional experience from start to finish. The team understood our vision for a contemporary yet timeless aesthetic. The 3D visualization was remarkably accurate, and the craftsmanship exceeded our highest expectations.',
     rating: 5,
     project: 'Complete Villa Renovation',
-    avatar: '/avatar-1.webp'
   },
   { 
     name: 'Sarah Mitchell', 
@@ -336,7 +556,6 @@ const TESTIMONIALS = [
     text: 'We interviewed five contractors before choosing Unicorn. Their attention to detail, transparent pricing, and respect for our home during construction set them apart. The result is nothing short of transformative.',
     rating: 5,
     project: 'Interior Transformation',
-    avatar: '/avatar-2.webp'
   },
   { 
     name: 'James & Victoria Chen', 
@@ -344,7 +563,6 @@ const TESTIMONIALS = [
     text: 'Our waterfront villa required specialists who understood both luxury and the unique challenges of Palm properties. Unicorn delivered impeccably—on time, on budget, and beyond our vision.',
     rating: 5,
     project: 'Villa Extension',
-    avatar: '/avatar-3.webp'
   },
 ];
 
@@ -352,37 +570,13 @@ const TESTIMONIALS = [
 // VIDEO TESTIMONIALS
 // ============================================
 const VIDEO_TESTIMONIALS = [
-  {
-    id: 'video-1',
-    name: 'Fatima Al-Rashid',
-    location: 'Emirates Hills',
-    project: 'Villa Renovation',
-    thumbnail: '/video-thumb-1.jpg',
-    videoSrc: '/testimonial-1.mp4',
-    duration: '0:06'
-  },
-  {
-    id: 'video-2',
-    name: 'Michelle Chen',
-    location: 'Arabian Ranches',
-    project: 'Interior Renovation',
-    thumbnail: '/video-thumb-2.jpg',
-    videoSrc: '/testimonial-2.mp4',
-    duration: '0:06'
-  },
-  {
-    id: 'video-3',
-    name: 'Marco Valentino',
-    location: 'Palm Jumeirah',
-    project: 'Full Transformation',
-    thumbnail: '/video-thumb-3.jpg',
-    videoSrc: '/testimonial-3.mp4',
-    duration: '0:06'
-  },
+  { id: 'video-1', name: 'Fatima Al-Rashid', location: 'Emirates Hills', project: 'Villa Renovation', thumbnail: '/video-thumb-1.jpg', videoSrc: '/testimonial-1.mp4', duration: '0:06' },
+  { id: 'video-2', name: 'Michelle Chen', location: 'Arabian Ranches', project: 'Interior Renovation', thumbnail: '/video-thumb-2.jpg', videoSrc: '/testimonial-2.mp4', duration: '0:06' },
+  { id: 'video-3', name: 'Marco Valentino', location: 'Palm Jumeirah', project: 'Full Transformation', thumbnail: '/video-thumb-3.jpg', videoSrc: '/testimonial-3.mp4', duration: '0:06' },
 ];
 
 // ============================================
-// TRUST BADGES - All Clickable
+// TRUST BADGES
 // ============================================
 const TRUST_BADGES = [
   { icon: '◈', title: 'DED Licensed', desc: 'Fully registered contractor', context: 'DED Licensed contractor' },
@@ -392,7 +586,7 @@ const TRUST_BADGES = [
 ];
 
 // ============================================
-// WHY CHOOSE US - All Clickable
+// WHY CHOOSE US
 // ============================================
 const WHY_CHOOSE_US = [
   { icon: '◈', title: 'Municipality Approved', desc: 'All permits and approvals handled seamlessly by our dedicated team', context: 'municipality approvals' },
@@ -400,11 +594,11 @@ const WHY_CHOOSE_US = [
   { icon: '◆', title: 'On-Time Delivery', desc: '6-8 weeks completion with weekly progress updates', context: 'project timeline' },
   { icon: '✧', title: '5-Year Warranty', desc: 'Comprehensive craftsmanship coverage for peace of mind', context: '5-year warranty' },
   { icon: '❖', title: 'Complimentary 3D Design', desc: 'Visualize your transformation before commitment', context: 'free 3D design service' },
-  { icon: '✦', title: '4.9/5 Client Rating', desc: '287 verified reviews from distinguished homeowners', context: 'client reviews and rating' },
+  { icon: '✦', title: 'Highly Rated', desc: 'Trusted by distinguished homeowners across Dubai', context: 'client reviews and rating' },
 ];
 
 // ============================================
-// AREAS SERVED - All Clickable
+// AREAS SERVED
 // ============================================
 const AREAS_SERVED = [
   'Emirates Hills', 'Palm Jumeirah', 'Dubai Hills Estate', 'Arabian Ranches',
@@ -414,10 +608,52 @@ const AREAS_SERVED = [
 ];
 
 // ============================================
+// LEAD QUALIFIER OPTIONS
+// ============================================
+const BUDGETS = [
+  { label: 'Under 100K', value: 'Under 100K AED' },
+  { label: '100K – 200K', value: '100K-200K AED' },
+  { label: '200K – 400K', value: '200K-400K AED' },
+  { label: '400K+', value: '400K+ AED' },
+];
+
+const TIMELINES = [
+  { label: 'ASAP', value: 'ASAP - Ready to start' },
+  { label: '1-2 months', value: '1-2 months' },
+  { label: '3-6 months', value: '3-6 months' },
+  { label: 'Just exploring', value: 'Just exploring options' },
+];
+
+// ============================================
+// FIX #6: COMPUTE SLOTS ON SERVER (Dubai timezone)
+// Avoids hydration mismatch
+// ============================================
+function computeSlotsLeft() {
+  // Get Dubai time (UTC+4)
+  const now = new Date();
+  const dubaiOffset = 4 * 60; // minutes
+  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  const dubaiMinutes = utcMinutes + dubaiOffset;
+  const dubaiHour = Math.floor(dubaiMinutes / 60) % 24;
+  
+  if (dubaiHour >= 18) return 1;
+  if (dubaiHour >= 14) return 2;
+  if (dubaiHour >= 10) return 3;
+  return 4;
+}
+
+// ============================================
 // SSR FUNCTIONS
 // ============================================
+
+// FIX #5: Safer regex for keyword normalization
 function normalizeKeyword(raw) {
-  return (raw || '').toString().toLowerCase().replace(/[+_-]/g, ' ').replace(/[[\]"'{}]/g, '').trim();
+  return (raw || '')
+    .toString()
+    .toLowerCase()
+    .replace(/[+_-]/g, ' ')
+    .replace(/[\[\]"'{}]/g, '') // Fixed: properly escaped brackets
+    .trim();
 }
 
 function resolveKeywordConfig(keywordRaw, locationRaw) {
@@ -457,339 +693,271 @@ function buildFaq(content) {
   const service = content.service || 'Renovation';
   const loc = content.location || 'Dubai';
   return [
-    { q: `What is the investment range for ${service.toLowerCase()} in ${loc}?`, a: `Investment varies based on scope, size, and specification level. We provide a comprehensive fixed-price proposal following a complimentary site assessment.` },
-    { q: `What is the typical timeline for a ${service.toLowerCase()} project?`, a: `Most projects reach completion within 6–8 weeks, depending on approvals, material procurement, and scope complexity.` },
-    { q: `Do you manage municipality permits and approvals?`, a: `Absolutely. We handle all required approvals and coordinate documentation seamlessly for your project type.` },
-    { q: `Is your quotation truly fixed?`, a: `Yes. We provide a fixed-price proposal for the agreed scope. No surprises, ever.` },
-    { q: `What warranty coverage do you provide?`, a: `We provide up to 5 years craftsmanship warranty depending on scope, complemented by manufacturer warranties.` },
+    { q: `What is the investment range for ${service.toLowerCase()} in ${loc}?`, a: `Investment varies based on scope, size, and specification level. We provide a comprehensive fixed-price proposal following a complimentary site assessment. No hidden costs, ever.` },
+    { q: `What is the typical timeline for a ${service.toLowerCase()} project?`, a: `Most projects reach completion within 6–8 weeks, depending on approvals, material procurement, and scope complexity. We provide weekly progress updates throughout.` },
+    { q: `Do you manage municipality permits and approvals?`, a: `Absolutely. We handle all required approvals and coordinate documentation seamlessly for your project type. This is included in our service at no extra charge.` },
+    { q: `Is your quotation truly fixed?`, a: `Yes. We provide a fixed-price proposal for the agreed scope. No surprises, ever. Any scope changes are discussed and approved before proceeding.` },
+    { q: `What warranty coverage do you provide?`, a: `We provide up to 5 years craftsmanship warranty depending on scope, complemented by manufacturer warranties on materials and appliances.` },
+    { q: `Can I see examples of similar projects?`, a: `Yes! We have an extensive portfolio of completed projects. During your free consultation, we'll show you relevant examples and can arrange visits to completed properties with client permission.` },
   ];
 }
 
+// FIX #6: Compute slots + year on server to avoid hydration mismatch
 export async function getServerSideProps(ctx) {
   const q = ctx.query || {};
   const keywordRaw = q.kw || q.keyword || q.utm_term || q.q || '';
   const locationRaw = q.loc || q.location || 'Dubai';
   const { content, services } = resolveKeywordConfig(keywordRaw, locationRaw);
-  return { props: { initialContent: content, initialServices: services } };
+  
+  // Compute slots on server
+  const initialSlots = computeSlotsLeft();
+  
+  return { 
+    props: { 
+      initialContent: content, 
+      initialServices: services,
+      initialSlots,
+      currentYear: new Date().getFullYear(), // For footer - avoids hydration mismatch
+    } 
+  };
 }
 
 // ============================================
-// INTERSECTION OBSERVER HOOK
+// VIDEO CARD COMPONENT
 // ============================================
-function useInView(options = {}) {
-  const [isInView, setIsInView] = useState(false);
-  const ref = useRef(null);
+function VideoCard({ video, onChatClick }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setIsInView(true);
-        observer.disconnect();
-      }
-    }, { threshold: 0.1, ...options });
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return [ref, isInView];
-}
-
-// ============================================
-// CLICKABLE CARD COMPONENT - Everything Leads to WhatsApp
-// ============================================
-function ClickableCard({ children, onClick, className = '', style = {} }) {
   return (
-    <div 
-      onClick={onClick}
-      className={`clickable-card ${className}`}
-      style={{ 
-        cursor: 'pointer', 
-        transition: 'all 0.3s ease',
-        ...style 
-      }}
-    >
-      {children}
+    <div className="video-card">
+      {isPlaying ? (
+        <video
+          ref={videoRef}
+          src={video.videoSrc}
+          poster={video.thumbnail}
+          controls
+          playsInline
+          autoPlay
+        />
+      ) : (
+        <>
+          <Image
+            src={video.thumbnail}
+            alt={`${video.name} testimonial video`}
+            fill
+            sizes="320px"
+            style={{ objectFit: 'cover' }}
+            loading="lazy"
+            quality={75}
+          />
+          
+          <div className="video-overlay" />
+
+          <div className="video-duration">▶ {video.duration}</div>
+          <div className="video-project">{video.project}</div>
+
+          <button 
+            onClick={() => setIsPlaying(true)}
+            aria-label={`Play ${video.name}'s testimonial video`}
+            className="video-play-btn"
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+
+          <div className="video-info">
+            <p className="video-name">{video.name}</p>
+            <p className="video-location"><span style={{ color: 'var(--gold-light)' }}>◆</span> {video.location}</p>
+            
+            <button onClick={(e) => { e.stopPropagation(); onChatClick(); }} className="video-cta">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              I Want This Too!
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
 // ============================================
-// LAZY VIDEO COMPONENT
+// LEAD QUALIFIER MODAL
 // ============================================
-function LazyVideo({ video, isVisible, onChatClick }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const videoRef = useRef(null);
+function LeadQualifier({ service, price, onClose, onSubmit }) {
+  const [budget, setBudget] = useState(null);
+  const [timeline, setTimeline] = useState(null);
 
-  const handlePlay = (e) => {
-    e.stopPropagation();
-    setIsPlaying(true);
-  };
-
-  const handleChatClick = (e) => {
-    e.stopPropagation();
-    onChatClick();
-  };
-
-  useEffect(() => {
-    if (isPlaying && videoRef.current) {
-      videoRef.current.play();
+  const handleSubmit = () => {
+    if (budget && timeline) {
+      onSubmit(budget.value, timeline.value);
     }
-  }, [isPlaying]);
-
-  const containerStyle = {
-    position: 'relative',
-    width: '100%',
-    maxWidth: '320px',
-    margin: '0 auto',
-    borderRadius: '16px',
-    overflow: 'hidden',
-    background: '#0a0a0a',
-    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
   };
 
   return (
-    <div style={containerStyle} className="video-card">
-      <div style={{ paddingBottom: '148%', position: 'relative' }}>
-        {isPlaying ? (
-          <video
-            ref={videoRef}
-            src={video.videoSrc}
-            controls
-            playsInline
-            poster={video.thumbnail}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          />
-        ) : (
-          <>
-            {isVisible && (
-              <Image
-                src={video.thumbnail}
-                alt={`${video.name} video testimonial`}
-                fill
-                sizes="(max-width: 768px) 280px, 320px"
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-                quality={75}
-              />
-            )}
-            
-            {/* Gradient Overlay */}
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.85) 100%)',
-            }} />
+    <>
+      <div className="qualifier-backdrop" onClick={onClose} aria-hidden="true" />
+      
+      <div className="qualifier-sheet" role="dialog" aria-modal="true" aria-labelledby="qualifier-title">
+        <div className="qualifier-handle" />
+        
+        <h3 id="qualifier-title" className="qualifier-title">Quick Questions 🎯</h3>
+        <p className="qualifier-subtitle">Help us prepare the perfect quote for your <strong>{service}</strong></p>
 
-            {/* Play Button */}
-            <div 
-              onClick={handlePlay}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '72px',
-                height: '72px',
-                background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 8px 32px rgba(201, 162, 39, 0.4)',
-                cursor: 'pointer',
-                paddingLeft: '4px',
-              }}
-              className="play-btn"
+        <p className="qualifier-label">💰 Approximate Budget (AED)</p>
+        <div className="qualifier-chips">
+          {BUDGETS.map((b) => (
+            <button
+              key={b.label}
+              onClick={() => setBudget(b)}
+              className={`qualifier-chip ${budget?.label === b.label ? 'selected' : ''}`}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-            </div>
+              {b.label}
+            </button>
+          ))}
+        </div>
 
-            {/* Duration Badge */}
-            <div style={{
-              position: 'absolute',
-              top: '16px',
-              right: '16px',
-              background: 'rgba(0,0,0,0.6)',
-              backdropFilter: 'blur(8px)',
-              color: '#fff',
-              padding: '6px 14px',
-              borderRadius: '24px',
-              fontSize: '13px',
-              fontWeight: '500',
-            }}>
-              ▶ {video.duration}
-            </div>
+        <p className="qualifier-label">⏰ When do you want to start?</p>
+        <div className="qualifier-chips">
+          {TIMELINES.map((t) => (
+            <button
+              key={t.label}
+              onClick={() => setTimeline(t)}
+              className={`qualifier-chip ${timeline?.label === t.label ? 'selected' : ''}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
 
-            {/* Project Badge */}
-            <div style={{
-              position: 'absolute',
-              top: '16px',
-              left: '16px',
-              background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)',
-              color: '#fff',
-              padding: '6px 14px',
-              borderRadius: '24px',
-              fontSize: '11px',
-              fontWeight: '600',
-              letterSpacing: '1px',
-              textTransform: 'uppercase',
-            }}>
-              {video.project}
-            </div>
+        <button
+          onClick={handleSubmit}
+          disabled={!budget || !timeline}
+          className={`qualifier-submit ${budget && timeline ? 'active' : ''}`}
+        >
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          {budget && timeline ? 'Chat on WhatsApp' : 'Select both options'}
+        </button>
 
-            {/* Client Info + WhatsApp CTA */}
-            <div style={{
-              position: 'absolute',
-              bottom: '20px',
-              left: '20px',
-              right: '20px',
-              color: '#fff',
-            }}>
-              <p className="font-display" style={{ 
-                fontWeight: '600', 
-                fontSize: '20px', 
-                marginBottom: '4px',
-              }}>
-                {video.name}
-              </p>
-              <p style={{ fontSize: '14px', opacity: 0.9, marginBottom: '12px' }}>
-                <span style={{ color: 'var(--gold-light)' }}>◆</span> {video.location}
-              </p>
-              
-              {/* WhatsApp CTA */}
-              <button
-                onClick={handleChatClick}
-                style={{
-                  background: '#25D366',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '24px',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  width: '100%',
-                  justifyContent: 'center'
-                }}
-              >
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                I Want This Too!
-              </button>
-            </div>
-          </>
-        )}
+        <button
+          onClick={() => { openWhatsApp('service', [service, price], { skipped_qualifier: true }); onClose(); }}
+          className="qualifier-skip"
+        >
+          Skip, just chat →
+        </button>
       </div>
-    </div>
+    </>
   );
 }
 
 // ============================================
 // MAIN COMPONENT
 // ============================================
-export default function WhatsAppEverywhereLP({ initialContent, initialServices }) {
-  const [slotsLeft, setSlotsLeft] = useState(3);
-  const [showExitPopup, setShowExitPopup] = useState(false);
-  const [scrollDepth, setScrollDepth] = useState(0);
-  const [engagement, setEngagement] = useState('new'); // new, browsing, engaged, hot
-  const exitPopupShown = useRef(false);
-
-  // Intersection observers
-  const [heroRef, heroInView] = useInView();
-  const [statsRef, statsInView] = useInView();
-  const [servicesRef, servicesInView] = useInView();
-  const [processRef, processInView] = useInView();
-  const [testimonialsRef, testimonialsInView] = useInView();
-  const [videoRef, videoInView] = useInView();
-  const [faqRef, faqInView] = useInView();
-  const [whyRef, whyInView] = useInView();
+export default function FinalLandingPage({ initialContent, initialServices, initialSlots, currentYear }) {
+  const [slotsLeft] = useState(initialSlots); // FIX #6: Use SSR value, no client update
+  const [showExitSheet, setShowExitSheet] = useState(false);
+  const [scrollPct, setScrollPct] = useState(0);
+  const [openFaq, setOpenFaq] = useState(null);
+  const [qualifier, setQualifier] = useState(null);
+  const exitShown = useRef(false);
 
   const content = initialContent;
   const services = initialServices;
   const faqs = useMemo(() => buildFaq(content), [content]);
+  const isHot = scrollPct >= 60;
 
-  // Dynamic urgency
+  // Initialize attribution on mount
   useEffect(() => {
-    const updateSlots = () => {
-      const h = new Date().getHours();
-      if (h >= 20) setSlotsLeft(1);
-      else if (h >= 16) setSlotsLeft(2);
-      else if (h >= 12) setSlotsLeft(3);
-      else setSlotsLeft(4);
-    };
-    updateSlots();
-    const t = setInterval(updateSlots, 60000);
-    return () => clearInterval(t);
+    getAttribution();
   }, []);
 
-  // Scroll tracking + engagement level
+  // Scroll tracking
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPct = Math.round((scrollTop / docHeight) * 100);
-      setScrollDepth(scrollPct);
-
-      // Update engagement level
-      if (scrollPct >= 75) setEngagement('hot');
-      else if (scrollPct >= 50) setEngagement('engaged');
-      else if (scrollPct > 20) setEngagement('browsing');
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Exit intent detection
-  useEffect(() => {
-    const handleMouseLeave = (e) => {
-      if (e.clientY < 50 && !exitPopupShown.current) {
-        exitPopupShown.current = true;
-        setShowExitPopup(true);
+    const onScroll = () => {
+      const scrollable = document.body.scrollHeight - window.innerHeight;
+      if (scrollable > 0) {
+        setScrollPct(Math.round((window.scrollY / scrollable) * 100));
       }
     };
-
-    document.addEventListener('mouseleave', handleMouseLeave);
-    return () => document.removeEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Mobile exit intent (45 second timeout) - skip if already clicked WA
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!exitShown.current && !hasClickedWhatsApp() && typeof window !== 'undefined' && window.innerWidth < 768) {
+        exitShown.current = true;
+        setShowExitSheet(true);
+      }
+    }, 45000);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Desktop exit intent (mouseout) - requires 15% scroll to avoid aggressive triggers
+  useEffect(() => {
+    const handleMouseOut = (e) => {
+      if (exitShown.current || hasClickedWhatsApp()) return;
+      
+      // Require minimum engagement (15% scroll) before showing
+      if (scrollPct < 15) return;
+      
+      // If leaving window (no relatedTarget) and near top of screen
+      if (!e.relatedTarget && e.clientY < 50) {
+        exitShown.current = true;
+        setShowExitSheet(true);
+      }
+    };
+    
+    window.addEventListener('mouseout', handleMouseOut);
+    return () => window.removeEventListener('mouseout', handleMouseOut);
+  }, [scrollPct]);
+
+  // Handle qualified lead
+  const handleQualifiedSubmit = (budget, timeline) => {
+    openWhatsApp('qualified', [qualifier.service, budget, timeline], { 
+      budget, 
+      timeline,
+      service: qualifier.service 
+    });
+    setQualifier(null);
+  };
+
+  // Service click opens qualifier
+  const handleServiceClick = (service) => {
+    setQualifier({ service: service.title, price: service.price });
+  };
 
   // Schema markup
   const faqSchema = useMemo(() => ({
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map(f => ({ "@type": "Question", "name": f.q, "acceptedAnswer": { "@type": "Answer", "text": f.a } }))
+    "mainEntity": faqs.map(f => ({ 
+      "@type": "Question", 
+      "name": f.q, 
+      "acceptedAnswer": { "@type": "Answer", "text": f.a } 
+    }))
   }), [faqs]);
 
-  const reviewSchema = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Unicorn Renovations",
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "287", "bestRating": "5" }
-  }), []);
+  // SEO title - limit length to prevent keyword stuffing
+  const seoTitle = (content.h1 || 'Villa Renovation Dubai').slice(0, 50);
 
   return (
     <>
       <Head>
-        <title>{content.h1} | Bespoke Transformations | Unicorn Renovations</title>
+        <title>{seoTitle} | Unicorn Renovations Dubai</title>
         <meta name="description" content={content.metaDesc} />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" content="#1a1a1a" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="robots" content="index, follow" />
         <link rel="preconnect" href="https://wa.me" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="canonical" href="https://dubailuxrenovate.com" />
         
+        {/* Schema - LocalBusiness without specific review counts */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "HomeAndConstructionBusiness",
@@ -798,778 +966,395 @@ export default function WhatsAppEverywhereLP({ initialContent, initialServices }
           "url": "https://dubailuxrenovate.com",
           "telephone": "+971585658002",
           "address": { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" },
-          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "287" },
           "areaServed": AREAS_SERVED,
         })}} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }} />
 
         <style dangerouslySetInnerHTML={{ __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-          
           :root {
             --gold: #c9a227;
             --gold-light: #d4af37;
             --gold-dark: #a68521;
-            --gold-muted: #b8860b;
             --charcoal: #1a1a1a;
             --charcoal-light: #2d2d2d;
             --cream: #faf8f5;
-            --cream-dark: #f5f0e8;
-            --whatsapp: #25D366;
-            --whatsapp-dark: #128c7e;
+            --wa: #25D366;
+            --wa-dark: #128c7e;
+            --safe-b: env(safe-area-inset-bottom, 0px);
           }
           
-          * { margin: 0; padding: 0; box-sizing: border-box; }
+          * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
           html { scroll-behavior: smooth; }
           body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            font-family: var(--font-inter), 'Inter', -apple-system, sans-serif; 
             color: var(--charcoal); 
             line-height: 1.6; 
             background: #fff;
             -webkit-font-smoothing: antialiased;
           }
           
-          .font-display { font-family: 'Playfair Display', Georgia, serif; }
-          .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+          .font-display { font-family: var(--font-display), 'Playfair Display', Georgia, serif; }
+          .c { width: 100%; padding: 0 16px; max-width: 1400px; margin: 0 auto; }
           
-          /* Clickable Card Hover */
-          .clickable-card {
-            position: relative;
-          }
-          .clickable-card::after {
-            content: '💬 Tap to Chat';
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            background: var(--whatsapp);
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-size: 11px;
-            font-weight: 600;
-            opacity: 0;
-            transform: translateY(8px);
-            transition: all 0.3s ease;
-          }
-          .clickable-card:hover::after {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          .clickable-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(37, 211, 102, 0.15);
-          }
-          
-          /* WhatsApp Pulse Animation */
-          @keyframes whatsapp-pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
-            50% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-          }
-          .whatsapp-pulse {
-            animation: whatsapp-pulse 2s infinite;
-          }
-          
-          /* Buttons */
-          .btn-whatsapp {
-            background: linear-gradient(135deg, var(--whatsapp) 0%, var(--whatsapp-dark) 100%);
-            color: #fff;
-            border: none;
-            padding: 18px 36px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          /* Buttons - min 48px touch target */
+          .btn {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
-          }
-          .btn-whatsapp:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
-          }
-          
-          .btn-gold {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-            color: #fff;
-            border: none;
-            padding: 18px 36px;
+            justify-content: center;
+            gap: 10px;
+            min-height: 52px;
+            padding: 14px 28px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            box-shadow: 0 4px 20px rgba(201, 162, 39, 0.3);
-          }
-          .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(201, 162, 39, 0.4);
-          }
-          
-          .btn-outline-light {
-            background: transparent;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.4);
-            padding: 18px 36px;
-            font-size: 16px;
-            font-weight: 500;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-          }
-          .btn-outline-light:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.6);
-          }
-          
-          .btn-dark {
-            background: var(--charcoal);
-            color: #fff;
             border: none;
-            padding: 18px 36px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.4s ease;
+            transition: transform 0.15s, box-shadow 0.15s;
+            text-decoration: none;
           }
-          .btn-dark:hover {
-            background: var(--charcoal-light);
-            transform: translateY(-2px);
+          .btn:active { transform: scale(0.97); }
+          .btn:focus-visible { outline: 3px solid var(--wa); outline-offset: 2px; }
+          
+          .btn-wa { 
+            background: linear-gradient(135deg, var(--wa) 0%, var(--wa-dark) 100%); 
+            color: #fff; 
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3); 
           }
           
           /* Cards */
-          .luxury-card {
+          .clickable-card { 
+            transition: transform 0.2s, box-shadow 0.2s; 
+            border-radius: 16px;
             background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid #f0f0f0;
-            cursor: pointer;
-            position: relative;
           }
-          .luxury-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            border-color: var(--whatsapp);
+          .clickable-card:active { transform: scale(0.98); }
+          .clickable-card:focus-visible { outline: 3px solid var(--wa); outline-offset: 2px; }
+          .clickable-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+          
+          /* Sections */
+          section { padding: 60px 0; }
+          
+          /* Typography */
+          h1 { font-size: 32px; font-weight: 700; line-height: 1.15; }
+          h2 { font-size: 26px; font-weight: 600; line-height: 1.2; }
+          h3 { font-size: 18px; font-weight: 600; }
+          
+          /* Horizontal scroll */
+          .scroll-x {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding: 4px 16px 16px;
+            margin: 0 -16px;
           }
-          .luxury-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--whatsapp), var(--gold));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-          }
-          .luxury-card:hover::before {
-            opacity: 1;
+          .scroll-x::-webkit-scrollbar { display: none; }
+          .scroll-x > * { scroll-snap-align: start; flex-shrink: 0; }
+          
+          /* FIX #1: Areas grid - mobile default is flex, desktop is grid */
+          .areas-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
           }
           
-          /* Animations */
-          .fade-up {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-          .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          .fade-up-delay-1 { transition-delay: 0.1s; }
-          .fade-up-delay-2 { transition-delay: 0.2s; }
-          .fade-up-delay-3 { transition-delay: 0.3s; }
-          .fade-up-delay-4 { transition-delay: 0.4s; }
-          .fade-up-delay-5 { transition-delay: 0.5s; }
+          /* Bottom sheet */
+          .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+          .sheet-bg.open { opacity: 1; pointer-events: auto; }
+          .sheet { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-radius: 24px 24px 0 0; padding: 24px 20px calc(24px + var(--safe-b)); z-index: 1000; transform: translateY(100%); transition: transform 0.3s ease; }
+          .sheet.open { transform: translateY(0); }
+          
+          /* Sticky bottom */
+          .sticky-b { position: fixed; bottom: 0; left: 0; right: 0; background: var(--charcoal); padding: 12px 16px calc(12px + var(--safe-b)); z-index: 100; display: flex; gap: 12px; }
+          .sticky-b.hot { background: linear-gradient(135deg, var(--wa) 0%, var(--wa-dark) 100%); }
           
           /* FAQ */
-          .faq-item {
-            border-bottom: 1px solid #e8e8e8;
-            transition: all 0.3s ease;
-            cursor: pointer;
-          }
-          .faq-item:hover { background: var(--cream); }
-          .faq-summary {
-            padding: 24px 0;
-            cursor: pointer;
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 18px;
-            font-weight: 500;
-          }
-          .faq-summary::-webkit-details-marker { display: none; }
-          .faq-summary::after {
-            content: '+';
-            font-size: 24px;
-            color: var(--gold);
-            font-weight: 300;
-            transition: transform 0.3s ease;
-          }
-          details[open] .faq-summary::after {
-            transform: rotate(45deg);
-          }
-          .faq-content {
-            padding: 0 0 24px 0;
-            color: #666;
-            line-height: 1.8;
-          }
+          .faq-item { border-bottom: 1px solid #eee; }
+          .faq-q { padding: 20px 0; font-size: 16px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; cursor: pointer; min-height: 60px; width: 100%; background: none; border: none; text-align: left; }
+          .faq-q:focus-visible { outline: 2px solid var(--wa); outline-offset: -2px; }
+          .faq-a { padding: 0 0 20px; font-size: 15px; color: #666; line-height: 1.7; display: none; }
+          .faq-a.open { display: block; }
           
-          /* Exit Popup */
-          .exit-popup-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            animation: fadeIn 0.3s ease;
-          }
-          @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+          /* Video Card */
+          .video-card { position: relative; width: 100%; border-radius: 16px; overflow: hidden; background: #0a0a0a; aspect-ratio: 9/16; max-height: 420px; }
+          .video-card video { width: 100%; height: 100%; object-fit: cover; }
+          .video-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%); }
+          .video-duration { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 12px; }
+          .video-project { position: absolute; top: 12px; left: 12px; background: var(--gold); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+          .video-play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 72px; height: 72px; border-radius: 50%; background: var(--gold); border: none; display: flex; align-items: center; justify-content: center; padding-left: 4px; cursor: pointer; box-shadow: 0 8px 32px rgba(201, 162, 39, 0.4); }
+          .video-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; color: #fff; }
+          .video-name { font-weight: 600; font-size: 17px; margin-bottom: 4px; }
+          .video-location { font-size: 13px; opacity: 0.85; margin-bottom: 14px; }
+          .video-cta { background: #25D366; color: #fff; border: none; padding: 14px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; justify-content: center; min-height: 48px; }
           
-          /* Sticky Bar */
-          .sticky-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            transition: all 0.3s ease;
-          }
-          .sticky-bar.new { background: var(--charcoal); }
-          .sticky-bar.browsing { background: var(--charcoal); }
-          .sticky-bar.engaged { background: linear-gradient(135deg, var(--charcoal) 0%, #2a2a2a 100%); }
-          .sticky-bar.hot { background: linear-gradient(135deg, var(--whatsapp-dark) 0%, var(--whatsapp) 100%); }
+          /* Qualifier Modal */
+          .qualifier-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; backdrop-filter: blur(4px); }
+          .qualifier-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-radius: 24px 24px 0 0; padding: 24px 20px calc(24px + var(--safe-b)); z-index: 1001; max-height: 85vh; overflow: auto; }
+          .qualifier-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 20px; }
+          .qualifier-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; text-align: center; }
+          .qualifier-subtitle { color: #666; font-size: 14px; margin-bottom: 24px; text-align: center; }
+          .qualifier-label { font-weight: 600; font-size: 14px; margin-bottom: 12px; }
+          .qualifier-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+          .qualifier-chip { padding: 12px 16px; border-radius: 10px; border: 1px solid #ddd; background: #fff; font-size: 14px; cursor: pointer; min-height: 48px; transition: all 0.15s; }
+          .qualifier-chip.selected { border: 2px solid var(--wa); background: rgba(37, 211, 102, 0.1); font-weight: 600; }
+          .qualifier-submit { width: 100%; padding: 16px; border-radius: 12px; border: none; background: #ccc; color: #fff; font-size: 16px; font-weight: 600; cursor: not-allowed; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s; }
+          .qualifier-submit.active { background: var(--wa); cursor: pointer; }
+          .qualifier-skip { width: 100%; padding: 14px; margin-top: 12px; background: none; border: none; color: #666; font-size: 14px; cursor: pointer; min-height: 48px; }
           
-          /* Responsive */
-          @media (max-width: 768px) {
-            .container { padding: 0 16px; }
-            .hide-mobile { display: none !important; }
-            .btn-whatsapp, .btn-gold, .btn-outline-light, .btn-dark {
-              padding: 16px 24px;
-              font-size: 14px;
-              width: 100%;
-              justify-content: center;
-            }
-            section { padding: 60px 0 !important; }
-            .services-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
-            .process-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
-            .testimonials-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
-            .video-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
-            .why-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
-            .areas-grid { grid-template-columns: repeat(2, 1fr) !important; }
-            .hero-stats { justify-content: center !important; gap: 24px !important; text-align: center; }
-            .hero-stats > div { text-align: center !important; min-width: 100px !important; }
-            .clickable-card::after { display: none; }
+          /* WhatsApp pulse */
+          @keyframes wa-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); } 50% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); } }
+          .wa-pulse { animation: wa-pulse 2s infinite; }
+          
+          /* Desktop */
+          @media (min-width: 768px) {
+            .c { padding: 0 24px; }
+            section { padding: 100px 0; }
+            h1 { font-size: 56px; }
+            h2 { font-size: 40px; }
+            .mobile-only { display: none !important; }
+            .scroll-x { flex-wrap: wrap; overflow: visible; padding: 0; margin: 0; }
+            .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+            .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+            .video-grid { display: grid; grid-template-columns: repeat(3, 320px); gap: 32px; justify-content: center; }
+            .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+            .process-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+            .trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+            /* FIX #1: Areas grid - desktop override to 6-column grid */
+            .areas-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+            .sticky-b { display: none; }
           }
-          @media (min-width: 769px) {
-            .hide-desktop { display: none !important; }
-            .video-grid { grid-template-columns: repeat(3, 320px) !important; }
-            .services-grid { grid-template-columns: repeat(3, 1fr) !important; }
-            .process-grid { grid-template-columns: repeat(5, 1fr) !important; }
-            .testimonials-grid { grid-template-columns: repeat(3, 1fr) !important; }
-            .why-grid { grid-template-columns: repeat(3, 1fr) !important; }
-            .video-card:hover { transform: translateY(-12px) !important; box-shadow: 0 30px 80px rgba(0,0,0,0.5) !important; }
-            .video-card:hover .play-btn { transform: scale(1.1); }
+          @media (max-width: 767px) {
+            .desktop-only { display: none !important; }
           }
         `}} />
       </Head>
 
-      <div style={{ minHeight: '100vh' }}>
+      {/* Analytics - stub loads beforeInteractive to guarantee no missed conversions */}
+      <Script id="gtag-stub" strategy="beforeInteractive">
+        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=window.gtag||gtag;gtag('js',new Date());gtag('config','AW-612864132');`}
+      </Script>
+      <Script src="https://www.googletagmanager.com/gtag/js?id=AW-612864132" strategy="afterInteractive" />
+      {/* Clarity can remain lazyOnload - not critical for conversions */}
+      <Script id="clarity" strategy="lazyOnload">
+        {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "v5bkaisuew");`}
+      </Script>
+
+      <div className={`${inter.variable} ${playfair.variable}`} style={{ paddingBottom: '80px' }}>
         
-        {/* EXIT INTENT POPUP */}
-        {showExitPopup && (
-          <div className="exit-popup-overlay" onClick={() => setShowExitPopup(false)}>
-            <div 
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                background: '#fff',
-                borderRadius: '20px',
-                padding: '48px',
-                maxWidth: '480px',
-                textAlign: 'center',
-                position: 'relative',
-                margin: '20px'
-              }}
-            >
-              <button 
-                onClick={() => setShowExitPopup(false)}
-                style={{
-                  position: 'absolute',
-                  top: '16px',
-                  right: '16px',
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  color: '#999'
-                }}
-              >×</button>
-              
-              <div style={{ fontSize: '64px', marginBottom: '16px' }}>🎁</div>
-              <h2 className="font-display" style={{ fontSize: '28px', marginBottom: '12px' }}>
-                Wait! Don't Leave Empty-Handed
-              </h2>
-              <p style={{ color: '#666', marginBottom: '24px', fontSize: '16px' }}>
-                Get a <strong>FREE 3D visualization</strong> of your dream renovation – no strings attached!
-              </p>
-              
-              <button 
-                onClick={() => {
-                  openWhatsApp('exitIntent', { service: content.service });
-                  setShowExitPopup(false);
-                }}
-                className="btn-whatsapp whatsapp-pulse"
-                style={{ width: '100%', fontSize: '18px', padding: '20px' }}
-              >
-                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                Claim My Free 3D Design
-              </button>
-              
-              <p style={{ marginTop: '16px', fontSize: '13px', color: '#999' }}>
-                ⏱️ Response within 2 minutes • No spam, ever
-              </p>
-            </div>
-          </div>
+        {/* LEAD QUALIFIER MODAL */}
+        {qualifier && (
+          <LeadQualifier
+            service={qualifier.service}
+            price={qualifier.price}
+            onClose={() => setQualifier(null)}
+            onSubmit={handleQualifiedSubmit}
+          />
         )}
 
-        {/* URGENCY BAR - Clickable */}
-        <div 
-          onClick={() => openWhatsApp('urgency', { slotsLeft })}
-          style={{ 
-            background: 'linear-gradient(90deg, var(--charcoal) 0%, var(--charcoal-light) 100%)', 
-            color: '#fff', 
-            padding: '14px 24px', 
-            textAlign: 'center', 
-            fontSize: '14px', 
-            letterSpacing: '0.5px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-        >
-          <span style={{ color: 'var(--gold-light)' }}>✦</span>
-          &nbsp;&nbsp;FREE 3D VISUALIZATION&nbsp;&nbsp;•&nbsp;&nbsp;
-          <strong>Only {slotsLeft} Consultation Slots Left</strong>&nbsp;&nbsp;•&nbsp;&nbsp;
-          <span style={{ 
-            background: 'var(--whatsapp)', 
-            padding: '4px 12px', 
-            borderRadius: '12px',
-            fontSize: '12px',
-            fontWeight: '600'
-          }}>
-            TAP TO BOOK →
-          </span>
+        {/* EXIT SHEET */}
+        <div className={`sheet-bg ${showExitSheet ? 'open' : ''}`} onClick={() => setShowExitSheet(false)} aria-hidden="true" />
+        <div className={`sheet ${showExitSheet ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label="Special offer">
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ width: '40px', height: '4px', background: '#ddd', borderRadius: '2px', margin: '0 auto 20px' }} />
+            <div style={{ fontSize: '48px', marginBottom: '12px' }} aria-hidden="true">🎁</div>
+            <h3 className="font-display" style={{ fontSize: '24px', marginBottom: '8px' }}>Wait! Free Gift Inside</h3>
+            <p style={{ color: '#666', marginBottom: '24px', fontSize: '15px' }}>Get a <strong>FREE 3D visualization</strong> of your dream {content.service.toLowerCase()}</p>
+            <button className="btn btn-wa wa-pulse" onClick={() => { openWhatsApp('exitIntent', [content.service]); setShowExitSheet(false); }} style={{ width: '100%' }}>
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              Claim Free 3D Design
+            </button>
+            <button onClick={() => setShowExitSheet(false)} style={{ background: 'none', border: 'none', color: '#999', fontSize: '14px', padding: '14px', marginTop: '8px', cursor: 'pointer', minHeight: '48px' }}>Maybe later</button>
+          </div>
         </div>
 
+        {/* URGENCY BAR */}
+        <button 
+          onClick={() => openWhatsApp('urgency', [slotsLeft])} 
+          style={{ width: '100%', background: 'linear-gradient(90deg, var(--charcoal) 0%, var(--charcoal-light) 100%)', color: '#fff', padding: '14px 16px', fontSize: '13px', cursor: 'pointer', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', border: 'none', letterSpacing: '0.3px' }}
+        >
+          <span style={{ color: 'var(--gold-light)' }}>✦</span>
+          <span>FREE 3D VISUALIZATION</span>
+          <span style={{ opacity: 0.5 }}>•</span>
+          <span><strong>Only {slotsLeft} Consultation Slots Left</strong></span>
+          <span style={{ background: 'var(--wa)', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', fontWeight: '600' }}>TAP TO BOOK →</span>
+        </button>
+
         {/* HEADER */}
-        <header style={{ 
-          background: 'rgba(255,255,255,0.95)', 
-          backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(0,0,0,0.05)', 
-          padding: '20px 0', 
-          position: 'sticky', 
-          top: 0, 
-          zIndex: 50 
-        }}>
-          <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <header style={{ background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(12px)', padding: '14px 0', position: 'sticky', top: 0, zIndex: 50, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+          <div className="c" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <a href="https://unicornrenovations.com" style={{ textDecoration: 'none' }}>
-              <span className="font-display" style={{ fontSize: '24px', fontWeight: '600', color: 'var(--charcoal)', letterSpacing: '2px' }}>
-                UNICORN
-              </span>
+              <span className="font-display" style={{ fontSize: '22px', fontWeight: '600', color: 'var(--charcoal)', letterSpacing: '2px' }}>UNICORN</span>
             </a>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <span 
-                className="hide-mobile" 
-                onClick={() => openWhatsApp('trustBadge', { badge: 'rated 4.9/5' })}
-                style={{ fontSize: '13px', color: '#888', cursor: 'pointer' }}
-              >
-                ★ 4.9/5 from 287 Reviews
-              </span>
-              <button 
-                onClick={() => openWhatsApp('hero', { service: content.service, location: content.location })}
-                className="btn-whatsapp"
-                style={{ padding: '12px 20px', fontSize: '13px', borderRadius: '8px' }}
-              >
-                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                <span className="hide-mobile">Chat Now</span>
-                <span className="hide-desktop">💬</span>
+              <span className="desktop-only" style={{ fontSize: '13px', color: '#888' }}>★ Highly Rated</span>
+              <button className="btn btn-wa" onClick={() => openWhatsApp('hero', [content.service, content.location])} style={{ padding: '10px 18px', minHeight: '44px', fontSize: '14px' }}>
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                <span className="desktop-only">Chat Now</span>
+                <span className="mobile-only">💬</span>
               </button>
             </div>
           </div>
         </header>
 
         {/* HERO */}
-        <section ref={heroRef} style={{ 
-          position: 'relative', 
-          minHeight: '90vh', 
-          display: 'flex', 
-          alignItems: 'center',
-          background: 'var(--charcoal)'
-        }}>
-          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-            <Image
-              src="/villa-renovation.webp"
-              alt={`${content.service} in ${content.location}`}
-              fill
-              sizes="100vw"
-              style={{ objectFit: 'cover', opacity: 0.4, filter: 'brightness(0.6)' }}
-              priority
-              quality={75}
-            />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(26,26,26,0.7) 0%, rgba(26,26,26,0.9) 100%)' }} />
+        <section style={{ position: 'relative', minHeight: '85vh', display: 'flex', alignItems: 'center', background: 'var(--charcoal)' }}>
+          <div style={{ position: 'absolute', inset: 0 }}>
+            <Image src="/villa-renovation.webp" alt={`${content.service} in ${content.location}`} fill sizes="100vw" style={{ objectFit: 'cover', opacity: 0.35 }} priority quality={75} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(26,26,26,0.6) 0%, rgba(26,26,26,0.9) 100%)' }} />
           </div>
 
-          <div className="container" style={{ position: 'relative', zIndex: 10, color: '#fff', paddingTop: '40px', paddingBottom: '60px' }}>
-            <div className={`fade-up ${heroInView ? 'visible' : ''}`}>
-              
-              {/* Trust Badge - Clickable */}
-              <div 
-                onClick={() => openWhatsApp('trustBadge', { badge: 'rated 4.9/5 with 287 reviews' })}
-                style={{ 
-                  display: 'inline-flex', 
-                  alignItems: 'center', 
-                  gap: '12px', 
-                  background: 'rgba(255,255,255,0.08)', 
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  padding: '10px 20px', 
-                  borderRadius: '40px', 
-                  marginBottom: '32px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                <span style={{ color: 'var(--gold-light)' }}>★★★★★</span>
-                <span style={{ fontSize: '14px' }}>4.9 Rating • 287 Reviews</span>
-                <span style={{ background: 'var(--whatsapp)', padding: '2px 8px', borderRadius: '10px', fontSize: '11px' }}>Verify →</span>
-              </div>
+          <div className="c" style={{ position: 'relative', zIndex: 10, color: '#fff', paddingTop: '40px', paddingBottom: '60px' }}>
+            <button 
+              onClick={() => openWhatsApp('trustBadge', ['highly rated'])} 
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', padding: '10px 18px', borderRadius: '30px', marginBottom: '28px', cursor: 'pointer', color: '#fff', fontSize: '13px' }}
+            >
+              <span style={{ color: 'var(--gold-light)' }}>★★★★★</span>
+              <span>Highly Rated • Trusted by Dubai Homeowners</span>
+            </button>
 
-              <h1 className="font-display" style={{ 
-                fontSize: 'clamp(40px, 7vw, 80px)', 
-                fontWeight: '500', 
-                lineHeight: 1.1, 
-                marginBottom: '16px',
-                letterSpacing: '-1px'
-              }}>
-                {content.h1}
-              </h1>
+            <h1 className="font-display" style={{ fontSize: 'clamp(36px, 7vw, 72px)', fontWeight: '500', lineHeight: 1.1, marginBottom: '12px', letterSpacing: '-0.5px' }}>{content.h1}</h1>
+            <h2 className="font-display" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontWeight: '400', color: 'var(--gold-light)', marginBottom: '20px', fontStyle: 'italic' }}>{content.h2}</h2>
+            
+            <p style={{ fontSize: '17px', opacity: 0.85, maxWidth: '550px', marginBottom: '32px', lineHeight: 1.7, fontWeight: '300' }}>
+              Get a <strong style={{ fontWeight: '500' }}>FREE 3D visualization</strong> of your dream {content.service.toLowerCase()} in {content.location}. 
+              Chat with us now – response within 2 minutes!
+            </p>
 
-              <h2 className="font-display" style={{ 
-                fontSize: 'clamp(20px, 3vw, 32px)', 
-                fontWeight: '400', 
-                color: 'var(--gold-light)',
-                marginBottom: '24px',
-                fontStyle: 'italic'
-              }}>
-                {content.h2}
-              </h2>
-
-              <p style={{ 
-                fontSize: '18px', 
-                opacity: 0.8, 
-                maxWidth: '600px', 
-                marginBottom: '40px',
-                lineHeight: 1.7,
-                fontWeight: '300'
-              }}>
-                Seeking exceptional <strong style={{ fontWeight: '500' }}>{content.keyword}</strong> in <strong style={{ fontWeight: '500' }}>{content.location}</strong>? 
-                Chat with us now – get a free 3D visualization in 24 hours!
-              </p>
-
-              {/* Stats Row - All Clickable */}
-              <div className="hero-stats" style={{ display: 'flex', gap: '32px', marginBottom: '48px', flexWrap: 'wrap' }}>
-                {[
-                  { num: '800+', label: 'Villas Transformed', context: 'your 800+ completed projects' },
-                  { num: '15+', label: 'Years of Mastery', context: 'your 15+ years of experience' },
-                  { num: '5yr', label: 'Warranty', context: '5-year warranty coverage' },
-                ].map((s, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => openWhatsApp('trustBadge', { badge: s.context })}
-                    style={{ textAlign: 'left', minWidth: '120px', cursor: 'pointer' }}
-                  >
-                    <div style={{ fontSize: '36px', fontWeight: '700', color: 'var(--gold-light)', marginBottom: '4px' }}>{s.num}</div>
-                    <div style={{ fontSize: '12px', opacity: 0.7, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{s.label}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* CTA Buttons */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '500px' }}>
-                <button 
-                  onClick={() => openWhatsApp('hero', { service: content.service, location: content.location })}
-                  className="btn-whatsapp whatsapp-pulse"
-                  style={{ fontSize: '18px', padding: '20px 36px' }}
-                >
-                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                  Chat With Us Now
+            <div style={{ display: 'flex', gap: '32px', marginBottom: '40px', flexWrap: 'wrap' }}>
+              {[{ n: '800+', l: 'Villas Transformed', c: 'your 800+ completed projects' }, { n: '15+', l: 'Years of Mastery', c: 'your 15+ years of experience' }, { n: '5yr', l: 'Warranty', c: '5-year warranty coverage' }].map((s, i) => (
+                <button key={i} onClick={() => openWhatsApp('trustBadge', [s.c])} style={{ textAlign: 'left', background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 0 }}>
+                  <div style={{ fontSize: '32px', fontWeight: '700', color: 'var(--gold-light)', marginBottom: '2px' }}>{s.n}</div>
+                  <div style={{ fontSize: '12px', opacity: 0.7, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{s.l}</div>
                 </button>
-                <p style={{ fontSize: '14px', opacity: 0.7, textAlign: 'center' }}>
-                  ⚡ Average response: 2 minutes • Free consultation
-                </p>
-              </div>
+              ))}
+            </div>
 
-              {/* Trust Points - All Clickable */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginTop: '32px' }}>
-                {[
-                  { text: '✓ Free 3D Design', context: 'free 3D design service' },
-                  { text: '✓ Fixed Pricing', context: 'fixed pricing guarantee' },
-                  { text: '✓ Municipality Approved', context: 'municipality approvals' },
-                  { text: '✓ 5-Year Warranty', context: '5-year warranty' },
-                ].map((item, i) => (
-                  <span 
-                    key={i}
-                    onClick={() => openWhatsApp('trustBadge', { badge: item.context })}
-                    style={{ 
-                      fontSize: '13px', 
-                      opacity: 0.8, 
-                      cursor: 'pointer',
-                      padding: '6px 12px',
-                      background: 'rgba(255,255,255,0.05)',
-                      borderRadius: '20px',
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
-                    {item.text}
-                  </span>
-                ))}
-              </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxWidth: '400px' }}>
+              <button className="btn btn-wa wa-pulse" onClick={() => openWhatsApp('hero', [content.service, content.location])} style={{ width: '100%', fontSize: '17px', padding: '18px 28px' }}>
+                <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                Chat With Us Now
+              </button>
+              <p style={{ fontSize: '13px', opacity: 0.65, textAlign: 'center' }}>⚡ Reply in 2 minutes • Free consultation</p>
+            </div>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '28px' }}>
+              {['Free 3D Design', 'Fixed Pricing', 'Municipality Approved', '5-Year Warranty'].map((item, i) => (
+                <span key={i} style={{ fontSize: '13px', opacity: 0.8, padding: '6px 14px', background: 'rgba(255,255,255,0.06)', borderRadius: '20px' }}>✓ {item}</span>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* TRUST BAR - All Clickable */}
-        <section ref={statsRef} style={{ padding: '80px 0', background: 'var(--cream)', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-          <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '48px', textAlign: 'center' }}>
-              {TRUST_BADGES.map((item, i) => (
-                <ClickableCard 
-                  key={i} 
-                  onClick={() => openWhatsApp('trustBadge', { badge: item.context })}
-                  className={`fade-up fade-up-delay-${i+1} ${statsInView ? 'visible' : ''}`}
-                  style={{ padding: '24px', borderRadius: '12px', background: '#fff' }}
-                >
-                  <div style={{ fontSize: '32px', color: 'var(--gold)', marginBottom: '16px' }}>{item.icon}</div>
-                  <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px', textTransform: 'uppercase' }}>{item.title}</h3>
-                  <p style={{ fontSize: '14px', color: '#666', marginBottom: '12px' }}>{item.desc}</p>
-                  <span style={{ fontSize: '12px', color: 'var(--whatsapp)', fontWeight: '600' }}>Learn More →</span>
+        {/* TRUST BADGES */}
+        <section style={{ padding: '50px 0', background: 'var(--cream)' }}>
+          <div className="c">
+            <div className="trust-grid scroll-x">
+              {TRUST_BADGES.map((b, i) => (
+                <ClickableCard key={i} onClick={() => openWhatsApp('trustBadge', [b.context])} style={{ flex: '0 0 200px', padding: '24px', textAlign: 'center' }} ariaLabel={`Learn more about ${b.title}`}>
+                  <div style={{ fontSize: '28px', color: 'var(--gold)', marginBottom: '12px' }}>{b.icon}</div>
+                  <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>{b.title}</h3>
+                  <p style={{ fontSize: '13px', color: '#666' }}>{b.desc}</p>
                 </ClickableCard>
               ))}
             </div>
           </div>
         </section>
 
-        {/* SERVICES - All Clickable */}
-        <section ref={servicesRef} style={{ padding: '100px 0', background: '#fff' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ fontSize: '13px', color: 'var(--gold)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
-                Our Expertise
-              </p>
-              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
-                {content.service} Services
-              </h2>
-              <p style={{ fontSize: '18px', color: '#666', maxWidth: '600px', margin: '0 auto' }}>
-                Tap any service to chat about your project
-              </p>
-            </div>
-
-            <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '32px' }}>
+        {/* SERVICES */}
+        <section style={{ background: '#fff' }}>
+          <div className="c">
+            <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500' }}>Our Expertise</p>
+            <h2 className="font-display" style={{ marginBottom: '8px' }}>{content.service} Services</h2>
+            <p style={{ fontSize: '16px', color: '#666', marginBottom: '32px' }}>Tap any service to get a personalized quote</p>
+          </div>
+          
+          <div className="c">
+            <div className="services-grid scroll-x">
               {services.map((s, i) => (
-                <div 
-                  key={i} 
-                  className={`luxury-card fade-up fade-up-delay-${i+1} ${servicesInView ? 'visible' : ''}`}
-                  onClick={() => openWhatsApp('service', { serviceName: s.title, price: s.price })}
-                >
-                  <div style={{ position: 'relative', height: '240px', background: 'var(--cream)' }}>
-                    <Image src={s.image} alt={`${s.title} in ${content.location}`} fill sizes="(max-width: 768px) 100vw, 400px" style={{ objectFit: 'cover' }} loading={i < 2 ? 'eager' : 'lazy'} quality={70} />
-                    {/* WhatsApp overlay on hover */}
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'linear-gradient(180deg, transparent 50%, rgba(37, 211, 102, 0.9) 100%)',
-                      opacity: 0,
-                      transition: 'opacity 0.3s ease',
-                      display: 'flex',
-                      alignItems: 'flex-end',
-                      justifyContent: 'center',
-                      padding: '20px'
-                    }} className="service-overlay">
-                      <span style={{ color: '#fff', fontWeight: '600', fontSize: '14px' }}>
-                        💬 Tap to discuss this service
-                      </span>
-                    </div>
+                <ClickableCard key={i} onClick={() => handleServiceClick(s)} style={{ flex: '0 0 320px', overflow: 'hidden' }} ariaLabel={`Get quote for ${s.title}`}>
+                  <div style={{ position: 'relative', height: '200px' }}>
+                    <Image src={s.image} alt={`${s.title} in ${content.location}`} fill sizes="320px" style={{ objectFit: 'cover' }} loading={i < 2 ? 'eager' : 'lazy'} quality={70} />
                   </div>
-                  <div style={{ padding: '28px' }}>
-                    <h3 className="font-display" style={{ fontSize: '24px', fontWeight: '500', marginBottom: '8px' }}>{s.title}</h3>
-                    <p style={{ fontSize: '15px', color: '#666', marginBottom: '16px', lineHeight: 1.6 }}>{s.desc}</p>
+                  <div style={{ padding: '20px' }}>
+                    <h3 className="font-display" style={{ fontSize: '20px', marginBottom: '6px' }}>{s.title}</h3>
+                    <p style={{ fontSize: '14px', color: '#666', marginBottom: '14px', lineHeight: 1.5 }}>{s.desc}</p>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <p style={{ fontSize: '18px', fontWeight: '600', color: 'var(--gold-dark)' }}>{s.price}</p>
-                      <span style={{ 
-                        background: 'var(--whatsapp)', 
-                        color: '#fff', 
-                        padding: '8px 16px', 
-                        borderRadius: '20px', 
-                        fontSize: '13px',
-                        fontWeight: '600'
-                      }}>
-                        Get Quote →
-                      </span>
+                      <span style={{ fontWeight: '600', color: 'var(--gold-dark)', fontSize: '16px' }}>{s.price}</span>
+                      <span style={{ background: 'var(--wa)', color: '#fff', padding: '8px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: '600' }}>Get Quote →</span>
                     </div>
                   </div>
-                </div>
+                </ClickableCard>
               ))}
             </div>
           </div>
         </section>
 
-        {/* PROCESS - All Steps Clickable */}
-        <section ref={processRef} style={{ padding: '100px 0', background: 'var(--charcoal)', color: '#fff' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ fontSize: '13px', color: 'var(--gold-light)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
-                The Journey
-              </p>
-              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
-                Our {content.service} Process
-              </h2>
-              <p style={{ fontSize: '18px', opacity: 0.7, maxWidth: '600px', margin: '0 auto' }}>
-                Tap any step to start your journey
-              </p>
-            </div>
-
-            <div className="process-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px' }}>
+        {/* PROCESS */}
+        <section style={{ background: 'var(--charcoal)', color: '#fff' }}>
+          <div className="c">
+            <p style={{ fontSize: '12px', color: 'var(--gold-light)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>The Journey</p>
+            <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '40px' }}>Our {content.service} Process</h2>
+            
+            <div className="process-grid scroll-x">
               {PROCESS_STEPS.map((step, i) => (
-                <ClickableCard 
-                  key={i} 
-                  onClick={() => openWhatsApp('process', { stepName: step.title })}
-                  className={`fade-up fade-up-delay-${i+1} ${processInView ? 'visible' : ''}`}
-                  style={{ 
-                    textAlign: 'center', 
-                    padding: '40px 24px',
-                    background: 'rgba(255,255,255,0.03)',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255,255,255,0.08)'
-                  }}
-                >
-                  <div style={{ fontSize: '14px', color: 'var(--gold-light)', letterSpacing: '2px', marginBottom: '16px', fontWeight: '600' }}>
-                    {step.step}
+                <ClickableCard key={i} onClick={() => openWhatsApp('process', [step.title])} style={{ flex: '0 0 200px', textAlign: 'center', padding: '28px 20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }} ariaLabel={`Start ${step.title} step`}>
+                  <div style={{ fontSize: '12px', color: 'var(--gold-light)', letterSpacing: '1.5px', marginBottom: '12px', fontWeight: '600' }}>{step.step}</div>
+                  <div style={{ fontSize: '24px', marginBottom: '12px', color: 'var(--gold-light)' }}>{step.icon}</div>
+                  <h3 className="font-display" style={{ fontSize: '18px', fontWeight: '500', marginBottom: '6px', color: '#fff' }}>{step.title}</h3>
+                  <p style={{ fontSize: '13px', opacity: 0.7, marginBottom: '10px', color: '#fff' }}>{step.desc}</p>
+                  <span style={{ fontSize: '11px', color: 'var(--gold-light)', opacity: 0.8 }}>{step.time}</span>
+                  <div style={{ marginTop: '14px' }}>
+                    <span style={{ background: 'var(--wa)', color: '#fff', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '600' }}>{step.cta} →</span>
                   </div>
-                  <div style={{ fontSize: '28px', marginBottom: '16px', color: 'var(--gold-light)' }}>{step.icon}</div>
-                  <h3 className="font-display" style={{ fontSize: '20px', fontWeight: '500', marginBottom: '8px' }}>{step.title}</h3>
-                  <p style={{ fontSize: '14px', opacity: 0.7, marginBottom: '12px' }}>{step.desc}</p>
-                  <span style={{ fontSize: '12px', color: 'var(--gold-muted)', letterSpacing: '1px', textTransform: 'uppercase', display: 'block', marginBottom: '16px' }}>
-                    {step.time}
-                  </span>
-                  <span style={{ 
-                    background: 'var(--whatsapp)', 
-                    color: '#fff', 
-                    padding: '8px 16px', 
-                    borderRadius: '20px', 
-                    fontSize: '12px',
-                    fontWeight: '600'
-                  }}>
-                    {step.cta} →
-                  </span>
                 </ClickableCard>
               ))}
             </div>
           </div>
         </section>
 
-        {/* WHY CHOOSE US - All Clickable */}
-        <section ref={whyRef} style={{ padding: '100px 0', background: '#fff' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ fontSize: '13px', color: 'var(--gold)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
-                The Difference
-              </p>
-              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500' }}>
-                Why Discerning Homeowners Choose Us
-              </h2>
-            </div>
-
-            <div className="why-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+        {/* WHY CHOOSE US */}
+        <section style={{ background: '#fff' }}>
+          <div className="c">
+            <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>The Difference</p>
+            <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '40px' }}>Why Discerning Homeowners Choose Us</h2>
+            
+            <div className="why-grid scroll-x">
               {WHY_CHOOSE_US.map((item, i) => (
-                <ClickableCard 
-                  key={i} 
-                  onClick={() => openWhatsApp('trustBadge', { badge: item.context })}
-                  className={`fade-up fade-up-delay-${i % 3 + 1} ${whyInView ? 'visible' : ''}`}
-                  style={{ padding: '32px', background: 'var(--cream)', borderRadius: '8px' }}
-                >
-                  <div style={{ fontSize: '28px', color: 'var(--gold)', marginBottom: '20px' }}>{item.icon}</div>
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '12px' }}>{item.title}</h3>
-                  <p style={{ fontSize: '15px', color: '#666', lineHeight: 1.7, marginBottom: '16px' }}>{item.desc}</p>
-                  <span style={{ fontSize: '13px', color: 'var(--whatsapp)', fontWeight: '600' }}>Ask About This →</span>
+                <ClickableCard key={i} onClick={() => openWhatsApp('whyChooseUs', [item.context])} style={{ flex: '0 0 280px', padding: '28px', background: 'var(--cream)' }} ariaLabel={`Learn about ${item.title}`}>
+                  <div style={{ fontSize: '28px', color: 'var(--gold)', marginBottom: '16px' }}>{item.icon}</div>
+                  <h3 style={{ fontSize: '17px', fontWeight: '600', marginBottom: '8px' }}>{item.title}</h3>
+                  <p style={{ fontSize: '14px', color: '#666', lineHeight: 1.6 }}>{item.desc}</p>
                 </ClickableCard>
               ))}
             </div>
           </div>
         </section>
 
-        {/* TESTIMONIALS - All Clickable */}
-        <section ref={testimonialsRef} style={{ padding: '100px 0', background: 'var(--cream)' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ fontSize: '13px', color: 'var(--gold)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
-                Client Stories
-              </p>
-              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
-                Voices of Transformation
-              </h2>
-              <p style={{ fontSize: '18px', color: '#666' }}>
-                Tap any review to start your transformation
-              </p>
-            </div>
-
-            <div className="testimonials-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '32px' }}>
+        {/* TESTIMONIALS */}
+        <section style={{ background: 'var(--cream)' }}>
+          <div className="c">
+            <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>Client Stories</p>
+            <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '8px' }}>Voices of Transformation</h2>
+            <p style={{ fontSize: '16px', color: '#666', textAlign: 'center', marginBottom: '40px' }}>Tap any review to start your transformation</p>
+          </div>
+          
+          <div className="c">
+            <div className="testimonials-grid scroll-x">
               {TESTIMONIALS.map((t, i) => (
-                <ClickableCard 
-                  key={i} 
-                  onClick={() => openWhatsApp('testimonial', { clientName: t.name, project: t.project })}
-                  className={`fade-up fade-up-delay-${i+1} ${testimonialsInView ? 'visible' : ''}`}
-                  style={{ background: '#fff', padding: '40px', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}
-                >
-                  <div style={{ display: 'flex', gap: '4px', marginBottom: '20px', color: 'var(--gold)' }}>
-                    {[...Array(t.rating)].map((_, j) => <span key={j}>★</span>)}
-                  </div>
-                  <p className="font-display" style={{ fontSize: '18px', color: '#444', marginBottom: '28px', lineHeight: 1.8, fontStyle: 'italic' }}>
-                    "{t.text}"
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <ClickableCard key={i} onClick={() => openWhatsApp('testimonial', [t.name, t.project])} style={{ flex: '0 0 340px', padding: '28px' }} ariaLabel={`Chat about ${t.name}'s project`}>
+                  <div style={{ color: 'var(--gold)', marginBottom: '14px', fontSize: '14px' }} aria-label={`${t.rating} out of 5 stars`}>{'★'.repeat(t.rating)}</div>
+                  <p className="font-display" style={{ fontSize: '16px', color: '#444', marginBottom: '20px', lineHeight: 1.7, fontStyle: 'italic' }}>"{t.text}"</p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                     <div>
-                      <p style={{ fontWeight: '600', fontSize: '16px' }}>{t.name}</p>
-                      <p style={{ fontSize: '14px', color: '#888' }}>{t.location}</p>
+                      <p style={{ fontWeight: '600', fontSize: '15px' }}>{t.name}</p>
+                      <p style={{ fontSize: '13px', color: '#888' }}>{t.location}</p>
                     </div>
-                    <span style={{ fontSize: '12px', color: 'var(--gold-dark)', background: 'var(--cream)', padding: '6px 12px', borderRadius: '4px' }}>
-                      {t.project}
-                    </span>
+                    <span style={{ fontSize: '11px', color: 'var(--gold-dark)', background: 'rgba(201,162,39,0.1)', padding: '4px 10px', borderRadius: '4px' }}>{t.project}</span>
                   </div>
-                  <div style={{ 
-                    background: 'var(--whatsapp)', 
-                    color: '#fff', 
-                    padding: '12px', 
-                    borderRadius: '8px', 
-                    textAlign: 'center',
-                    fontSize: '14px',
-                    fontWeight: '600'
-                  }}>
-                    💬 I Want Results Like This!
-                  </div>
+                  <div style={{ background: 'var(--wa)', color: '#fff', padding: '12px', borderRadius: '8px', textAlign: 'center', fontSize: '14px', fontWeight: '600' }}>💬 I Want Results Like This!</div>
                 </ClickableCard>
               ))}
             </div>
@@ -1577,284 +1362,119 @@ export default function WhatsAppEverywhereLP({ initialContent, initialServices }
         </section>
 
         {/* VIDEO TESTIMONIALS */}
-        <section ref={videoRef} style={{ padding: '100px 0', background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)', overflow: 'hidden' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ fontSize: '13px', color: 'var(--gold-light)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
-                Hear Their Stories
-              </p>
-              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px', color: '#fff' }}>
-                Video Testimonials
-              </h2>
-              <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.7)', maxWidth: '500px', margin: '0 auto' }}>
-                Watch, then tap "I Want This Too!" to start your journey
-              </p>
-            </div>
-
-            <div className="video-grid" style={{ display: 'grid', gap: '32px', justifyContent: 'center' }}>
-              {VIDEO_TESTIMONIALS.map((video, i) => (
-                <div key={video.id} className={`fade-up fade-up-delay-${i+1} ${videoInView ? 'visible' : ''}`}>
-                  <LazyVideo 
-                    video={video} 
-                    isVisible={videoInView} 
-                    onChatClick={() => openWhatsApp('videoTestimonial', { clientName: video.name, location: video.location })}
-                  />
+        <section style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)', overflow: 'hidden' }}>
+          <div className="c">
+            <p style={{ fontSize: '12px', color: 'var(--gold-light)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>Hear Their Stories</p>
+            <h2 className="font-display" style={{ color: '#fff', textAlign: 'center', marginBottom: '8px' }}>Video Testimonials</h2>
+            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginBottom: '40px' }}>Watch, then tap "I Want This Too!" to start</p>
+          </div>
+          
+          <div className="c">
+            <div className="video-grid scroll-x">
+              {VIDEO_TESTIMONIALS.map((video) => (
+                <div key={video.id} style={{ flex: '0 0 280px' }}>
+                  <VideoCard video={video} onChatClick={() => openWhatsApp('videoTestimonial', [video.name, video.location])} />
                 </div>
               ))}
             </div>
-
-            <div style={{ textAlign: 'center', marginTop: '48px', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
-              <span style={{ color: 'var(--gold-light)' }}>★★★★★</span>
-              &nbsp;&nbsp;Join 800+ satisfied homeowners
-            </div>
           </div>
         </section>
 
-        {/* FAQ - All Questions Clickable */}
-        <section ref={faqRef} style={{ padding: '100px 0', background: '#fff' }}>
-          <div className="container" style={{ maxWidth: '800px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-              <p style={{ fontSize: '13px', color: 'var(--gold)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '16px', fontWeight: '500' }}>
-                Common Questions
-              </p>
-              <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
-                {content.service} FAQ
-              </h2>
-              <p style={{ fontSize: '16px', color: '#666' }}>
-                Have a question? Tap to ask us directly!
-              </p>
-            </div>
+        {/* FAQ */}
+        <section style={{ background: '#fff' }}>
+          <div className="c" style={{ maxWidth: '800px' }}>
+            <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>Common Questions</p>
+            <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '8px' }}>{content.service} FAQ</h2>
+            <p style={{ fontSize: '16px', color: '#666', textAlign: 'center', marginBottom: '32px' }}>Have a question? Tap to ask us directly!</p>
             
-            <div className={`fade-up ${faqInView ? 'visible' : ''}`}>
-              {faqs.map((f, idx) => (
-                <details key={idx} className="faq-item">
-                  <summary className="faq-summary">{f.q}</summary>
-                  <div className="faq-content">
-                    <p style={{ marginBottom: '20px' }}>{f.a}</p>
-                    <button 
-                      onClick={() => openWhatsApp('faq', { question: f.q })}
-                      style={{
-                        background: 'var(--whatsapp)',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '12px 24px',
-                        borderRadius: '24px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                      Ask About This
-                    </button>
-                  </div>
-                </details>
-              ))}
-            </div>
+            {faqs.map((f, i) => (
+              <div key={i} className="faq-item">
+                <button className="faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i} aria-controls={`faq-${i}`}>
+                  <span>{f.q}</span>
+                  <span style={{ color: 'var(--gold)', fontSize: '22px', transform: openFaq === i ? 'rotate(45deg)' : 'none', transition: '0.2s' }} aria-hidden="true">+</span>
+                </button>
+                <div id={`faq-${i}`} className={`faq-a ${openFaq === i ? 'open' : ''}`} role="region" aria-hidden={openFaq !== i}>
+                  <p style={{ marginBottom: '16px' }}>{f.a}</p>
+                  <button onClick={() => openWhatsApp('faq', [f.q])} style={{ background: 'var(--wa)', color: '#fff', border: 'none', padding: '12px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: '600', cursor: 'pointer', minHeight: '48px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    💬 Ask About This
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* INSTANT QUOTE SECTION - Replaces Form */}
-        <section style={{ padding: '100px 0', background: 'var(--cream)' }}>
-          <div className="container" style={{ maxWidth: '600px', textAlign: 'center' }}>
-            <div style={{ fontSize: '64px', marginBottom: '24px' }}>💬</div>
-            <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: '500', marginBottom: '16px' }}>
-              Skip the Form.<br />Just Chat.
-            </h2>
-            <p style={{ fontSize: '18px', color: '#666', marginBottom: '40px', maxWidth: '500px', margin: '0 auto 40px' }}>
-              No forms, no emails, no waiting. Just tap the button and tell us about your project. 
-              Get a personalized quote within minutes.
-            </p>
-
-            <button 
-              onClick={() => openWhatsApp('callToAction')}
-              className="btn-whatsapp whatsapp-pulse"
-              style={{ fontSize: '20px', padding: '24px 48px' }}
-            >
-              <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        {/* SKIP THE FORM */}
+        <section style={{ padding: '80px 0', background: 'var(--cream)' }}>
+          <div className="c" style={{ maxWidth: '600px', textAlign: 'center' }}>
+            <div style={{ fontSize: '56px', marginBottom: '20px' }}>💬</div>
+            <h2 className="font-display" style={{ marginBottom: '12px' }}>Skip the Form.<br />Just Chat.</h2>
+            <p style={{ fontSize: '16px', color: '#666', marginBottom: '32px' }}>No forms, no emails, no waiting. Just tap and tell us about your project. Get a personalized quote within minutes.</p>
+            <button className="btn btn-wa wa-pulse" onClick={() => openWhatsApp('callToAction', [])} style={{ fontSize: '18px', padding: '20px 40px' }}>
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
               Start Chatting Now
             </button>
-
-            <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'center', gap: '32px', flexWrap: 'wrap' }}>
-              {[
-                { icon: '⚡', text: '2 min response' },
-                { icon: '🎁', text: 'Free 3D design' },
-                { icon: '🔒', text: 'No spam ever' },
-              ].map((item, i) => (
-                <div key={i} style={{ fontSize: '14px', color: '#666' }}>
-                  {item.icon} {item.text}
-                </div>
+            <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' }}>
+              {[{ icon: '⚡', text: '2 min response' }, { icon: '🎁', text: 'Free 3D design' }, { icon: '🔒', text: 'No spam ever' }].map((item, i) => (
+                <span key={i} style={{ fontSize: '13px', color: '#666' }}>{item.icon} {item.text}</span>
               ))}
             </div>
           </div>
         </section>
 
-        {/* AREAS SERVED - All Clickable */}
-        <section style={{ padding: '64px 0', background: '#fff', borderTop: '1px solid #f0f0f0' }}>
-          <div className="container">
-            <h3 className="font-display" style={{ fontSize: '24px', fontWeight: '500', textAlign: 'center', marginBottom: '24px' }}>
-              Serving Dubai's Finest Communities
-            </h3>
-            <p style={{ textAlign: 'center', marginBottom: '24px', color: '#888', fontSize: '14px' }}>
-              Tap your area to get local expertise
-            </p>
-            <div className="areas-grid" style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
-              gap: '12px', 
-              maxWidth: '900px', 
-              margin: '0 auto' 
-            }}>
+        {/* FIX #1: AREAS SERVED - NO inline display style, CSS handles it */}
+        <section style={{ padding: '50px 0', background: '#fff' }}>
+          <div className="c">
+            <h3 className="font-display" style={{ fontSize: '24px', textAlign: 'center', marginBottom: '8px' }}>Serving Dubai's Finest Communities</h3>
+            <p style={{ textAlign: 'center', marginBottom: '28px', color: '#888', fontSize: '14px' }}>Tap your area for local expertise</p>
+            <div className="areas-grid">
               {AREAS_SERVED.map((area, i) => (
-                <button
-                  key={i}
-                  onClick={() => openWhatsApp('area', { areaName: area })}
-                  style={{
-                    background: 'var(--cream)',
-                    border: '1px solid #e8e8e8',
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    textAlign: 'center'
-                  }}
-                  className="area-btn"
-                >
-                  {area}
-                </button>
+                <button key={i} onClick={() => openWhatsApp('area', [area])} style={{ background: 'var(--cream)', border: '1px solid #e8e8e8', padding: '12px 18px', borderRadius: '10px', fontSize: '13px', fontWeight: '500', cursor: 'pointer', minHeight: '48px', transition: 'all 0.15s' }}>{area}</button>
               ))}
             </div>
           </div>
         </section>
 
         {/* FINAL CTA */}
-        <section style={{ padding: '120px 0', background: 'var(--charcoal)', color: '#fff', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(37,211,102,0.1) 0%, transparent 70%)' }} />
-          
-          <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-            <p style={{ fontSize: '13px', color: 'var(--gold-light)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>
-              Your Dream Villa Awaits
-            </p>
-            <h2 className="font-display" style={{ fontSize: 'clamp(36px, 6vw, 64px)', fontWeight: '500', marginBottom: '24px', lineHeight: 1.2 }}>
-              One Tap Away From<br />Your Dream Home
-            </h2>
-            <p style={{ fontSize: '20px', opacity: 0.8, marginBottom: '48px', maxWidth: '600px', margin: '0 auto 48px' }}>
-              800+ homeowners started their journey with a simple WhatsApp message.<br />You're next.
-            </p>
-            
-            <button 
-              onClick={() => openWhatsApp('callToAction')}
-              className="btn-whatsapp whatsapp-pulse"
-              style={{ fontSize: '20px', padding: '24px 48px' }}
-            >
-              <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        <section style={{ padding: '80px 0', background: 'var(--charcoal)', color: '#fff', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(37,211,102,0.08) 0%, transparent 70%)' }} />
+          <div className="c" style={{ position: 'relative', zIndex: 10 }}>
+            <p style={{ fontSize: '12px', color: 'var(--gold-light)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '20px', fontWeight: '500' }}>Your Dream Villa Awaits</p>
+            <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 52px)', marginBottom: '16px', lineHeight: 1.2 }}>One Tap Away From<br />Your Dream Home</h2>
+            <p style={{ fontSize: '18px', opacity: 0.8, marginBottom: '36px', maxWidth: '500px', margin: '0 auto 36px' }}>800+ homeowners started their journey with a simple WhatsApp message. You're next.</p>
+            <button className="btn btn-wa wa-pulse" onClick={() => openWhatsApp('callToAction', [])} style={{ fontSize: '18px', padding: '20px 40px' }}>
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
               Let's Create Magic Together
             </button>
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer style={{ padding: '48px 0', background: '#0d0d0d', color: '#fff' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <span className="font-display" style={{ fontSize: '28px', fontWeight: '600', letterSpacing: '3px' }}>UNICORN</span>
-              <p style={{ fontSize: '14px', opacity: 0.5, marginTop: '12px' }}>Crafting Timeless Villa Transformations Since 2012</p>
-            </div>
-            
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', marginBottom: '32px' }}>
-              {[
-                { label: 'Villa Renovation', url: 'https://unicornrenovations.com/villa-renovation/' },
-                { label: 'Interior Design', url: 'https://unicornrenovations.com/interior-design/' },
-                { label: 'Portfolio', url: 'https://unicornrenovations.com/portfolio/' },
-                { label: 'Contact', url: 'https://unicornrenovations.com/contact/' },
-              ].map((link, i) => (
-                <a key={i} href={link.url} target="_blank" rel="noopener" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', textDecoration: 'none' }}>
-                  {link.label}
-                </a>
+        {/* FOOTER - Uses currentYear from SSR to avoid hydration mismatch */}
+        <footer style={{ padding: '40px 0', background: '#0d0d0d', color: '#fff' }}>
+          <div className="c" style={{ textAlign: 'center' }}>
+            <span className="font-display" style={{ fontSize: '24px', fontWeight: '600', letterSpacing: '2px' }}>UNICORN</span>
+            <p style={{ fontSize: '13px', opacity: 0.5, marginTop: '8px', marginBottom: '20px' }}>Crafting Timeless Villa Transformations Since 2012</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
+              {[{ label: 'Villa Renovation', url: 'https://unicornrenovations.com/villa-renovation/' }, { label: 'Interior Design', url: 'https://unicornrenovations.com/interior-design/' }, { label: 'Portfolio', url: 'https://unicornrenovations.com/portfolio/' }, { label: 'Contact', url: 'https://unicornrenovations.com/contact/' }].map((link, i) => (
+                <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', textDecoration: 'none' }}>{link.label}</a>
               ))}
             </div>
-            
-            <p style={{ fontSize: '12px', opacity: 0.4, textAlign: 'center' }}>
-              © {new Date().getFullYear()} Unicorn Renovations. All rights reserved.
-            </p>
+            <p style={{ fontSize: '12px', opacity: 0.4 }}>© {currentYear} Unicorn Renovations. All rights reserved.</p>
           </div>
         </footer>
 
-        {/* FLOATING WHATSAPP BUTTON */}
-        <button 
-          onClick={() => openWhatsApp('floatingButton')}
-          aria-label="WhatsApp" 
-          className="whatsapp-pulse"
-          style={{ 
-            position: 'fixed', 
-            bottom: '100px', 
-            right: '24px', 
-            width: '64px', 
-            height: '64px', 
-            background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)', 
-            borderRadius: '50%', 
-            border: 'none', 
-            cursor: 'pointer', 
-            boxShadow: '0 8px 32px rgba(37, 211, 102, 0.4)', 
-            zIndex: 50, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-          }}
-        >
-          <svg style={{ width: '32px', height: '32px' }} fill="#fff" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        {/* FLOATING WHATSAPP - Desktop */}
+        <button onClick={() => openWhatsApp('floatingButton', [])} aria-label="Chat on WhatsApp" className="desktop-only wa-pulse" style={{ position: 'fixed', bottom: '28px', right: '28px', width: '64px', height: '64px', background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)', borderRadius: '50%', border: 'none', cursor: 'pointer', boxShadow: '0 8px 28px rgba(37, 211, 102, 0.4)', zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="32" height="32" fill="#fff" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
         </button>
 
-        {/* SMART STICKY BAR - Changes based on engagement */}
-        <div className={`sticky-bar ${engagement} hide-desktop`} style={{ display: 'flex' }}>
-          <div style={{ color: '#fff', fontSize: '14px', flex: 1 }}>
-            {engagement === 'hot' && '🔥 You look ready!'}
-            {engagement === 'engaged' && '✨ Have questions?'}
-            {engagement === 'browsing' && '👋 Need help?'}
-            {engagement === 'new' && '💬 Chat with us'}
-          </div>
-          <button 
-            onClick={() => openWhatsApp('sticky', { engagement })}
-            style={{
-              background: engagement === 'hot' ? '#fff' : 'var(--whatsapp)',
-              color: engagement === 'hot' ? 'var(--whatsapp-dark)' : '#fff',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '24px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-            {engagement === 'hot' ? "Let's Talk!" : 'WhatsApp'}
+        {/* STICKY BOTTOM - Mobile */}
+        <div className={`sticky-b mobile-only ${isHot ? 'hot' : ''}`}>
+          <a href="tel:+971585658002" aria-label="Call us" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: 'rgba(255,255,255,0.1)', color: '#fff', borderRadius: '10px', padding: '12px', textDecoration: 'none', fontWeight: '600', fontSize: '14px', minHeight: '48px' }}>📞 Call</a>
+          <button className="btn btn-wa" onClick={() => openWhatsApp('sticky', [isHot])} style={{ flex: 2, minHeight: '48px', padding: '12px' }}>
+            {isHot ? "🔥 I'm Ready!" : '💬 WhatsApp'}
           </button>
         </div>
-        <div className="hide-desktop" style={{ height: '72px' }} />
-
-        {/* ANALYTICS */}
-        <script dangerouslySetInnerHTML={{ __html: `window.addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.src='https://www.googletagmanager.com/gtag/js?id=AW-612864132';s.async=true;document.head.appendChild(s);s.onload=function(){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','AW-612864132');};},1500);});` }} />
-        <script dangerouslySetInnerHTML={{ __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "v5bkaisuew");` }} />
-        
-        {/* EXTRA HOVER STYLES */}
-        <style jsx global>{`
-          .area-btn:hover {
-            background: var(--whatsapp) !important;
-            color: #fff !important;
-            border-color: var(--whatsapp) !important;
-            transform: translateY(-2px);
-          }
-          .luxury-card:hover .service-overlay {
-            opacity: 1 !important;
-          }
-        `}</style>
       </div>
     </>
   );
