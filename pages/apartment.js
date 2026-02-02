@@ -5,22 +5,27 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import Script from 'next/script';
-import { Inter, Playfair_Display } from 'next/font/google';
 import { useState, useMemo, useEffect, useRef } from 'react';
 
 // ============================================
-// FONTS
+// FONTS - Ultra Luxury + Modern
+// Cormorant Garamond: High-end editorial, thin elegant strokes
+// Plus Jakarta Sans: Premium modern, clean luxury feel
 // ============================================
-const inter = Inter({ 
+import { Cormorant_Garamond, Plus_Jakarta_Sans } from 'next/font/google';
+
+const jakarta = Plus_Jakarta_Sans({ 
   subsets: ['latin'], 
-  variable: '--font-inter',
+  variable: '--font-body',
   display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
 });
 
-const playfair = Playfair_Display({ 
+const cormorant = Cormorant_Garamond({ 
   subsets: ['latin'], 
   variable: '--font-display',
   display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
 });
 
 // ============================================
@@ -664,12 +669,12 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
           
           * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
           html { scroll-behavior: smooth; }
-          body { font-family: var(--font-inter), -apple-system, sans-serif; color: var(--charcoal); line-height: 1.6; background: #fff; -webkit-font-smoothing: antialiased; }
+          body { font-family: var(--font-body), 'Plus Jakarta Sans', -apple-system, sans-serif; color: var(--charcoal); line-height: 1.6; background: #fff; -webkit-font-smoothing: antialiased; font-weight: 400; letter-spacing: -0.01em; }
           
-          .font-display { font-family: var(--font-display), Georgia, serif; }
+          .font-display { font-family: var(--font-display), 'Cormorant Garamond', Georgia, serif; font-weight: 500; letter-spacing: 0.02em; }
           .c { width: 100%; padding: 0 12px; max-width: 1200px; margin: 0 auto; }
           
-          .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 600; border: none; cursor: pointer; transition: transform 0.15s; text-decoration: none; }
+          .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: transform 0.15s; text-decoration: none; letter-spacing: 0.02em; }
           .btn:active { transform: scale(0.97); }
           .btn:focus-visible { outline: 3px solid var(--wa); outline-offset: 2px; }
           .btn-wa { background: linear-gradient(135deg, var(--wa) 0%, var(--wa-dark) 100%); color: #fff; box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3); }
@@ -679,9 +684,9 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
           .clickable-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
           
           section { padding: 40px 0; }
-          h1 { font-size: 28px; font-weight: 700; line-height: 1.15; }
-          h2 { font-size: 22px; font-weight: 600; line-height: 1.2; }
-          h3 { font-size: 16px; font-weight: 600; }
+          h1 { font-size: 32px; font-weight: 400; line-height: 1.1; letter-spacing: 0.01em; }
+          h2 { font-size: 26px; font-weight: 400; line-height: 1.15; letter-spacing: 0.01em; }
+          h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
           
           .grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
           .grid-3 { display: grid; grid-template-columns: 1fr; gap: 12px; }
@@ -732,8 +737,8 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
           @media (min-width: 768px) {
             .c { padding: 0 24px; }
             section { padding: 80px 0; }
-            h1 { font-size: 52px; }
-            h2 { font-size: 36px; }
+            h1 { font-size: 56px; font-weight: 400; }
+            h2 { font-size: 42px; font-weight: 400; }
             .mobile-only { display: none !important; }
             .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 24px; }
             .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 32px; }
@@ -755,7 +760,7 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
         {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "v5bkaisuew");`}
       </Script>
 
-      <div className={`${inter.variable} ${playfair.variable}`} style={{ paddingBottom: '80px', cursor: 'pointer' }} onClick={handleBackgroundClick}>
+      <div className={`${jakarta.variable} ${cormorant.variable}`} style={{ paddingBottom: '80px', cursor: 'pointer' }} onClick={handleBackgroundClick}>
         
         {qualifier && (
           <LeadQualifier service={qualifier.service} price={qualifier.price} onClose={() => setQualifier(null)} onSubmit={handleQualifiedSubmit} />
@@ -816,8 +821,8 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
               <span>Dubai's #1 Apartment Renovation Specialists</span>
             </button>
 
-            <h1 className="font-display" style={{ fontSize: 'clamp(32px, 7vw, 68px)', fontWeight: '500', lineHeight: 1.1, marginBottom: '8px', letterSpacing: '-0.5px' }}>{content.h1}</h1>
-            <h2 className="font-display" style={{ fontSize: 'clamp(16px, 3vw, 26px)', fontWeight: '400', color: '#60a5fa', marginBottom: '16px', fontStyle: 'italic' }}>{content.h2}</h2>
+            <h1 className="font-display" style={{ fontSize: 'clamp(36px, 8vw, 72px)', fontWeight: '400', lineHeight: 1.05, marginBottom: '8px', letterSpacing: '0.02em' }}>{content.h1}</h1>
+            <h2 className="font-display" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontWeight: '300', color: '#93c5fd', marginBottom: '16px', fontStyle: 'italic', letterSpacing: '0.03em' }}>{content.h2}</h2>
             
             <p style={{ fontSize: '15px', opacity: 0.9, maxWidth: '550px', marginBottom: '24px', lineHeight: 1.6 }}>
               From <strong>studio to penthouse</strong> – we handle building approvals, NOC paperwork, and deliver stunning results in <strong>4-6 weeks</strong>. Free 3D design included!
@@ -939,7 +944,7 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
               {TESTIMONIALS.map((t, i) => (
                 <ClickableCard key={i} onClick={() => openWhatsApp('testimonial', [t.name, t.project])} style={{ padding: '24px' }} ariaLabel={`Chat about ${t.name}'s project`}>
                   <div style={{ color: '#f59e0b', marginBottom: '12px', fontSize: '14px' }}>{'★'.repeat(t.rating)}</div>
-                  <p style={{ fontSize: '14px', color: '#444', marginBottom: '16px', lineHeight: 1.7, fontStyle: 'italic' }}>"{t.text}"</p>
+                  <p className="font-display" style={{ fontSize: '15px', color: '#374151', marginBottom: '16px', lineHeight: 1.8, fontStyle: 'italic', fontWeight: '400' }}>"{t.text}"</p>
                   <div style={{ marginBottom: '12px' }}>
                     <p style={{ fontWeight: '600', fontSize: '14px' }}>{t.name}</p>
                     <p style={{ fontSize: '12px', color: '#888' }}>{t.building}, {t.location}</p>
@@ -971,7 +976,7 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
         <section style={{ background: '#fff' }}>
           <div className="c" style={{ maxWidth: '800px' }}>
             <p style={{ fontSize: '12px', color: '#2563eb', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>FAQ</p>
-            <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '32px' }}>Apartment Renovation Questions</h2>
+            <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '32px', fontWeight: '400', letterSpacing: '0.02em' }}>Apartment Renovation Questions</h2>
             
             {faqs.map((f, i) => (
               <div key={i} className="faq-item">
@@ -994,7 +999,7 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
         <section style={{ padding: '80px 0', background: '#f8fafc' }}>
           <div className="c" style={{ maxWidth: '600px', textAlign: 'center' }}>
             <div style={{ fontSize: '56px', marginBottom: '20px' }}>💬</div>
-            <h2 className="font-display" style={{ marginBottom: '12px' }}>No Forms. Just Chat.</h2>
+            <h2 className="font-display" style={{ marginBottom: '12px', fontWeight: '400', letterSpacing: '0.02em' }}>No Forms. Just Chat.</h2>
             <p style={{ fontSize: '16px', color: '#666', marginBottom: '32px' }}>Skip the paperwork. Tap and tell us about your apartment. Get a personalized quote in minutes.</p>
             <button className="btn btn-wa wa-pulse" onClick={() => openWhatsApp('callToAction', [])} style={{ fontSize: '18px', padding: '20px 40px' }}>
               <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
@@ -1006,7 +1011,7 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
         {/* AREAS */}
         <section style={{ padding: '50px 0', background: '#fff' }}>
           <div className="c">
-            <h3 className="font-display" style={{ fontSize: '24px', textAlign: 'center', marginBottom: '8px' }}>Serving All Dubai Areas</h3>
+            <h3 className="font-display" style={{ fontSize: '28px', textAlign: 'center', marginBottom: '8px', fontWeight: '400', letterSpacing: '0.02em' }}>Serving All Dubai Areas</h3>
             <p style={{ textAlign: 'center', marginBottom: '28px', color: '#888', fontSize: '14px' }}>Tap your area for local expertise</p>
             <div className="areas-grid">
               {AREAS_SERVED.map((area, i) => (
@@ -1020,7 +1025,7 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
         <section style={{ padding: '80px 0', background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)', color: '#fff', textAlign: 'center' }}>
           <div className="c">
             <p style={{ fontSize: '12px', color: '#60a5fa', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '20px' }}>Ready to Transform?</p>
-            <h2 className="font-display" style={{ fontSize: 'clamp(28px, 5vw, 48px)', marginBottom: '16px' }}>Your Dream Apartment<br />Is One Tap Away</h2>
+            <h2 className="font-display" style={{ fontSize: 'clamp(32px, 6vw, 56px)', marginBottom: '16px', fontWeight: '400', letterSpacing: '0.02em' }}>Your Dream Apartment<br />Is One Tap Away</h2>
             <p style={{ fontSize: '18px', opacity: 0.8, marginBottom: '36px', maxWidth: '500px', margin: '0 auto 36px' }}>500+ apartment owners started with a simple WhatsApp message. You're next.</p>
             <button className="btn btn-wa wa-pulse" onClick={() => openWhatsApp('callToAction', [])} style={{ fontSize: '18px', padding: '20px 40px' }}>
               <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
