@@ -166,13 +166,27 @@ const openWhatsApp = (context, args = [], meta = {}) => {
   }
   const attr = readAttribution();
   const clickId = Math.random().toString(36).slice(2, 8).toUpperCase();
-  const trackingFooter =
-    `\n\n—\nRef: ${attr.lp || 'apt'}-${clickId}` +
-    (attr.utm_term ? `\nKW: ${attr.utm_term}` : '') +
-    (attr.gclid ? `\nGCLID: ${attr.gclid}` : '') +
-    (attr.wbraid ? `\nWB: ${attr.wbraid}` : '') +
-    (attr.gbraid ? `\nGB: ${attr.gbraid}` : '') +
-    (attr.utm_campaign ? `\nCamp: ${attr.utm_campaign}` : '');
+  
+  // Store full tracking data locally for your reference
+  try {
+    const trackingData = {
+      id: clickId,
+      context,
+      keyword: attr.utm_term || '',
+      gclid: attr.gclid || '',
+      wbraid: attr.wbraid || '',
+      gbraid: attr.gbraid || '',
+      campaign: attr.utm_campaign || '',
+      page: attr.lp || 'apt',
+      time: new Date().toISOString()
+    };
+    const existing = JSON.parse(localStorage.getItem('unicorn_leads') || '[]');
+    existing.push(trackingData);
+    localStorage.setItem('unicorn_leads', JSON.stringify(existing.slice(-100))); // Keep last 100
+  } catch(e) {}
+  
+  // Clean short footer for customer
+  const trackingFooter = `\n\n— Ref: ${clickId}`;
   message += trackingFooter;
   const value = CONVERSION_VALUES[context] || CONVERSION_VALUES.default;
   fireGtag('event', 'conversion', {
