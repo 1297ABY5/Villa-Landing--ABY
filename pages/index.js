@@ -1,7 +1,7 @@
-// pages/index.js - FINAL PRODUCTION VERSION v3.1
-// ✅ All 10 original Document 1 improvements
-// ✅ All 6 code review fixes applied
-// Version: 3.1 FINAL
+// pages/index.js - FINAL PRODUCTION VERSION v3.5
+// ✅ All fixes applied
+// ✅ VERTICAL SCROLL ONLY (no horizontal carousels)
+// Version: 3.5 FINAL
 
 import Head from 'next/head';
 import Image from 'next/image';
@@ -1040,18 +1040,13 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           h2 { font-size: 26px; font-weight: 600; line-height: 1.2; }
           h3 { font-size: 18px; font-weight: 600; }
           
-          /* Horizontal scroll */
-          .scroll-x {
-            display: flex;
-            gap: 16px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            padding: 4px 16px 16px;
-            margin: 0 -16px;
-          }
-          .scroll-x::-webkit-scrollbar { display: none; }
-          .scroll-x > * { scroll-snap-align: start; flex-shrink: 0; }
+          /* VERTICAL GRIDS - No horizontal scroll */
+          .grid-1 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+          .grid-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+          .grid-3 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+          .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+          .grid-5 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+          .grid-6 { display: grid; grid-template-columns: 1fr; gap: 16px; }
           
           /* FIX #1: Areas grid - mobile default is flex, desktop is grid */
           .areas-grid {
@@ -1078,8 +1073,8 @@ export default function FinalLandingPage({ initialContent, initialServices, init
           .faq-a { padding: 0 0 20px; font-size: 15px; color: #666; line-height: 1.7; display: none; }
           .faq-a.open { display: block; }
           
-          /* Video Card */
-          .video-card { position: relative; width: 100%; border-radius: 16px; overflow: hidden; background: #0a0a0a; aspect-ratio: 9/16; max-height: 420px; }
+          /* Video Card - 16:9 aspect for vertical scroll */
+          .video-card { position: relative; width: 100%; border-radius: 16px; overflow: hidden; background: #0a0a0a; aspect-ratio: 16/9; }
           .video-card video { width: 100%; height: 100%; object-fit: cover; }
           .video-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%); }
           .video-duration { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 12px; }
@@ -1115,14 +1110,11 @@ export default function FinalLandingPage({ initialContent, initialServices, init
             h1 { font-size: 56px; }
             h2 { font-size: 40px; }
             .mobile-only { display: none !important; }
-            .scroll-x { flex-wrap: wrap; overflow: visible; padding: 0; margin: 0; }
-            .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-            .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-            .video-grid { display: grid; grid-template-columns: repeat(3, 320px); gap: 32px; justify-content: center; }
-            .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-            .process-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
-            .trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-            /* FIX #1: Areas grid - desktop override to 6-column grid */
+            .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+            .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+            .grid-4 { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+            .grid-5 { grid-template-columns: repeat(5, 1fr); gap: 20px; }
+            .grid-6 { grid-template-columns: repeat(3, 1fr); gap: 24px; }
             .areas-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
             .sticky-b { display: none; }
           }
@@ -1251,9 +1243,9 @@ export default function FinalLandingPage({ initialContent, initialServices, init
         {/* TRUST BADGES */}
         <section style={{ padding: '50px 0', background: 'var(--cream)' }}>
           <div className="c">
-            <div className="trust-grid scroll-x">
+            <div className="grid-4">
               {TRUST_BADGES.map((b, i) => (
-                <ClickableCard key={i} onClick={() => openWhatsApp('trustBadge', [b.context])} style={{ flex: '0 0 200px', padding: '24px', textAlign: 'center' }} ariaLabel={`Learn more about ${b.title}`}>
+                <ClickableCard key={i} onClick={() => openWhatsApp('trustBadge', [b.context])} style={{ padding: '24px', textAlign: 'center' }} ariaLabel={`Learn more about ${b.title}`}>
                   <div style={{ fontSize: '28px', color: 'var(--gold)', marginBottom: '12px' }}>{b.icon}</div>
                   <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>{b.title}</h3>
                   <p style={{ fontSize: '13px', color: '#666' }}>{b.desc}</p>
@@ -1269,14 +1261,12 @@ export default function FinalLandingPage({ initialContent, initialServices, init
             <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500' }}>Our Expertise</p>
             <h2 className="font-display" style={{ marginBottom: '8px' }}>{content.service} Services</h2>
             <p style={{ fontSize: '16px', color: '#666', marginBottom: '32px' }}>Tap any service to get a personalized quote</p>
-          </div>
-          
-          <div className="c">
-            <div className="services-grid scroll-x">
+            
+            <div className="grid-2">
               {services.map((s, i) => (
-                <ClickableCard key={i} onClick={() => handleServiceClick(s)} style={{ flex: '0 0 320px', overflow: 'hidden' }} ariaLabel={`Get quote for ${s.title}`}>
-                  <div style={{ position: 'relative', height: '200px' }}>
-                    <Image src={s.image} alt={`${s.title} in ${content.location}`} fill sizes="320px" style={{ objectFit: 'cover' }} loading={i < 2 ? 'eager' : 'lazy'} quality={70} />
+                <ClickableCard key={i} onClick={() => handleServiceClick(s)} style={{ overflow: 'hidden' }} ariaLabel={`Get quote for ${s.title}`}>
+                  <div style={{ position: 'relative', height: '180px' }}>
+                    <Image src={s.image} alt={`${s.title} in ${content.location}`} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} loading={i < 2 ? 'eager' : 'lazy'} quality={70} />
                   </div>
                   <div style={{ padding: '20px' }}>
                     <h3 className="font-display" style={{ fontSize: '20px', marginBottom: '6px' }}>{s.title}</h3>
@@ -1298,17 +1288,14 @@ export default function FinalLandingPage({ initialContent, initialServices, init
             <p style={{ fontSize: '12px', color: 'var(--gold-light)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>The Journey</p>
             <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '40px' }}>Our {content.service} Process</h2>
             
-            <div className="process-grid scroll-x">
+            <div className="grid-5">
               {PROCESS_STEPS.map((step, i) => (
-                <ClickableCard key={i} onClick={() => openWhatsApp('process', [step.title])} style={{ flex: '0 0 200px', textAlign: 'center', padding: '28px 20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }} ariaLabel={`Start ${step.title} step`}>
+                <ClickableCard key={i} onClick={() => openWhatsApp('process', [step.title])} style={{ textAlign: 'center', padding: '28px 20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }} ariaLabel={`Start ${step.title} step`}>
                   <div style={{ fontSize: '12px', color: 'var(--gold-light)', letterSpacing: '1.5px', marginBottom: '12px', fontWeight: '600' }}>{step.step}</div>
                   <div style={{ fontSize: '24px', marginBottom: '12px', color: 'var(--gold-light)' }}>{step.icon}</div>
                   <h3 className="font-display" style={{ fontSize: '18px', fontWeight: '500', marginBottom: '6px', color: '#fff' }}>{step.title}</h3>
                   <p style={{ fontSize: '13px', opacity: 0.7, marginBottom: '10px', color: '#fff' }}>{step.desc}</p>
                   <span style={{ fontSize: '11px', color: 'var(--gold-light)', opacity: 0.8 }}>{step.time}</span>
-                  <div style={{ marginTop: '14px' }}>
-                    <span style={{ background: 'var(--wa)', color: '#fff', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '600' }}>{step.cta} →</span>
-                  </div>
                 </ClickableCard>
               ))}
             </div>
@@ -1321,9 +1308,9 @@ export default function FinalLandingPage({ initialContent, initialServices, init
             <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>The Difference</p>
             <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '40px' }}>Why Discerning Homeowners Choose Us</h2>
             
-            <div className="why-grid scroll-x">
+            <div className="grid-6">
               {WHY_CHOOSE_US.map((item, i) => (
-                <ClickableCard key={i} onClick={() => openWhatsApp('whyChooseUs', [item.context])} style={{ flex: '0 0 280px', padding: '28px', background: 'var(--cream)' }} ariaLabel={`Learn about ${item.title}`}>
+                <ClickableCard key={i} onClick={() => openWhatsApp('whyChooseUs', [item.context])} style={{ padding: '24px', background: 'var(--cream)' }} ariaLabel={`Learn about ${item.title}`}>
                   <div style={{ fontSize: '28px', color: 'var(--gold)', marginBottom: '16px' }}>{item.icon}</div>
                   <h3 style={{ fontSize: '17px', fontWeight: '600', marginBottom: '8px' }}>{item.title}</h3>
                   <p style={{ fontSize: '14px', color: '#666', lineHeight: 1.6 }}>{item.desc}</p>
@@ -1339,15 +1326,13 @@ export default function FinalLandingPage({ initialContent, initialServices, init
             <p style={{ fontSize: '12px', color: 'var(--gold)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>Client Stories</p>
             <h2 className="font-display" style={{ textAlign: 'center', marginBottom: '8px' }}>Voices of Transformation</h2>
             <p style={{ fontSize: '16px', color: '#666', textAlign: 'center', marginBottom: '40px' }}>Tap any review to start your transformation</p>
-          </div>
-          
-          <div className="c">
-            <div className="testimonials-grid scroll-x">
+            
+            <div className="grid-3">
               {TESTIMONIALS.map((t, i) => (
-                <ClickableCard key={i} onClick={() => openWhatsApp('testimonial', [t.name, t.project])} style={{ flex: '0 0 340px', padding: '28px' }} ariaLabel={`Chat about ${t.name}'s project`}>
+                <ClickableCard key={i} onClick={() => openWhatsApp('testimonial', [t.name, t.project])} style={{ padding: '28px' }} ariaLabel={`Chat about ${t.name}'s project`}>
                   <div style={{ color: 'var(--gold)', marginBottom: '14px', fontSize: '14px' }} aria-label={`${t.rating} out of 5 stars`}>{'★'.repeat(t.rating)}</div>
                   <p className="font-display" style={{ fontSize: '16px', color: '#444', marginBottom: '20px', lineHeight: 1.7, fontStyle: 'italic' }}>"{t.text}"</p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
                     <div>
                       <p style={{ fontWeight: '600', fontSize: '15px' }}>{t.name}</p>
                       <p style={{ fontSize: '13px', color: '#888' }}>{t.location}</p>
@@ -1362,17 +1347,15 @@ export default function FinalLandingPage({ initialContent, initialServices, init
         </section>
 
         {/* VIDEO TESTIMONIALS */}
-        <section style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)', overflow: 'hidden' }}>
+        <section style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)' }}>
           <div className="c">
             <p style={{ fontSize: '12px', color: 'var(--gold-light)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: '500', textAlign: 'center' }}>Hear Their Stories</p>
             <h2 className="font-display" style={{ color: '#fff', textAlign: 'center', marginBottom: '8px' }}>Video Testimonials</h2>
             <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginBottom: '40px' }}>Watch, then tap "I Want This Too!" to start</p>
-          </div>
-          
-          <div className="c">
-            <div className="video-grid scroll-x">
+            
+            <div className="grid-3">
               {VIDEO_TESTIMONIALS.map((video) => (
-                <div key={video.id} style={{ flex: '0 0 280px' }}>
+                <div key={video.id}>
                   <VideoCard video={video} onChatClick={() => openWhatsApp('videoTestimonial', [video.name, video.location])} />
                 </div>
               ))}
