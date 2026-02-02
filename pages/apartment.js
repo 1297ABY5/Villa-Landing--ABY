@@ -729,7 +729,7 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
           .faq-a { padding: 0 0 20px; font-size: 15px; color: #666; line-height: 1.7; display: none; }
           .faq-a.open { display: block; }
           
-          .video-card { position: relative; width: 100%; border-radius: 16px; overflow: hidden; background: #0a0a0a; aspect-ratio: 16/9; }
+          .video-card { position: relative; width: 100%; border-radius: 16px; overflow: hidden; background: #0a0a0a; aspect-ratio: 4/5; }
           .video-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%); }
           .video-duration { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 12px; }
           .video-project { position: absolute; top: 12px; left: 12px; background: var(--accent); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
@@ -898,7 +898,7 @@ export default function ApartmentLandingPage({ initialContent, initialSlots, cur
             <div className="grid-2">
               {APARTMENT_SERVICES.map((s, i) => (
                 <ClickableCard key={i} onClick={() => handleServiceClick(s)} style={{ overflow: 'hidden' }} ariaLabel={`Get quote for ${s.title}`}>
-                  <div style={{ position: 'relative', height: '160px' }}>
+                  <div style={{ position: 'relative', height: '220px' }}>
                     <Image src={s.image} alt={s.title} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} loading={i < 2 ? 'eager' : 'lazy'} quality={70} />
                   </div>
                   <div style={{ padding: '20px' }}>
